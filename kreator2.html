@@ -1,4 +1,4 @@
-<!-- kreator2.html v0.003 Dodanie walidacji, placeholdera i ikon kształtów -->
+<!-- kreator2.html v0.004 Zmiana nazewnictwa: ściana → obszar roboczy, odcinek → segment -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -192,9 +192,9 @@
     <!-- 1. LEWA KOLUMNA (KONFIGURACJA) -->
     <div class="controls">
 
-        <!-- Kształt Ściany -->
+        <!-- Kształt obszaru roboczego -->
         <div class="card">
-            <h3>1. Kształt Ściany</h3>
+            <h3>1. Kształt obszaru roboczego</h3>
             <div id="segmentsContainer"></div>
 
             <div style="background:#fdfdfd; padding:10px; border:1px dashed #ccc; margin-top:10px; border-radius:4px;">
@@ -203,9 +203,9 @@
                     <input type="number" id="segStartHeight" placeholder="np. 140">
                     <input type="number" id="segEndHeight" placeholder="Wys. końc.">
                 </div>
-                <button class="btn-add-segment" onclick="addSegment()">+ Dodaj Odcinek</button>
+                <button class="btn-add-segment" onclick="addSegment()">+ Dodaj Segment</button>
             </div>
-            <button class="btn-danger" onclick="resetWall()">Resetuj Ścianę</button>
+            <button class="btn-danger" onclick="resetWall()">Resetuj Obszar</button>
         </div>
 
         <!-- Konfiguracja Przycisków -->
@@ -512,7 +512,7 @@
     }
 
     function resetWall() {
-        if(confirm("Resetować ścianę?")) {
+        if(confirm("Resetować obszar roboczy?")) {
             wallData.segments = [];
             document.getElementById('segStartHeight').value = '';
             document.getElementById('segEndHeight').value = '';
@@ -628,10 +628,10 @@
         const svg = document.getElementById('svgWrapper');
 
         if (wallData.segments.length === 0) {
-            // Brak odcinków - pokaż pustą przestrzeń
+            // Brak segmentów - pokaż pustą przestrzeń
             svg.innerHTML = `<svg width="300px" viewBox="0 0 300 200">
                 <text x="150" y="100" text-anchor="middle" fill="#999" font-size="14">
-                    Dodaj odcinki ściany
+                    Dodaj segmenty obszaru
                 </text>
             </svg>`;
             return;
