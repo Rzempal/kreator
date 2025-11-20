@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+<html lang="pl"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+ 
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="https://rasek.com.pl/favicon/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://rasek.com.pl/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="https://rasek.com.pl/favicon/favicon-48x48.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://rasek.com.pl/favicon/favicon-180x180.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="https://rasek.com.pl/favicon/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="https://rasek.com.pl/favicon/favicon-512x512.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+<link href="./Kalkulator wyceny - Rasek.pl_files/css2" rel="stylesheet">
+
+<link rel="stylesheet" href="./Kalkulator wyceny - Rasek.pl_files/css2(1)">
+ <title>Kalkulator wyceny - Rasek.pl</title>
+
+<link rel="stylesheet" href="./Kalkulator wyceny - Rasek.pl_files/styles.css">
+
+</head>
+<body>
+  <div class="main-wrapper">
+ <!-- Kontener dla logo i napisów -->
+ <div class="header-container">
+    <img src="./Kalkulator wyceny - Rasek.pl_files/1637328566logo-jpg.webp" alt="Logo" class="header-logo">
+    <div class="namepage">
+        <h1>Pracownia RASEK</h1>
+        <h2>Kalkulator paneli na wymiar</h2>
+    </div>
+<div class="infolinia-box">
+<span style="font-size: 12px;">Infolinia:</span><br>
+<strong><span style="color: #dd5f5f;">737-377-317</span></strong>
+</div>
+ </div>
+<hr class="header-divider">
+
+<div class="menu-container">
+<div class="menu-item">
+<img src="./Kalkulator wyceny - Rasek.pl_files/thumb_1636491684panele_tapicerowane_klasyczne.jpg" alt="Zestaw">
+<p>PANELE KLASYCZNE</p>
+</div>
+<div class="menu-item">
+<img src="./Kalkulator wyceny - Rasek.pl_files/3485d0c19783b679f737b839a95ac7e3.jpg" alt="Zestaw">
+<p>PANELE LONG</p>
+</div>
+<div class="menu-item">
+<img src="./Kalkulator wyceny - Rasek.pl_files/thumb_small_1675436959panele_tapicerowane_klasyczne_plus.jpg" alt="Zestaw">
+<p>PANELE KLAS. XL</p>
+</div>
+</div>
+
+<hr class="header-divider">
+
+<div class="menu1">
+<button class="move-btn" onclick="moveResult()">ZMIEŃ WIDOK ❒</button>
+<span class="SumaZam" id="sumaZamBtn">SUMA: 0,00 zł</span>
+    </div>
+ <div class="container">
+    <div id="inputContainer">
+<div class="options">
+    <div class="header-row"> <!-- Nowy kontener dla variant-label i fabricContainer -->
+        <div class="variant-label">Zestaw nr. 1</div>
+        <div class="fabricContainer">
+            <select id="mainSelect1" onchange="showSubList(this)">
+                <option value="tkanina" disabled="" selected="">Wybierz tkaninę</option>
+                <option value="WLASNA">Własna tkanina</option>
+            <option value="DIANA">DIANA</option><option value="LUNA">LUNA</option><option value="SWEET">SWEET</option><option value="TANGO">TANGO</option><option value="NUBUK">NUBUK</option><option value="TREND">TREND</option><option value="OLIMP">OLIMP</option><option value="TRINITY">TRINITY</option><option value="RIO">RIO</option><option value="LARY">LARY</option><option value="IVA">IVA</option><option value="EKO_SKÓRA">EKO_SKÓRA</option><option value="COLIN">COLIN</option><option value="KRONOS">KRONOS</option><option value="RODOS">RODOS</option><option value="FOREST">FOREST</option><option value="CROWN">CROWN</option><option value="MONOLITH">MONOLITH</option><option value="EVO">EVO</option><option value="FRESH">FRESH</option><option value="PRESTON">PRESTON</option><option value="MATT_VELVET">MATT_VELVET</option><option value="JASMINE_PIK">JASMINE_PIK</option><option value="RIVIERA">RIVIERA</option><option value="GEMMA">GEMMA</option><option value="NOW_OR_NEVER">NOW_OR_NEVER</option></select>
+            <div id="subListContainer1" class="hidden">
+                <select id="subList1" onchange="showImage(this)" class="subList">
+                    <option value="" disabled="" selected="">Wybierz kolor tkaniny</option>
+                    <!-- Opcje będą dodane dynamicznie -->
+                </select>
+                <div id="imageContainer1" class="image-container">
+                    <img src="https://rasek.com.pl/" alt="Wybrana grafika">
+                </div>
+            </div>
+        </div>
+    </div>
+            <div class="input-group">
+                <div class="row">
+                    <label class="label">szerokość (cm)</label>
+<div class="szer">
+
+<div class="number-input-container">
+  <input type="number" placeholder="0" class="x1" max="350" min="10" step="0.1">
+
+
+  <div class="arrow-up">+</div>
+  <div class="arrow-down">-</div>
+</div>
+
+  <span class="unit">cm</span>
+</div>
+</div>
+
+
+                <span class="x-sign">✖</span>
+                <div class="row">
+                    <label class="label">wysokość (cm)</label>
+<div class="wys">
+<div class="number-input-container">
+
+
+                    <input type="number" placeholder="0" class="y2" max="350" min="10" step="0.1">
+  <div class="arrow-up">+</div>
+  <div class="arrow-down">-</div>
+</div>
+<span class="unit">cm</span>
+                </div>
+</div>
+                <div class="rowZ">
+                    <label class="label">ilość paneli</label>
+<div class="szt">
+<div class="number-input-container">
+
+                    <input type="number" placeholder="0" class="z3" max="99" min="1" step="1">
+  <div class="arrow-up">+</div>
+  <div class="arrow-down">-</div>
+</div>
+<span class="unit">szt</span>
+</div>
+                </div>
+            <button class="material-symbols-outlined">visibility</button>
+            </div>
+            <div class="row2">
+<div class="fototkanina">
+    <div class="image-box1">Wybierz tkaninę<br>z listy powyżej</div>
+</div>
+
+            <div class="opcje">
+<div class="Pianka-box2">
+    <img src="./Kalkulator wyceny - Rasek.pl_files/thumb_6e2ff697d2ec984db51988eb9d9936f0-jpg.webp" alt="Pianka"><p>Podwójna pianka</p>
+
+</div>
+<div class="Rzep-box3">
+    <img src="./Kalkulator wyceny - Rasek.pl_files/thumb_8e3b09957d21dea4ef69a0a26bccf103-jpg.webp" alt="Rzep"><p>Rzep montażowy</p>
+
+</div>
+<div class="Kontakt-box4">
+    <img src="./Kalkulator wyceny - Rasek.pl_files/thumb_08d474ce00366886fcb94554d229f2d0-jpg.webp" alt="Kontakt"><p>Otwór na kontakt</p>
+
+</div>
+</div>
+</div>
+
+
+<div class="row3 hidden">
+
+        <div class="pomiar">Wprowadź <b>POŁOŻENIE ŚRODKA RAMKI KONTAKTU</b> do boków panelu</div>
+
+    <div class="input-group">
+        <div class="row3-1">
+            <label class="label">do lewego (cm)</label>
+            <input type="number" placeholder="0" class="left-input" max="400" min="-50" step="0.1" disabled="">
+        </div>
+        <div class="row3-1">
+            <label class="label">do dolnego (cm)</label>
+            <input type="number" placeholder="0" class="bottom-input" max="400" min="-50" step="0.1" disabled="">
+        </div>
+
+        <div class="row3-2a">
+            <label class="label">ilość puszek w ścianie</label>
+            <select class="puszki-select" style="color: rgb(220, 94, 94);">
+                <option value="" disabled="" selected="">Wybierz ilość</option>
+                <option value="1">1 puszka ⛒</option>
+                <option value="2">2 puszki ⛒⛒</option>
+                <option value="3">3 puszki ⛒⛒⛒</option>
+                <option value="4">4 puszki ⛒⛒⛒⛒</option>
+            </select>
+        </div>
+        <div class="row3-2b">
+            <label class="label">układ puszek</label>
+            <select class="orientacja-select" style="color: rgb(220, 94, 94);">
+                <option value="" disabled="" selected="">Ułożenie</option>
+                <option value="pionowo">PIONOWO ⭥</option>
+                <option value="poziomo">POZIOMO ⭤</option>
+            </select>
+        </div>
+        <div class="row3-2c">
+            <button class="ZobaczProjek" style="display: none;">ZOBACZ<br>PROJEKT</button>
+        </div>
+    </div>
+</div>
+            <button class="remove-btn" onclick="removeRow(this)" style="display: none;">x</button>
+        </div>
+    </div>
+
+    <!-- Nowy kontener "dodatki" -->
+    <div class="dodatki">
+
+<div class="input-group">
+
+<div class="klej">
+            <label class="labelklej">Klej montażowy</label>
+<div class="number-input-container">
+
+
+
+            <input type="number" placeholder="0" class="klej-ilosc" max="99" min="1" step="1">
+
+  <div class="arrow-up">+</div>
+  <div class="arrow-down">-</div>
+</div>
+<span class="unit">szt</span>
+</div>
+</div>
+
+        <label>
+            <input type="checkbox" class="wysylka checkbox"> Wysyłka kurierska (PL)
+        </label>
+    </div>
+
+    <div class="button-container">
+        <button class="btn" onclick="addRow()">+</button>
+        <button class="undo-btn" onclick="undoRemove()">↩︎ Przywróć usunięty Zestaw</button>
+    </div>
+
+ </div>
+<!-- <div class="result" id="result"> ZMIANA WIDOKU DOMYŚLNEGO NA 2 BLOKI W WIERSZU Z OPISEM RESULT NA DOLE -->
+<div class="result result-moved" id="result"> <!-- ZMIANA DOMYŚLNEGO WIDOKU NA JEDEN POD DRUGIM, Z OPISEM RESULT Z PRAWEJ -->
+    <div class="result_btn">
+    <!-- <button class="email-btn" onclick="sendEmail()">Wyślij mail</button> -->
+    <button class="copy-btn" onclick="copyResultToClipboard()">Kopiuj podsumowanie</button>
+    <button class="pdf-btn" onclick="saveResultAsPDF()">Zapisz jako PDF</button>
+</div>
+    <div id="result-content">Wprowadź wymiary aby zobaczyć wycenę</div>
+</div>
+<div id="szicMainCon">
+    <div class="szkic-title" id="szkicTitle">
+        <!-- Pierwszy napis (górny) -->
+        <div class="szkic-title-top">Zestaw nr. 1</div>
+    </div>
+<div class="szkic-container" id="szkicContainer">
+    <button class="szkic-close-btn" onclick="closeSzkic()">x</button>
+
+<div class="szkic-figure" id="szkicFigure">
+<div class="szkic-figureM" id="szkicFigureM">
+
+<div class="KontaktAll">
+  <div class="inner-square"></div>
+  <div class="inner-square2"></div>
+   <div class="inner-square-circle"></div>
+   <div class="inner-square-circle1"></div>
+   <div class="inner-square-circle2"></div>
+</div>
+<div class="szkic-opis">
+  <div class="szkic-opisX"></div>
+  <div class="szkic-opisY"></div>
+</div>
+
+</div></div>
+<button class="pdf-projekt-btn" onclick="saveSzkicAsPDF()">Zapisz projekt (PDF)</button>
+</div>
+<div class="szkic-container2" id="szkicContainer2">
+        <!-- Drugi napis (dolny) -->
+        <div class="szkic-podsumowanie"></div> <!-- id="szkicTitle" -->
+        <textarea id="szkicInput"></textarea>
+</div>
+
+</div>
+
+<script src="./Kalkulator wyceny - Rasek.pl_files/html2canvas.min.js.pobrane"></script>
+<script src="./Kalkulator wyceny - Rasek.pl_files/jspdf.umd.min.js.pobrane"></script>
+
+<script src="./Kalkulator wyceny - Rasek.pl_files/fabricImages.js.pobrane"></script>
+<script src="./Kalkulator wyceny - Rasek.pl_files/rozmiary.js.pobrane"></script>
+<script src="./Kalkulator wyceny - Rasek.pl_files/sc.js.pobrane"></script>
+
+<hr class="header-divider">
+
+<div class="footer">
+
+<h3>Kontakt</h3>
+Pracownia RASEK<br>
+ul. Chorzowska 52<br>
+44-100 Gliwice, woj. śląskie<br>
+NIP: 631 247 09 54<br>
+e-mail: <a href="mailto:sklep@rasek.pl">sklep@rasek.pl</a><br>
+☎ 737-377-317<br>
+✎ <a href="https://rasek.pl/formularz-kontaktowy">FORMULARZ KONTAKTOWY</a>
+<p class="version">Pracownia RASEK 2025 - PanelKalkulator_v_1.0<br>PaneleNaWymiar.pl</p>
+
+  </div>
+
+  </div>
+
+</body></html>

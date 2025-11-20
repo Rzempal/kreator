@@ -1,0 +1,1126 @@
+@media (max-width: 600px) {
+    body {
+        transform: scale(0.7); /* Zmniejsza całą stronę do 90% oryginalnego rozmiaru */
+        transform-origin: top left; /* Ustawia punkt transformacji w lewym górnym rogu */
+        width: 100vw; /* Zapewnia, że strona zajmuje całą szerokość widoku */
+        overflow-x: hidden; /* Zapobiega pojawianiu się poziomego scrolla */
+    }
+#szicMainCon {
+    transform: scale(0.9);
+    }
+}
+
+.main-wrapper {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 20px;
+    width: 100%;
+    position: relative; /* Ważne dla absolutnie pozycjonowanych dzieci */
+}
+
+body {
+  background-color: white;
+  color: #404040;
+  /*width: 1180px;*/
+  min-width: 600px;
+  /*max-width: 98%;*/
+  margin: 0;
+  padding: 5px;
+  font-family: "Oswald", sans-serif;
+  font-optical-sizing: auto;
+  /*font-weight: <weight>;*/
+  font-style: normal;
+  letter-spacing: 0.5px;
+ }
+.container {
+    margin: 5px 10px; /* Wyśrodkowanie kontenera */
+    max-width: 1135px;
+    width: 100%;
+    position: relative; /* Potrzebne dla absolutnego pozycjonowania dzieci */
+}
+
+#inputContainer {
+  display: flex;
+  flex-wrap: wrap; /* Zawijanie elementów w nowe wiersze */
+  gap: 0 15px;
+  width: 100%; /* Zmiana na 100%, aby dostosować się do szerokości kontenera */
+  flex-direction: column; /* ZMIANA DOMYŚLNEGO WIDOKU NA JEDEN POD DRUGIM, Z OPISEM RESULT Z PRAWEJ */
+}
+
+select {
+letter-spacing: 0.5px;
+}
+
+
+.header-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin: 0px 11px 10px 10px;
+    flex-direction: row;
+    justify-content: space-between;
+    height: 30px;
+}
+ .row {
+ display: flex;
+ flex-direction: column;
+ margin-bottom: 10px;
+ }
+ .rowZ {
+ display: flex;
+ flex-direction: column;
+ margin: 0px 0px 10px 30px;
+ }
+
+ .row2 {
+    padding-top: 3px;
+    display: flex;
+    margin: 0px 10px 3px 10px;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-direction: row-reverse;
+ }
+ .row.label {
+ margin-bottom: 5px;
+ margin-left: 2px;
+ }
+ .row input, .rowZ input {
+    padding: 5px;
+    width: 110px;
+    border: 1px solid #d0d0d0;
+    height: 20px;
+    border-radius: 4px;
+    color: #468bc6;
+    font-size: medium;
+ }
+  .opcje {
+    display: flex;
+    flex-wrap: nowrap;
+
+  }
+  .fototkanina {
+    width: 148px;
+    height: 80px;
+    background-color: #ffffff;
+    border: 1px solid #d0d0d0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+.image-box1 {
+    position: relative; /* Zapewnia, że przyciski są pozycjonowane względem image-box1 */
+    display: flex;
+    /* gap: 10px; */
+    /* border-radius: 2px; */
+    align-items: center;
+    justify-content: center;
+    color: #757575;
+    text-align: center;
+    cursor: zoom-in;
+}
+img.selected-image.zoomed {
+    transform: scale(2.5);
+    border: 1.8px solid #ffffff;
+    box-shadow: 2px 2px 4px rgb(0 0 0 / 28%);
+    border-radius: 1px;
+    transition: transform 0.25s;
+    z-index: 1000;
+    cursor: zoom-out;
+}
+/*.selected-image.zoomed + .scroll-btn {
+    display: block; Pokaż przyciski, gdy obrazek jest powiększony
+} */
+.scroll-btn {
+    position: absolute;
+    top: 50%;
+    height: 70px;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.35);
+    color: #f7f7f7;
+    border: none;
+    cursor: pointer;
+    font-size: 24px;
+    padding: 10px;
+    z-index: 1001;
+    opacity: 0;
+}
+.scroll-btn.visible {
+    opacity: 1; /* Ustaw pełną widzialność */
+}
+.left-btn {
+    right: 200px;
+}
+.right-btn {
+    left: 200px;
+}
+img.selected-image {
+    transition: transform 0.25s;
+    z-index: 1000;
+}
+.menu1 {
+    height: 30px;
+    display: flex;
+    margin: 15px 0px 15px 20px;
+    border-radius: 6px;
+    width: 560px;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.options {
+    border: 1px solid #d0d0d0;
+    padding: 10px;
+    margin-bottom: 15px;
+    position: relative;
+    border-radius: 6px;
+    background-color: #f7f7f7;
+
+  width: 560px; /* Ustaw szerokość na 1/3 kontenera minus odstęp */
+  /*min-width: 420px;  Minimalna szerokość elementu */
+  box-sizing: border-box; /* Upewnij się, że padding i border są wliczane do szerokości */
+}
+
+
+
+.remove-btn {
+position: absolute;
+    right: -12px;
+    top: -10px;
+    background-color: #dc5e5e;
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+    border-radius: 2px;
+    border: 1px solid #7a7a7a;
+    width: 25px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    line-height: 0;
+    padding: 0;
+    font-weight: bold;
+}
+ .result {
+    position: relative;
+    width: 540px;
+    border: 1px solid #d0d0d0;
+    padding: 10px;
+    margin: 0 0 20px 10px;
+    background-color: #f7f7f7;
+    border-radius: 6px;
+    font-family: "Open Sans", serif;
+ }
+
+.result_btn {
+    /*width: 540px;*/
+    height: 30px;
+    display: flex;
+    margin-bottom: 10px;
+    justify-content: space-between;
+}
+
+ .label {
+ width: 120px;
+ padding-bottom: 2px;
+ font-size: small;
+color: #4e4e4e;
+font-style: oblique;
+display: flex;
+justify-content: center;
+ }
+
+
+ .input-group {
+ display: flex;
+ flex-direction: row;
+ gap: 2px;
+ align-items: center; /* Wyśrodkowanie elementów w pionie */
+ }
+ .input-group .x-sign {
+ font-size: 12px;
+ margin: 7px 5px 0 5px; /* Odstęp od pól input */
+ }
+
+
+ .button-container {
+display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 5px;
+    width: 540px;
+    padding: 10px;
+ }
+ h1 {
+ max-width: 530px;
+ margin: 0 0 0 0;
+ color: #4e4e4e;
+font-weight: normal;
+ }
+ h2 {
+    max-width: 530px;
+    margin: 0px;
+    color: #4e4e4e;
+    text-align: right;
+    font-weight: 300;
+ }
+ .checkbox {
+ width: 30px !important;
+ }
+
+  .btn {
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ font-size: 25px;
+ padding: 5px 10px;
+ background-color: #e0e0e0;
+ border: 1px solid #d0d0d0;
+ width: 60px;
+ height: 30px;
+ margin-left: 10px;
+ color: #4e4e4e;
+}
+ .undo-btn {
+ font-size: 14px;
+ height: 28px;
+ display: none; /* Domyślnie ukryty */
+ background-color: #f6e586;
+ border: 1px solid #d0d0d0;
+ border-radius: 2px;
+ margin-right: 10px;
+ padding: 0px 15px;
+ }
+ .hidden {
+ display: none;
+ }
+.fabricContainer {
+    display: flex;
+    gap: 10px; /* Odstęp między elementami w fabricContainer */
+    align-items: center; /* Wyśrodkowanie elementów w pionie */
+}
+
+#mainSelect1, .fabricContainer, #subList1 {
+ display: flex;
+ /*gap: 10px;*/
+}
+#mainSelect1, .mainSelect {
+ width: 120px;
+height: 30px;
+    background-color: #f7f7f7;
+    border: 1px solid #d0d0d0;
+border-radius: 4px;
+    font-family: "Oswald", sans-serif; /* Czcionka */
+}
+/* Styl dla listy rozwijanej po najechaniu kursorem */
+.mainSelect:hover, #mainSelect1:hover {
+    border-color: #4e4e4e; /* Zmień kolor obramowania po najechaniu */
+    background-color: #e0e0e0;
+}
+/* Styl dla opcji listy rozwijanej */
+.mainSelect option, #mainSelect1 option {
+    padding: 8px; /* Dodaj padding do opcji */
+    background-color: #ffffff; /* Kolor tła opcji */
+    color: #4e4e4e; /* Kolor tekstu opcji */
+}
+
+#subList1, .subList {
+ width: 230px;
+ height: 35px;
+    background-color: #ffffff;
+    border: 1px solid #d0d0d0;
+border-radius: 4px;
+    font-family: "Oswald", sans-serif; /* Czcionka */
+}
+/* Styl dla listy rozwijanej po najechaniu kursorem */
+.subList:hover, #subList1:hover {
+    border-color: #4e4e4e; /* Zmień kolor obramowania po najechaniu */
+    background-color: #e0e0e0;
+}
+/* Styl dla opcji listy rozwijanej */
+.subList option, #subList1 option, .puszki-select option, .orientacja-select option {
+    padding: 8px; /* Dodaj padding do opcji */
+    background-color: #ffffff; /* Kolor tła opcji */
+    color: #4e4e4e; /* Kolor tekstu opcji */
+}
+/* Styl dla listy rozwijanej po najechaniu kursorem */
+.puszki-select:hover, .orientacja-select:hover  {
+    border-color: #4e4e4e; /* Zmień kolor obramowania po najechaniu */
+    background-color: #f7f7f7;
+}
+
+.variant-label {
+    font-size: 20px;
+    color: #4e4e4e;
+    font-weight: bold;
+    margin: 0; /* Usunięcie domyślnych marginesów */
+    padding-bottom: 10px;
+}
+.image-container {
+    margin-top: -30px;
+    padding-left: 244px;
+    display: none;
+}
+
+.image-container img {
+    width: 155px;
+    height: 85px;
+    border: 1px solid #a2a2a2;
+    border-radius: 2px;
+}
+
+/* Dodane style dla grafiki */
+.header-container {
+    display: flex;
+    margin: 15px;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+/* Styl dla logo */
+.header-logo {
+    width: 80px;
+    height: 80px;
+    margin-right: 15px;
+}
+    .dodatki {
+    height: 20px;
+    border: 1px solid #d0d0d0;
+    padding: 10px;
+    border-radius: 6px;
+    background-color: #f7f7f7;
+    display: flex
+;
+    align-items: center;
+    justify-content: space-between;
+    align-items: center;
+    justify-content: space-between;
+    width: 540px;
+;
+    align-items: center;
+    justify-content: space-between;
+;
+    align-items: center;
+    justify-content: space-between;
+    }
+
+    .dodatki label {
+        display: flex;
+        gap: 5px;
+        margin-right: 10px;
+    }
+
+    .dodatki input[type="number"] {
+        width: 90px;
+        padding: 5px;
+        border: 1px solid #beb58f;
+    color: #468bc6;
+    font-size: medium;
+    }
+
+    .dodatki input[type="checkbox"] {
+        margin-right: 0;
+    }
+
+/* Styl dla przycisku kopiowania */
+.copy-btn, .pdf-btn, .pdf-projekt-btn, .email-btn {
+    background-color: #ffffff;
+    border: 1px solid #d0d0d0;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 16px;
+    z-index: 1000;
+    border-radius: 2px;
+    height: 30px;
+    padding: 0px 15px;
+}
+.pdf-projekt-btn {
+    padding: 0px 20px 0px 20px;
+    position: absolute;
+    right: 55px;
+    top: -12px;
+    background-color: #e0e0e0;
+    color: #4e4e4e;
+    cursor: pointer;
+    border-radius: 2px;
+    border: 1px solid #7a7a7a;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: medium;
+}
+
+.copy-btn:hover, .pdf-btn:hover, .pdf-projekt-btn:hover, .email-btn:hover {
+    background-color: #c0dcf4;
+}
+.btn:hover {
+    background-color: #c0dcf4; /* Zmiana koloru tła na ciemniejszy odcień szarości */
+    color: #2d2d2d; /* Zmiana koloru tekstu na ciemniejszy */
+    border-color: #a0a0a0; /* Zmiana koloru obramowania */
+}
+
+/* Hover dla przycisku undo-btn */
+.undo-btn:hover {
+    background-color: #c0dcf4; /* Zmiana koloru tła na jaśniejszy odcień żółtego */
+    color: #333333; /* Zmiana koloru tekstu na ciemniejszy */
+    border-color: #a0a0a0; /* Zmiana koloru obramowania */
+}
+
+/* Hover dla przycisku remove-btn */
+.remove-btn:hover {
+    background-color: #4e4e4e; /* Zmiana koloru tła na jaśniejszy odcień czerwonego */
+    color: #ffffff; /* Zmiana koloru tekstu na biały */
+    border-color: black; /* Zmiana koloru obramowania */
+}
+
+
+/* Unikalne style dla przycisków "Podwójna pianka" i "Rzep montażowy" */
+
+
+
+
+.Pianka-box2 img {
+    margin: 17.50px 0 17.50px 0;
+}
+
+
+.Pianka-box2, .Rzep-box3, .Kontakt-box4 {
+    width: 105px;
+    height: 80px;
+    background-color: #ffffff;
+    border: 1px solid #d0d0d0;
+    margin-right:10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.1s, background-color 0.31s;
+    cursor: pointer;
+    justify-content: space-evenly;
+    filter: grayscale(100%) opacity(0.5) brightness(0.97);
+}
+
+.Pianka-box2 img, .Rzep-box3 img, .Kontakt-box4 img {
+    max-width: 90%;
+    max-height: 100%;
+    transition: transform 0.3s;
+}
+
+.Pianka-box2 p, .Rzep-box3 p, .Kontakt-box4 p {
+    margin: 0;
+    font-size: 20px;
+    transition: color 0.3s;
+    font-size: small;
+}
+
+.Pianka-box2:hover, .Rzep-box3:hover, .Kontakt-box4:hover {
+    background-color: #e0e0e0;
+    filter: grayscale(0%) opacity(1.0) brightness(1.0);
+    background-color: #ffffff;
+    color: #4e4e4e;
+    transform: scale(1.03);
+}
+
+
+.Pianka-box2:hover p, .Rzep-box3:hover p, .Kontakt-box4:hover p {
+}
+
+.Pianka-box2.active, .Rzep-box3.active, .Kontakt-box4.active {
+    transform: scale(1.0);
+    background-color: #e0e0e0;
+    filter: grayscale(0%) opacity(1.0) brightness(1.0);
+    background-color: #ffffff;
+    color: #4e4e4e;
+}
+.Pianka-box2.active::before, .Rzep-box3.active::before, .Kontakt-box4.active::before {
+    content: "✓";
+    position: absolute;
+    top: -20px;
+    left: 3px;
+    font-size: 28px;
+    color: #468bc6;
+}
+.selected-image {
+    width: 142px;
+    height: 74px;
+    object-fit: cover;
+}
+
+select:focus {
+    outline: 1.5px solid #468bc6;
+}
+
+option:focus {
+    outline: 1.5px solid #468bc6;
+}
+input[type="number"]:focus {
+    outline: 1.5px solid #468bc6;
+    /* border: 1px solid green; obramowanie podczas fokusu */
+}
+
+
+.row3 {
+    display: none; /* Domyślnie ukryty */
+    margin-top: 10px;
+    border: 1px solid #d0d0d0;
+    border-radius: 6px;
+    background-color: #ffffff;
+}
+
+.row3 .input-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+}
+
+.row3 .row {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 5px;
+}
+
+.row3 input[type="number"] {
+    width: 80px;
+    padding: 5px;
+    border: 1px solid #d0d0d0;
+    border-radius: 4px;
+    color: #468bc6;
+    font-size: small;
+}
+
+.row3 select {
+    padding: 5px;
+    border: 1px solid #d0d0d0;
+    border-radius: 4px;
+    font-size: small;
+    font-family: "Oswald", sans-serif;
+color: #468bc6;
+}
+.pomiar {
+    text-align: center;
+    padding: 4px;
+}
+
+.row3-1 {
+    width: 90px;
+    display: flex;
+    flex-direction: column;
+}
+.row3-1 .label {
+    font-style: oblique;
+    font-size: small;
+    color: #4e4e4e;
+    width: 90px;
+}
+.row3-2a {
+    text-align: center;
+}
+
+.row3-2a, .row3-2b {
+    flex-direction: column;
+}
+.row3-2a, .row3-2a .label, .puszki-select {
+    width: 142px;
+}
+.row3-2b, .row3-2b .label, .orientacja-select
+ {
+    width: 95px;
+}
+
+.row3-2b {
+    display: none; /* Domyślnie ukryj */
+}
+
+
+button.ZobaczProjek {
+font-family: "Oswald", sans-serif;
+    height: 55px;
+    color: #468bc6;
+    /* border-radius: 1px; */
+    background-color: white;
+    border: 1.75px dotted #468bc6;
+    letter-spacing: 0.5px;
+}
+button.ZobaczProjek:hover {
+    background-color: #c0dcf4;
+    border: 1.75px dotted #468bc6;
+    letter-spacing: 0.5px;
+}
+button.ZobaczProjek.active {
+    background-color: #dc5e5e; /* Kolor tła dla aktywnego przycisku */
+    color: white; /* Kolor tekstu dla lepszej widoczności */
+}
+button.material-symbols-outlined {
+    margin: 10px 5px 0px 0px;
+    font-size: 28px;
+    color: #757587;
+    background-color: #f7f7f700;
+    border: 0px dotted #757587;
+    transition: transform 0.1s ease; /* Dodaj płynne przejście */
+}
+button.material-symbols-outlined:hover {
+    color: #468bc6;
+    transform: scale(1.2);
+    transform-origin: center; /* Powiększenie od środka */
+}
+button.material-symbols-outlined.active {
+    color: #dc5e5e;
+    transform: scale(1.2);
+}
+
+#szicMainCon {
+    position: fixed;
+    top: 50px;
+    left: 50px;
+    display: flex;
+    background-color: white;
+    border: 1px solid #d0d0d0;
+    border-radius: 6px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 9999; /* Upewnij się, że jest na wierzchu */
+    display: none; /* Domyślnie ukryty */
+}
+/* Styl dla kontenera szkicu */
+.szkic-container {
+    /* position: relative; */
+    z-index: 1000;
+    cursor: grab;
+    user-select: none;
+}
+
+.szkic-container:active {
+    cursor: grabbing; /* Kursor podczas przeciągania */
+}
+.szkic-container2 {
+    position: relative;
+    /* height: 85px;  Dostosuj wysokość według potrzeb */
+    padding: 0px 60px 20px 40px; /* Dodaj padding, aby napis nie przylegał do krawędzi */
+    overflow: hidden; /* Ukryj nadmiar treści */
+    word-wrap: break-word; /* Złam słowa, aby dopasować do kontenera */
+}
+
+/* Styl dla przycisku zamykania */
+.szkic-close-btn {
+    position: absolute;
+    right: 9px;
+    top: -12px;
+    background-color: #dc5e5e;
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+    border-radius: 2px;
+    border: 1px solid #7a7a7a;
+    width: 37px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: medium;
+    line-height: 0;
+    padding: 0;
+    font-weight: bold;
+    z-index: 1000;
+}
+
+.szkic-close-btn:hover {
+    background-color: #4e4e4e;
+    color: #ffffff;
+    border-color: black;
+}
+
+/* Styl dla figury wewnątrz szkicu */
+.szkic-figure {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #c0dcf4;
+    box-shadow: inset 1px 1px 20px 3px rgb(55 117 170 / 60%);
+    z-index: 1001;  Ustaw wyższy z-index niż kwadraty
+    overflow: visible; Upewnij się, że obramowanie nie jest przycinane */
+}
+/* Styl dla figury wewnątrz szkicu */
+.szkic-figureM {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #ffffff00;
+    border: 1.5px dashed #4e4e4e;
+    z-index: 1001;  Ustaw wyższy z-index niż kwadraty
+    overflow: visible; Upewnij się, że obramowanie nie jest przycinane */
+}
+/* Styl dla punktu */
+.szkic-point {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background-color: #c61212;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1003;
+}
+
+/* Styl dla linii przerywanej */
+.szkic-line {
+    position: absolute;
+    pointer-events: none; /* Zapobiega interakcji z linią */
+    z-index: 1000;
+}
+.szkic-title {
+    height: 100px;
+    text-align: left;
+    font-size: x-large;
+    font-weight: bold;
+    padding: 12px 0px 0px 40px;
+    color: #4e4e4e;
+}
+
+.result-moved {
+    position: absolute;
+    width: 560px;
+    left: 600px;
+    top: 260px;
+    max-height: 86vh;
+    /* overflow-y: auto;*/
+    padding: 20px 30px 20px 25px;
+    box-sizing: border-box; /* Upewnia się, że padding nie zwiększa szerokości */
+}
+.move-btn, .SumaZam {
+    display: flex;
+    align-items: center;
+    background-color: #ffffff;
+    color: #4e4e4e;
+    border: 1px solid #d0d0d0;
+    cursor: context-menu;
+    font-size: medium;
+    z-index: 1000;
+    border-radius: 2px;
+    height: 30px;
+    padding: 0px 15px;
+}
+button#sumaZamBtn {
+    letter-spacing: 1px;
+}
+.move-btn:hover {
+    background-color: #c0dcf4;
+    color: #2d2d2d;
+    border-color: #a0a0a0;
+}
+
+@media (max-width: 1260px) {
+    .result-moved {
+        position: static;
+        max-height: none;
+        margin: 20px 10px;
+        padding: 15px;
+    border: 1px solid #d0d0d0;
+    background-color: #f7f7f7;
+    border-radius: 6px;
+    font-family: "Open Sans", serif;
+    }
+    .menu1 {
+    justify-content: flex-end;
+    }
+    .move-btn {
+        display: none; /* lub inline-block, w zależności od potrzeb */
+    }
+}
+.hidden-for-pdf {
+    display: none;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+}
+
+.input-group .unit {
+  margin-left: 5px; /* Odstęp między polem a jednostką */
+  font-size: medium; /* Dopasuj rozmiar czcionki do pola */
+  color: #468bc6; /* Dopasuj kolor do stylu strony */
+}
+
+.szer, .wys, .szt, .klej {
+    display: flex;
+    align-content: flex-end;
+    align-items: baseline;
+}
+
+/* Ukrycie domyślnych strzałek */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+    position: relative; */
+    width: 110px;
+    padding: 5px;
+    font-size: 16px;
+    text-align: center;
+}
+
+/* Stylizacja kontenera dla strzałek */
+.number-input-container {
+  position: relative;
+  display: inline-block;
+}
+
+.number-input-container .arrow-up,
+.number-input-container .arrow-down {
+    position: absolute;
+    width: 25px;
+    height: 26px;
+    font-size: x-large;
+    font-weight: 100;
+    color: #4e4e4e;
+    background-color: #f7f7f7;
+    border: 1px solid #d0d0d0;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.number-input-container .arrow-up {
+border-radius: 0 3px 3px 0;
+}
+.number-input-container .arrow-down {
+border-radius: 3px 0 0 3px;
+display: flex;
+    align-items: flex-end;
+}
+
+.number-input-container .arrow-up {
+    right: 2px;
+    top: 2px;
+}
+
+.number-input-container .arrow-down {
+    left: 2px;
+    bottom: 2px;
+}
+
+/* Efekt hover dla strzałek */
+.number-input-container .arrow-up:hover,
+.number-input-container .arrow-down:hover {
+    color: #4e4e4e;
+    background-color: #d5d5d5;
+border: 1px solid #afafaf;
+}
+/* label.labelklej {
+    width: 110px;
+} */
+
+.inner-square {
+    position: absolute;
+    width: 54px; /* 9 cm przeliczone na piksele */
+    height: 54px; /* 9 cm przeliczone na piksele */
+    background-color: white;
+    border: 1px solid #a0a5a9;
+  transform: translate(-50%, -50%);
+}
+
+.inner-square2 {
+  position: absolute;
+  width: 42px; /* 7 cm przeliczone na piksele */
+  height: 42px; /* 7 cm przeliczone na piksele */
+  border: 1px solid #a0a5a9;
+  box-shadow: inset 0px 0px 3px 0px rgb(160 160 160);
+  transform: translate(-50%, -50%);
+}
+.inner-square-circle {
+    position: absolute;
+    width: 27px;
+    height: 27px;
+    background-color: #d9dbda;
+    border-radius: 50%;
+    box-shadow: inset 1px 2px 2px 1px rgb(160 160 160);
+    /* top: 50%; */
+    /* left: 50%; */
+    transform: translate(-50%, -50%);
+}
+.inner-square-circle1 {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background-color: #ffffff;
+    border: 0.5px solid #878787;
+    border-radius: 50%;
+    /* top: 50%; */
+    /* left: 50%; */
+    transform: translate(-50%, -50%);
+}
+.inner-square-circle2 {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    background-color: #a0a5a9;
+    border-radius: 50%;
+    /* top: 50%; */
+    /* left: 50%; */
+    transform: translate(-50%, -50%);
+}
+.dashed-line {
+    position: absolute;
+    border: 1px dashed red;
+    z-index: 1002;
+}
+.horizontal-line {
+    width: 100%;
+    height: 0;
+    top: 50%;
+    left: 0;
+}
+.vertical-line {
+    /*position: absolute;*/
+    /*border-left: 1px dashed red; /* Upewnij się, że linia jest czerwona i przerywana */
+    width: 0; /* Szerokość linii */
+}
+.szkic-opisX, .szkic-opisY {
+    text-align: center;
+    width: 100px;
+    position: absolute;
+    font-size: large;
+    color: #4e4e4e;
+    background-color: rgb(229 194 98);
+    padding: 2px 5px;
+    border-radius: 3px;
+    border: 1px solid #9f9f9f;
+    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1002;
+    line-height: 1.2; /* Dodaj tę linię, aby poprawić odstępy między liniami */
+}
+
+.szkic-opisX {
+    height: 47px;
+
+}
+
+.szkic-opisY {
+    height: 47px;
+}
+.dimension-label {
+    font-size: large;
+    color: #4e4e4e;
+    padding: 2px 5px;
+    white-space: nowrap;
+}
+
+.szkic-podsumowanie p {
+    /* position: relative; */
+    margin: 0px !important;
+    /* bottom: 0px !important; */
+    /* left: 50%; */
+    /* transform: translateX(-50%); */
+    color: #4e4e4e;
+    font-size: large;
+    /* width: 100%; */
+    /* font-weight: bold; */
+    /* text-align: center; */
+}
+.podsumowanie-text-input {
+    resize: none !important; /* Zablokuj ręczną zmianę rozmiaru */
+    width: 520px;
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #d0d0d0;
+    border-radius: 4px;
+    font-size: 18px;
+    color: #4e4e4e;
+    overflow-wrap: break-word; /* Zawijanie tekstu */
+    word-wrap: break-word; /* Zawijanie tekstu dla starszych przeglądarek */
+    white-space: pre-wrap; /* Zachowuje białe znaki i zawija tekst */
+}
+textarea {
+    /* resize: both !important; Upewnij się, że styl jest nadrzędny */
+}
+#szkicInput {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #d0d0d0;
+    border-radius: 4px;
+    font-size: medium;
+    color: #468bc6;
+    margin-top: 10px;
+}
+.KontaktAll {
+    z-index: 1000;
+}
+
+.no-box-shadow {
+    box-shadow: none !important;
+}
+.header-divider {
+    border: none;
+    height: 0.5px;
+    background-color: #e0e0e0;
+    /* margin: 25px 0; */
+}
+
+.footer h3 {
+    margin-block-start: 0;
+    margin-block-end: 1em;
+}
+.footer a {
+    color: #468bc6;
+}
+p.version {
+    color: #b2b2b2;
+    text-align: center;
+    font-size: 14px;
+}
+.infolinia-box {
+    line-height: 18px;
+    width: 120px;
+    height: 50px;
+    border: 1px solid #a0a0a0;
+    border-radius: 6px;
+    /* display: flex; */
+    align-items: center;
+    text-align: center;
+    font-size: 18px;
+    color: #4e4e4e;
+    background-color: #ffffff;
+    /* padding: 1px; */
+    box-sizing: border-box;
+    align-content: space-around;
+}
+.namepage {
+line-height: 35px;
+}
+.menu-container {
+display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+.menu-item {
+    border-radius: 4px;
+    border: 1px solid #d0d0d0;
+    text-align: center;
+    margin: 5px 5px 5px 5px;
+    width: 110px;
+    height: 115px;
+    display: flex;
+    font-size: small;
+    flex-direction: column;
+    align-items: center;
+}
+.menu-item img {
+margin: 7px 0 0 0;
+width: 80px;
+}
+.menu-item p {
+margin: 5px 0 0 0;
+}
