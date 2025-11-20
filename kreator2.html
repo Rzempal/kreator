@@ -1,4 +1,4 @@
-<!-- kreator2.html v0.007 Wymiarowanie paneli: zasady rysunku technicznego -->
+<!-- kreator2.html v0.008 Fix: wymiary wewnątrz (wys. 90°), panele widoczne, horizontal od dołu -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -455,11 +455,11 @@
             const lastPanel = panels[panels.length - 1];
 
             if (layoutMode === 'horizontal') {
-                // Dodaj obok (w prawo)
+                // Dodaj obok (w prawo) - ZAWSZE od dołu (y=0)
                 x = lastPanel.x + lastPanel.width;
-                y = lastPanel.y;
+                y = 0;
             } else {
-                // Dodaj nad (w górę)
+                // Dodaj nad (w górę) - ta sama pozycja X
                 x = lastPanel.x;
                 y = lastPanel.y + lastPanel.height;
             }
@@ -729,28 +729,21 @@
             const panelX = p.x;
             const panelY = floorY - p.y - p.height;
 
+            // Wymiary WEWNĄTRZ panelu
+            // Szerokość - poziomo na dole
+            const widthTextY = panelY + p.height - 8;
+            // Wysokość - pionowo (obrócona 90°) po prawej stronie
+            const heightTextX = panelX + p.width - 8;
+            const heightTextY = panelY + p.height/2;
+
             return `<g onclick="onPanelClick(${i})">
                 <rect x="${panelX}" y="${panelY}" width="${p.width}" height="${p.height}" fill="${fill}" class="${cls}"/>
+                <text x="${panelX + p.width/2}" y="${widthTextY}" text-anchor="middle" class="dim-text-panel">${p.width}</text>
+                <text x="${heightTextX}" y="${heightTextY}" text-anchor="middle" class="dim-text-panel" transform="rotate(-90 ${heightTextX} ${heightTextY})">${p.height}</text>
                 <line x1="${panelX}" y1="${panelY}" x2="${panelX}" y2="${panelY + p.height}" stroke="rgba(0,0,0,0.15)" stroke-width="1"/>
                 <line x1="${panelX + p.width}" y1="${panelY}" x2="${panelX + p.width}" y2="${panelY + p.height}" stroke="rgba(0,0,0,0.15)" stroke-width="1"/>
             </g>`;
         }).join('');
-
-        // Wymiarowanie paneli (na zewnątrz - zasady rysunku technicznego)
-        let panelDimsSVG = '';
-        panels.forEach((p, i) => {
-            const panelX = p.x;
-            const panelY = floorY - p.y - p.height;
-
-            // Szerokość - na dole panelu (wycentrowana)
-            const dimYPanel = floorY + 10;
-            panelDimsSVG += `<text x="${panelX + p.width/2}" y="${dimYPanel}" text-anchor="middle" class="dim-text-external" font-size="11" font-weight="bold">${p.width}</text>`;
-
-            // Wysokość - po prawej stronie panelu (wycentrowana wertykalnie)
-            const dimXPanel = panelX + p.width + 5;
-            const dimYPanelMid = panelY + p.height/2;
-            panelDimsSVG += `<text x="${dimXPanel}" y="${dimYPanelMid + 4}" text-anchor="start" class="dim-text-external" font-size="11" font-weight="bold">${p.height}</text>`;
-        });
 
         // Wymiarowanie segmentów (wysokości)
         let dimensionsSVG = '';
@@ -783,9 +776,8 @@
         svg.innerHTML = `<svg width="${W*zoomLevel}px" viewBox="0 0 ${W} ${H}">
             <defs>${defs}</defs>
             <path d="${d}" class="wall-bg"/>
-            <g clip-path="url(#wc)">${pSvg}</g>
+            ${pSvg}
             <path d="${d}" fill="none" stroke="#555" stroke-width="2"/>
-            ${panelDimsSVG}
             ${dimensionsSVG}
         </svg>`;
     }
