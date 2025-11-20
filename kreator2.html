@@ -1,4 +1,4 @@
-<!-- Kreator_Paneli_v1.005_Final_Layout.html -->
+<!-- kreator2.html v0.003 Dodanie walidacji, placeholdera i ikon kształtów -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -54,7 +54,7 @@
         h3 { margin-top: 0; font-size: 1.1em; border-bottom: 2px solid #f0f0f0; padding-bottom: 8px; margin-bottom: 12px; color: #444; }
         label { display: block; font-size: 0.85em; font-weight: 600; color: #555; margin-bottom: 4px; }
         input[type="number"], select { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 4px; box-sizing: border-box; }
-        
+
         /* Przyciski */
         button { cursor: pointer; transition: 0.2s; }
         .btn-secondary { background: #e2e6ea; color: #333; border: 1px solid #ced4da; padding: 6px 12px; border-radius: 4px; font-size: 0.9em; }
@@ -65,6 +65,7 @@
 
         /* Lista Odcinków */
         .segment-row { display: flex; justify-content: space-between; align-items: center; padding: 8px; background: #fafafa; border-bottom: 1px solid #eee; font-size: 0.9em; }
+        .segment-icon { font-size: 1.2em; margin-right: 8px; color: #999; }
         .btn-x { padding: 2px 8px; font-size: 0.8em; color: var(--danger); border: 1px solid var(--danger); background: #fff; border-radius: 4px; }
 
         /* Lista Wariantów (Config) */
@@ -135,21 +136,21 @@
             overflow-y: auto;
             z-index: 2;
         }
-        
+
         .tool-btn {
-            width: 40px; height: 40px; border-radius: 50%; 
+            width: 40px; height: 40px; border-radius: 50%;
             border: 2px solid #ddd; cursor: pointer; position: relative; flex-shrink: 0;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: transform 0.1s;
             background-size: cover; background-position: center;
         }
         .tool-btn:hover { transform: scale(1.1); z-index: 3; }
         .tool-btn.active { border-color: var(--active-border); transform: scale(1.1); box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.2); }
-        .tool-btn.eraser { 
+        .tool-btn.eraser {
             background: #fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23d32f2f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>') no-repeat center;
             border-color: #f5c6cb;
         }
         .tool-btn.eraser.active { background-color: #ffecec; border-color: #dc3545; box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2); }
-        
+
         .tool-sep { width: 60%; height: 1px; background: #ddd; margin: 5px 0; }
 
         /* CANVAS */
@@ -177,8 +178,8 @@
         /* Zapis */
         .save-slot { background: #f8f9fa; border: 1px solid #eee; padding: 8px; margin-bottom: 5px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85em; }
 
-        @media (max-width: 900px) { 
-            .layout { grid-template-columns: 1fr; height: auto; display: block; } 
+        @media (max-width: 900px) {
+            .layout { grid-template-columns: 1fr; height: auto; display: block; }
             .controls { height: auto; margin-bottom: 20px; overflow: visible; }
             .project-area { height: 600px; }
         }
@@ -187,23 +188,20 @@
 <body>
 
 <div class="layout">
-    
+
     <!-- 1. LEWA KOLUMNA (KONFIGURACJA) -->
     <div class="controls">
-        
+
         <!-- Kształt Ściany -->
         <div class="card">
             <h3>1. Kształt Ściany</h3>
-            <div class="form-group">
-                <label>Wysokość START [cm]:</label>
-                <input type="number" id="startHeight" value="140" onchange="updateStartHeight()">
-            </div>
             <div id="segmentsContainer"></div>
-            
+
             <div style="background:#fdfdfd; padding:10px; border:1px dashed #ccc; margin-top:10px; border-radius:4px;">
-                <div class="row-inputs" style="display:grid; grid-template-columns:1fr 1fr; gap:5px;">
+                <div class="row-inputs" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:5px;">
                     <input type="number" id="segWidth" placeholder="Szer.">
-                    <input type="number" id="segEndHeight" placeholder="Wys. końcowa">
+                    <input type="number" id="segStartHeight" placeholder="np. 140">
+                    <input type="number" id="segEndHeight" placeholder="Wys. końc.">
                 </div>
                 <button class="btn-add-segment" onclick="addSegment()">+ Dodaj Odcinek</button>
             </div>
@@ -224,7 +222,7 @@
         <!-- Wycena i Mapowanie -->
         <div class="card" style="border-left: 5px solid #28a745;">
             <h3>3. Wycena i Materiały</h3>
-            
+
             <div id="mappingContainer" style="margin-bottom:15px;"></div>
 
             <div style="font-size:0.9em; margin-bottom:10px; display:grid; grid-template-columns: 1fr 1fr; gap:5px;">
@@ -254,7 +252,7 @@
 
     <!-- 2. PRAWA STRONA (PROJEKT) -->
     <div class="project-area">
-        
+
         <!-- TOP BAR: SZYBKIE DODAWANIE -->
         <div class="top-bar" id="topBar">
             <div class="top-bar-title">Dodaj Panel:</div>
@@ -271,7 +269,7 @@
             <!-- CANVAS -->
             <div class="canvas-wrapper">
                 <div id="svgWrapper"></div>
-                
+
                 <div class="canvas-zoom">
                     <button onclick="changeZoom(-0.1)" class="btn-secondary" style="padding:2px 6px;">-</button>
                     <span id="zoomLabel">100%</span>
@@ -292,7 +290,7 @@
         Premium: ['KRONOS', 'RODOS', 'FOREST', 'CROWN', 'MONOLITH', 'EVO', 'FRESH', 'PRESTON']
     };
     const Prices = {
-        Standard: { "20x20": 21, "30x30": 24, "30x60": 28, "40x40": 26 }, 
+        Standard: { "20x20": 21, "30x30": 24, "30x60": 28, "40x40": 26 },
         Premium:  { "20x20": 25, "30x30": 28, "30x60": 33, "40x40": 31 }
     };
 
@@ -308,11 +306,11 @@
     const visualTextures = [{ file: floralTex, name: 'Dekor' }];
 
     // --- STAN ---
-    let wallData = { startHeight: 140, segments: [] };
+    let wallData = { segments: [] };
     let variants = [50, 40, 30, 20, 10]; // Domyślne szerokości
-    let panels = []; 
+    let panels = [];
     let activeTool = { type: 'color', value: visualPalette[0].hex }; // 'eraser' lub {type, value}
-    let styleMapping = {}; 
+    let styleMapping = {};
     let zoomLevel = 1.0;
     const STORAGE_KEY = 'panelConfig_V5_Saves';
 
@@ -338,7 +336,7 @@
             document.getElementById('newVariantInput').value = '';
         }
     }
-    
+
     function removeVariantDefinition(val) {
         variants = variants.filter(v => v !== val);
         renderVariantConfig();
@@ -381,7 +379,7 @@
         eraser.title = "Usuń Panel (Kliknij panel aby usunąć)";
         eraser.onclick = () => setActiveTool('eraser');
         c.appendChild(eraser);
-        
+
         c.appendChild(document.createElement('div')).className = 'tool-sep';
 
         // 2. Kolory
@@ -419,7 +417,7 @@
         // Nowy panel otrzymuje styl z aktywnego narzędzia (jeśli to nie gumka)
         let style = { type: 'color', value: '#cccccc' }; // Default
         if (activeTool !== 'eraser') style = { ...activeTool };
-        
+
         panels.push({ width, style });
         draw();
         updateMappingUI();
@@ -434,7 +432,7 @@
         draw();
         updateMappingUI();
     }
-    
+
     function undoPanel() { panels.pop(); draw(); updateMappingUI(); }
 
     // --- 4. ZAPIS (FIFO) ---
@@ -458,10 +456,10 @@
         c.innerHTML = '';
         const saves = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
         if(saves.length===0) c.innerHTML='<div style="color:#999; font-size:0.8em;">Pusto</div>';
-        
+
         saves.forEach(s => {
             const d = document.createElement('div'); d.className='save-slot';
-            d.innerHTML = `<span>${s.date} (${s.panels.length} el.)</span> 
+            d.innerHTML = `<span>${s.date} (${s.panels.length} el.)</span>
                 <button class="btn-secondary" style="padding:2px 5px; font-size:0.8em;" onclick="loadSave(${s.id})">Wczytaj</button>`;
             c.appendChild(d);
         });
@@ -470,34 +468,72 @@
     function loadSave(id) {
         const s = JSON.parse(localStorage.getItem(STORAGE_KEY)).find(x=>x.id===id);
         if(s && confirm("Wczytać projekt?")) {
-            wallData = s.wall; panels = s.panels; variants = s.variants || variants; styleMapping = s.mapping || {};
-            document.getElementById('startHeight').value = wallData.startHeight;
-            draw(); renderSegmentsList(); renderVariantConfig(); renderTopBar(); updateMappingUI();
+            wallData = s.wall;
+            panels = s.panels;
+            variants = s.variants || variants;
+            styleMapping = s.mapping || {};
+            draw();
+            renderSegmentsList();
+            renderVariantConfig();
+            renderTopBar();
+            updateMappingUI();
         }
     }
 
     // --- 5. LOGIKA ŚCIANY ---
-    function updateStartHeight() {
-        const v = parseFloat(document.getElementById('startHeight').value);
-        if(v>0) { wallData.startHeight=v; draw(); updateMappingUI(); }
-    }
     function addSegment() {
         const w = parseFloat(document.getElementById('segWidth').value);
-        const h = parseFloat(document.getElementById('segEndHeight').value);
-        if(w>0 && h>0) {
-            wallData.segments.push({width:w, endHeight:h});
-            document.getElementById('segWidth').value='';
-            renderSegmentsList(); draw(); updateMappingUI();
+        const sh = parseFloat(document.getElementById('segStartHeight').value);
+        const eh = parseFloat(document.getElementById('segEndHeight').value);
+
+        // Walidacja: sprawdź czy wszystkie pola są wypełnione
+        if (!w || !sh || !eh || w <= 0 || sh <= 0 || eh <= 0) {
+            alert('Wypełnij wszystkie pola (szerokość, wysokość początkowa i końcowa) wartościami większymi od 0');
+            return;
+        }
+
+        wallData.segments.push({width: w, startHeight: sh, endHeight: eh});
+        document.getElementById('segWidth').value = '';
+        document.getElementById('segEndHeight').value = '';
+
+        // Auto-wypełnianie: przepisz wysokość końcową do pola początkowej
+        document.getElementById('segStartHeight').value = eh;
+
+        renderSegmentsList();
+        draw();
+        updateMappingUI();
+    }
+
+    function removeSegment(i) {
+        wallData.segments.splice(i, 1);
+        renderSegmentsList();
+        draw();
+        updateMappingUI();
+    }
+
+    function resetWall() {
+        if(confirm("Resetować ścianę?")) {
+            wallData.segments = [];
+            document.getElementById('segStartHeight').value = '';
+            document.getElementById('segEndHeight').value = '';
+            renderSegmentsList();
+            draw();
+            updateMappingUI();
         }
     }
-    function removeSegment(i) { wallData.segments.splice(i,1); renderSegmentsList(); draw(); updateMappingUI(); }
-    function resetWall() { if(confirm("Reset?")) { wallData.segments=[]; wallData.startHeight=140; renderSegmentsList(); draw(); updateMappingUI(); }}
+
     function renderSegmentsList() {
-        const c = document.getElementById('segmentsContainer'); c.innerHTML='';
-        let ph=wallData.startHeight;
-        wallData.segments.forEach((s,i)=>{
-            c.innerHTML+=`<div class="segment-row"><span>${i+1}. <b>${s.width}</b>cm &rarr; <b>${s.endHeight}</b>cm</span><button class="btn-x" onclick="removeSegment(${i})">X</button></div>`;
-            ph=s.endHeight;
+        const c = document.getElementById('segmentsContainer');
+        c.innerHTML = '';
+
+        wallData.segments.forEach((s, i) => {
+            // Określ ikonę kształtu: prostokąt (▭) lub trapez (⏢)
+            const shapeIcon = s.startHeight === s.endHeight ? '▭' : '⏢';
+
+            c.innerHTML += `<div class="segment-row">
+                <span><span class="segment-icon" title="${s.startHeight === s.endHeight ? 'Prostokąt' : 'Trapez'}">${shapeIcon}</span>${i+1}. <b>${s.width}</b>cm | ${s.startHeight}cm → ${s.endHeight}cm</span>
+                <button class="btn-x" onclick="removeSegment(${i})">X</button>
+            </div>`;
         });
     }
 
@@ -512,10 +548,10 @@
             const sw = document.createElement('div'); sw.className='map-swatch';
             if(val.includes('data:image')) { sw.style.backgroundImage=`url('${val}')`; sw.style.backgroundSize='cover'; }
             else sw.style.backgroundColor=val;
-            
+
             const sel = document.createElement('select'); sel.className='map-select';
             sel.onchange = (e) => { styleMapping[val]=e.target.value; recalculatePrice(); };
-            
+
             ['Standard','Premium'].forEach(grp => {
                 const g = document.createElement('optgroup'); g.label=grp;
                 Collections[grp].forEach(col => {
@@ -545,7 +581,7 @@
             const h = getGeoHeight(startX, startX+p.width);
             const col = styleMapping[p.style.value] || 'DIANA';
             const isPrem = Collections.Premium.includes(col);
-            
+
             // Uproszczona cena (w realu tutaj wklejamy logikę z sizes)
             const k = `${p.width}x${h}`;
             let base = (isPrem ? Prices.Premium[k] : Prices.Standard[k]);
@@ -569,35 +605,67 @@
     }
 
     function getGeoHeight(x1, x2) {
-        let max=wallData.startHeight, cx=50;
-        wallData.segments.forEach(s=>{
-            if(cx+s.width>x1 && cx<x2) max=Math.max(max, s.endHeight);
-            cx+=s.width;
+        let maxH = 0;
+        let cx = 50;
+
+        wallData.segments.forEach(s => {
+            const segStart = cx;
+            const segEnd = cx + s.width;
+
+            // Sprawdź, czy segment nachodzi na zakres panelu [x1, x2]
+            if (segEnd > x1 && segStart < x2) {
+                maxH = Math.max(maxH, s.startHeight, s.endHeight);
+            }
+
+            cx += s.width;
         });
-        return Math.ceil(max);
+
+        return Math.ceil(maxH);
     }
 
     // --- 7. WIZUALIZACJA ---
     function draw() {
         const svg = document.getElementById('svgWrapper');
-        let totalW=0, maxH=wallData.startHeight;
-        wallData.segments.forEach(s=>{ totalW+=s.width; if(s.endHeight>maxH) maxH=s.endHeight; });
-        if(totalW===0) totalW=200;
 
-        const padX=50, padY=60;
-        const W = totalW+padX*2, H = maxH+padY*2;
-        const startX = padX, floorY = H-padY;
+        if (wallData.segments.length === 0) {
+            // Brak odcinków - pokaż pustą przestrzeń
+            svg.innerHTML = `<svg width="300px" viewBox="0 0 300 200">
+                <text x="150" y="100" text-anchor="middle" fill="#999" font-size="14">
+                    Dodaj odcinki ściany
+                </text>
+            </svg>`;
+            return;
+        }
 
-        let d = `M ${startX} ${floorY} L ${startX} ${floorY-wallData.startHeight}`;
-        let cx=startX, cy=wallData.startHeight;
-        wallData.segments.forEach(s=>{ cx+=s.width; cy=s.endHeight; d+=` L ${cx} ${floorY-cy}`; });
-        d+=` L ${cx} ${floorY} Z`;
+        let totalW = 0, maxH = 0;
+        wallData.segments.forEach(s => {
+            totalW += s.width;
+            maxH = Math.max(maxH, s.startHeight, s.endHeight);
+        });
+
+        const padX = 50, padY = 60;
+        const W = totalW + padX * 2, H = maxH + padY * 2;
+        const startX = padX, floorY = H - padY;
+
+        // Budowanie ścieżki ściany
+        let cx = startX;
+        let d = `M ${cx} ${floorY}`;
+
+        // Linia górna (od lewej do prawej)
+        wallData.segments.forEach(s => {
+            d += ` L ${cx} ${floorY - s.startHeight}`;
+            cx += s.width;
+            d += ` L ${cx} ${floorY - s.endHeight}`;
+        });
+
+        // Zamknięcie ścieżki (prawa krawędź w dół, linia dolna)
+        d += ` L ${cx} ${floorY} Z`;
 
         let defs = `<clipPath id="wc"><path d="${d}"/></clipPath>`;
         const uTex = [...new Set(panels.filter(p=>p.style.type==='image').map(p=>p.style.value))];
         uTex.forEach((src,i)=> defs+=`<pattern id="pt${i}" patternUnits="userSpaceOnUse" width="50" height="50"><image href="${src}" x="0" y="0" width="50" height="50" preserveAspectRatio="xMidYMid slice"/></pattern>`);
 
-        let px=startX;
+        let px = startX;
         const pSvg = panels.map((p,i)=>{
             const fill = p.style.type==='color' ? p.style.value : `url(#pt${uTex.indexOf(p.style.value)})`;
             const cls = activeTool==='eraser' ? 'panel-rect delete-mode' : 'panel-rect';
@@ -607,7 +675,12 @@
 
         svg.innerHTML = `<svg width="${W*zoomLevel}px" viewBox="0 0 ${W} ${H}"><defs>${defs}</defs><path d="${d}" class="wall-bg"/><g clip-path="url(#wc)">${pSvg}</g><path d="${d}" fill="none" stroke="#555" stroke-width="2"/></svg>`;
     }
-    function changeZoom(d) { zoomLevel = Math.max(0.2, Math.min(3.0, zoomLevel + d)); document.getElementById('zoomLabel').innerText = Math.round(zoomLevel*100)+'%'; draw(); }
+
+    function changeZoom(d) {
+        zoomLevel = Math.max(0.2, Math.min(3.0, zoomLevel + d));
+        document.getElementById('zoomLabel').innerText = Math.round(zoomLevel*100)+'%';
+        draw();
+    }
 </script>
 
 </body>
