@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kreator Paneli (Zapis Projektów)</title>
+    <style>
+        :root {
+            --primary: #5d3a75;
+            --accent: #7e5aa8;
+            --bg: #f0f2f5;
+            --text: #333;
+            --border: #ccc;
+            --success: #28a745;
+            --warning: #ffc107;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        /* KARTY */
+        .card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+        }
+
+        h3 { margin-top: 0; color: #444; font-size: 1.1em; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 8px;}
+
+        /* INPUTY */
+        .form-group { margin-bottom: 10px; }
+        label { display: block; font-size: 0.8em; font-weight: bold; color: #666; margin-bottom: 4px; }
+        
+        input[type="number"] {
+            width: 100%;
+            padding: 6px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .row-inputs { display: flex; gap: 5px; }
+        .row-inputs input { flex: 1; }
+
+        /* BUTTONY */
+        button {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.2s;
+            font-size: 0.9em;
+        }
+        
+        .btn-primary { background: var(--primary); color: white; width: 100%; margin-top: 5px; }
+        .btn-primary:hover { background: #4a2e5e; }
+        
+        .btn-secondary { background: #e0e0e0; color: #333; }
+        .btn-secondary:hover { background: #d0d0d0; }
+
+        .btn-danger { background: #fff0f0; color: #d32f2f; border: 1px solid #ffcdd2; width: 100%; margin-top:5px;}
+        .btn-danger:hover { background: #ffe0e0; }
+        
+        .btn-success { background: var(--success); color: white; width: 100%; margin-top: 5px; }
+        .btn-success:hover { background: #218838; }
+        
+        .btn-mini { width: auto; padding: 2px 6px; margin: 0; font-size: 0.75em; }
+        .btn-load { background: #e2e6ea; color: #333; font-size: 0.8em; padding: 4px 8px; border: 1px solid #ccc; }
+        .btn-load:hover { background: #dbeecf; border-color: #8cba74; color: #2b542c; }
+
+        /* LISTY */
+        .item-list {
+            background: #fafafa;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            padding: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .list-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            padding: 4px 0;
+            font-size: 0.85em;
+        }
+        
+        /* ZAPISANE PROJEKTY */
+        .save-slot {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 8px;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .save-info { font-size: 0.8em; color: #555; }
+        .save-info strong { display: block; color: #333; font-size: 1.1em;}
+        .save-actions { display:flex; gap: 5px; }
+
+        /* WIZUALIZACJA */
+        .svg-scroll-wrapper {
+            width: 100%;
+            height: 600px;
+            background: #fff;
+            border: 1px solid #999;
+            overflow: auto;
+            position: relative;
+        }
+
+        svg { display: block; background: #f8f9fa; margin: 0 auto; transform-origin: top left; }
+
+        /* SVG STYLES */
+        .wall-bg { fill: #e0e0e0; stroke: #777; stroke-width: 1; }
+        .panel-rect { fill: var(--primary); stroke: rgba(255,255,255,0.3); stroke-width: 1; cursor: pointer; transition: fill 0.1s; }
+        .panel-rect:hover { filter: brightness(1.15); }
+        .panel-rect.floral { fill: url(#floralPattern); }
+        
+        .dim-text-panel { font-size: 12px; font-family: Arial, sans-serif; fill: white; font-weight: bold; text-shadow: 0 0 2px rgba(0,0,0,0.8); pointer-events: none; }
+        .dim-text-external { font-size: 11px; font-family: Arial, sans-serif; fill: #444; font-weight: normal; }
+        .dim-line { stroke: #444; stroke-width: 1; stroke-dasharray: 2,2; }
+
+        .builder-toolbar { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; padding: 10px; background: #eee; border-radius: 6px; }
+        .btn-add-panel { width: auto; background: var(--primary); color: white; border: 1px solid #4a2e5e;}
+
+        @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+<div class="layout">
+    <!-- LEWA KOLUMNA -->
+    <div class="controls">
+        
+        <!-- 1. ŚCIANA -->
+        <div class="card">
+            <h3>1. Kształt Ściany</h3>
+            <div class="form-group">
+                <label>Wysokość START [cm]:</label>
+                <input type="number" id="startHeight" value="140" onchange="updateStartHeight()">
+            </div>
+            <div class="item-list" id="segmentsContainer"></div>
+            <div class="form-group" style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed #ccc;">
+                <label>Dodaj odcinek:</label>
+                <div class="row-inputs">
+                    <input type="number" id="segWidth" placeholder="Szer.">
+                    <input type="number" id="segEndHeight" placeholder="Wys. końcowa">
+                </div>
+                <button class="btn-secondary" onclick="addSegment()">+ Dodaj Odcinek</button>
+            </div>
+            <button class="btn-danger" onclick="resetWall()">Resetuj Ścianę</button>
+        </div>
+
+        <!-- 2. PANELE -->
+        <div class="card">
+            <h3>2. Dostępne Panele</h3>
+            <div class="row-inputs">
+                <input type="number" id="newVariantVal" placeholder="Szerokość">
+                <button class="btn-secondary" style="flex: 0 0 50px;" onclick="addVariant()">+</button>
+            </div>
+            <div class="item-list" id="variantsContainer"></div>
+        </div>
+
+        <!-- PODSUMOWANIE -->
+        <div class="card">
+            <h3>Podsumowanie</h3>
+            <div id="stats" style="font-size:0.9em;"></div>
+            <button class="btn-danger" onclick="clearPanels()" style="margin-top:10px;">Wyczyść panele</button>
+        </div>
+
+        <!-- 3. ZAPIS PROJEKTÓW (Nowa sekcja) -->
+        <div class="card" style="border-left: 4px solid var(--success);">
+            <h3>Zapisane Layouty (Max 5)</h3>
+            <div id="savesContainer"></div>
+            <button class="btn-success" onclick="saveCurrentLayout()">💾 Zapisz obecny układ</button>
+            <p style="font-size:0.75em; color:#777; margin-top:5px;">
+                *Gdy zapiszesz 6. układ, najstarszy zostanie nadpisany.
+            </p>
+        </div>
+    </div>
+
+    <!-- WIZUALIZACJA -->
+    <div class="visualization">
+        <div class="card" style="padding: 0; overflow: hidden;">
+            <div style="padding: 15px; border-bottom: 1px solid #eee; background: #fdfdfd;">
+                <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+                    <div style="display:flex; gap:10px; align-items:center; background:#f1f1f1; padding:5px 10px; border-radius:4px;">
+                        <span style="font-size:0.9em; font-weight:bold; color:#555;">Widok:</span>
+                        <button onclick="changeZoom(-0.1)" style="width:30px;">-</button>
+                        <span id="zoomLabel" style="font-size:0.9em; width:40px; text-align:center;">100%</span>
+                        <button onclick="changeZoom(0.1)" style="width:30px;">+</button>
+                        <button onclick="fitToWidth()" style="background:#ddd; color:#333; font-size:0.8em;">Reset</button>
+                    </div>
+                    <button class="btn-secondary" style="width:auto;" onclick="undoPanel()">↩ Cofnij</button>
+                </div>
+                <div style="margin-top: 10px;">
+                    <div class="builder-toolbar" id="builderToolbar"></div>
+                </div>
+            </div>
+
+            <div class="svg-scroll-wrapper">
+                <div id="svgWrapper"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- DANE ---
+    let wallData = { startHeight: 140, segments: [] };
+    let variants = [50, 40, 20]; 
+    let panels = []; 
+    let zoomLevel = 1.0; 
+
+    // Stała nazwa klucza w LocalStorage
+    const STORAGE_KEY = 'panelConfiguratorSaves_v1';
+
+    // --- INITIALIZACJA ---
+    document.addEventListener('DOMContentLoaded', () => {
+        renderSegmentsList();
+        renderVariantsList();
+        draw();
+        updateZoomUI();
+        renderSavesList(); // Ładuje zapisane projekty
+    });
+
+    // --- LOGIKA ZAPISU (SAVE SYSTEM) ---
+
+    function getSaves() {
+        const saves = localStorage.getItem(STORAGE_KEY);
+        return saves ? JSON.parse(saves) : [];
+    }
+
+    function saveCurrentLayout() {
+        let saves = getSaves();
+        
+        // Tworzymy obiekt zapisu (Deep Copy danych, żeby odcięcie referencji)
+        const newSave = {
+            id: Date.now(), // Unikalne ID
+            date: new Date().toLocaleString(),
+            wallData: JSON.parse(JSON.stringify(wallData)),
+            panels: JSON.parse(JSON.stringify(panels)),
+            variants: [...variants] // Kopia tablicy
+        };
+
+        // Dodajemy na koniec
+        saves.push(newSave);
+
+        // Jeśli jest więcej niż 5, usuwamy pierwszy (najstarszy) - FIFO
+        if (saves.length > 5) {
+            saves.shift(); 
+        }
+
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(saves));
+        renderSavesList();
+        alert("Układ został zapisany!");
+    }
+
+    function loadLayout(id) {
+        if(!confirm("Wczytanie nadpisze obecny widok. Kontynuować?")) return;
+
+        const saves = getSaves();
+        const saveToLoad = saves.find(s => s.id === id);
+
+        if (saveToLoad) {
+            // Przywracamy stan
+            wallData = JSON.parse(JSON.stringify(saveToLoad.wallData));
+            panels = JSON.parse(JSON.stringify(saveToLoad.panels));
+            variants = [...saveToLoad.variants];
+
+            // Aktualizujemy UI
+            document.getElementById('startHeight').value = wallData.startHeight;
+            renderSegmentsList();
+            renderVariantsList();
+            draw();
+        }
+    }
+
+    function deleteSave(id) {
+        if(!confirm("Usunąć ten zapis?")) return;
+        
+        let saves = getSaves();
+        saves = saves.filter(s => s.id !== id);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(saves));
+        renderSavesList();
+    }
+
+    function renderSavesList() {
+        const container = document.getElementById('savesContainer');
+        const saves = getSaves();
+        container.innerHTML = '';
+
+        if (saves.length === 0) {
+            container.innerHTML = '<div style="font-size:0.8em; color:#999; padding:10px; text-align:center;">Brak zapisanych układów</div>';
+            return;
+        }
+
+        // Renderujemy w odwrotnej kolejności (najnowsze na górze), 
+        // ale logika nadpisywania działa na podstawie tablicy (FIFO)
+        [...saves].reverse().forEach((save, index) => {
+            // Obliczamy statystyki dla podglądu
+            const totalLen = save.panels.reduce((a,b) => a + b.width, 0);
+            const panelCount = save.panels.length;
+            
+            const div = document.createElement('div');
+            div.className = 'save-slot';
+            div.innerHTML = `
+                <div class="save-info">
+                    <strong>Projekt ${saves.length - index}</strong>
+                    ${save.date}<br>
+                    Dł: ${totalLen} | Paneli: ${panelCount}
+                </div>
+                <div class="save-actions">
+                    <button class="btn-load" onclick="loadLayout(${save.id})">Wczytaj</button>
+                    <button class="btn-danger btn-mini" onclick="deleteSave(${save.id})">X</button>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+
+    // --- POZOSTAŁA LOGIKA KREATORA ---
+
+    function changeZoom(delta) {
+        zoomLevel += delta;
+        if(zoomLevel < 0.2) zoomLevel = 0.2; 
+        if(zoomLevel > 3.0) zoomLevel = 3.0; 
+        updateZoomUI();
+    }
+    function fitToWidth() { zoomLevel = 1.0; updateZoomUI(); }
+    function updateZoomUI() {
+        document.getElementById('zoomLabel').textContent = Math.round(zoomLevel * 100) + "%";
+        draw();
+    }
+
+    function updateStartHeight() {
+        const val = parseFloat(document.getElementById('startHeight').value);
+        if(val > 0) { wallData.startHeight = val; draw(); }
+    }
+
+    function addSegment() {
+        const w = parseFloat(document.getElementById('segWidth').value);
+        const h = parseFloat(document.getElementById('segEndHeight').value);
+        if (w > 0 && h > 0) {
+            wallData.segments.push({ width: w, endHeight: h });
+            document.getElementById('segWidth').value = '';
+            document.getElementById('segEndHeight').value = h; 
+            renderSegmentsList();
+            draw();
+        } else { alert("Podaj poprawne wymiary"); }
+    }
+
+    function removeSegment(index) { wallData.segments.splice(index, 1); renderSegmentsList(); draw(); }
+    function resetWall() { wallData.segments = []; wallData.startHeight = 140; document.getElementById('startHeight').value = 140; renderSegmentsList(); draw(); }
+
+    function renderSegmentsList() {
+        const container = document.getElementById('segmentsContainer');
+        container.innerHTML = '';
+        let prevH = wallData.startHeight;
+        wallData.segments.forEach((seg, idx) => {
+            const div = document.createElement('div');
+            div.className = 'list-row';
+            let arrow = '→';
+            if (seg.endHeight > prevH) arrow = '↗';
+            if (seg.endHeight < prevH) arrow = '↘';
+            div.innerHTML = `<span>${idx+1}. <b>${seg.width}</b> ${arrow} ${seg.endHeight}</span><button class="btn-danger btn-mini" onclick="removeSegment(${idx})">X</button>`;
+            container.appendChild(div);
+            prevH = seg.endHeight;
+        });
+    }
+
+    function addVariant() {
+        const val = parseFloat(document.getElementById('newVariantVal').value);
+        if (val > 0 && !variants.includes(val)) {
+            variants.push(val); variants.sort((a,b) => b-a);
+            renderVariantsList(); document.getElementById('newVariantVal').value = '';
+        }
+    }
+    function removeVariant(val) { variants = variants.filter(v => v !== val); renderVariantsList(); }
+
+    function renderVariantsList() {
+        const listContainer = document.getElementById('variantsContainer');
+        listContainer.innerHTML = '';
+        variants.forEach(v => {
+            listContainer.innerHTML += `<div class="list-row"><span>${v}</span><button class="btn-danger btn-mini" onclick="removeVariant(${v})">X</button></div>`;
+        });
+        const toolbar = document.getElementById('builderToolbar');
+        toolbar.innerHTML = '';
+        variants.forEach(v => {
+            const btn = document.createElement('button');
+            btn.className = 'btn-add-panel';
+            btn.textContent = `+ ${v}`;
+            btn.onclick = () => addPanel(v);
+            toolbar.appendChild(btn);
+        });
+    }
+
+    function addPanel(width) { panels.push({ width: width, isDecor: false }); draw(); }
+    function undoPanel() { panels.pop(); draw(); }
+    function clearPanels() { panels = []; draw(); }
+    function toggleDecor(index) { panels[index].isDecor = !panels[index].isDecor; draw(); }
+
+    function draw() {
+        const svgWrapper = document.getElementById('svgWrapper');
+        
+        let totalWidth = 0;
+        let maxHeight = wallData.startHeight;
+        
+        wallData.segments.forEach(s => {
+            totalWidth += s.width;
+            if(s.endHeight > maxHeight) maxHeight = s.endHeight;
+        });
+        if (totalWidth === 0) totalWidth = 200;
+
+        const padLeft = 50; const padRight = 50; const padBottom = 60; const padTop = 40;
+        const vbWidth = totalWidth + padLeft + padRight;
+        const vbHeight = maxHeight + padBottom + padTop;
+        const floorY = vbHeight - padBottom;
+        const startX = padLeft;
+
+        let d = `M ${startX} ${floorY}`; 
+        d += ` L ${startX} ${floorY - wallData.startHeight}`;
+
+        let currentX = startX;
+        let currentH = wallData.startHeight;
+        let heightPoints = [{x: startX, h: wallData.startHeight}];
+
+        wallData.segments.forEach(s => {
+            currentX += s.width;
+            currentH = s.endHeight;
+            d += ` L ${currentX} ${floorY - currentH}`;
+            heightPoints.push({x: currentX, h: currentH});
+        });
+
+        d += ` L ${currentX} ${floorY} Z`;
+
+        let panelsSVG = '';
+        let panelX = startX;
+
+        panels.forEach((p, idx) => {
+            const panelClass = p.isDecor ? 'panel-rect floral' : 'panel-rect';
+            panelsSVG += `
+                <g onclick="toggleDecor(${idx})">
+                    <rect x="${panelX}" y="0" width="${p.width}" height="${vbHeight}" class="${panelClass}" />
+                    <line x1="${panelX}" y1="0" x2="${panelX}" y2="${vbHeight}" stroke="rgba(0,0,0,0.15)" />
+                    <text x="${panelX + p.width/2}" y="${floorY - 20}" text-anchor="middle" class="dim-text-panel">${p.width}</text>
+                </g>
+            `;
+            panelX += p.width;
+        });
+        if(panels.length > 0) {
+            panelsSVG += `<line x1="${panelX}" y1="0" x2="${panelX}" y2="${vbHeight}" stroke="rgba(0,0,0,0.15)" />`;
+        }
+
+        let dimensionsSVG = '';
+        heightPoints.forEach(pt => {
+            const topY = floorY - pt.h;
+            dimensionsSVG += `<line x1="${pt.x}" y1="${floorY}" x2="${pt.x}" y2="${topY - 10}" class="dim-line" stroke="#888" />`;
+            dimensionsSVG += `<text x="${pt.x}" y="${topY - 15}" text-anchor="middle" class="dim-text-external" font-weight="bold">${pt.h}</text>`;
+        });
+
+        const dimY = floorY + 30;
+        dimensionsSVG += `
+            <line x1="${startX}" y1="${dimY}" x2="${currentX}" y2="${dimY}" stroke="#444" stroke-width="1" />
+            <line x1="${startX}" y1="${dimY-5}" x2="${startX}" y2="${dimY+5}" stroke="#444" stroke-width="1" />
+            <line x1="${currentX}" y1="${dimY-5}" x2="${currentX}" y2="${dimY+5}" stroke="#444" stroke-width="1" />
+            <text x="${startX + (currentX-startX)/2}" y="${dimY + 15}" text-anchor="middle" class="dim-text-external" font-size="14" font-weight="bold">${currentX-startX}</text>
+        `;
+
+        const displayWidth = (zoomLevel * vbWidth) + "px"; 
+        const pattern = `
+            <pattern id="floralPattern" patternUnits="userSpaceOnUse" width="20" height="20">
+                <rect width="20" height="20" fill="#7e5aa8" />
+                <circle cx="10" cy="10" r="3" fill="rgba(255,255,255,0.25)" />
+                <path d="M5 5 L15 15 M15 5 L5 15" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+                <circle cx="5" cy="15" r="1" fill="rgba(255,255,255,0.05)"/>
+            </pattern>
+        `;
+
+        const svgContent = `
+            <svg width="${displayWidth}" viewBox="0 0 ${vbWidth} ${vbHeight}" preserveAspectRatio="xMidYMin meet">
+                <defs>
+                    ${pattern}
+                    <clipPath id="wallShape"><path d="${d}" /></clipPath>
+                </defs>
+                <path d="${d}" class="wall-bg" />
+                <g clip-path="url(#wallShape)">${panelsSVG}</g>
+                <path d="${d}" fill="none" stroke="#555" stroke-width="2" />
+                ${dimensionsSVG}
+            </svg>
+        `;
+
+        svgWrapper.innerHTML = svgContent;
+
+        const panelsLen = panels.reduce((a,b) => a + b.width, 0);
+        const wallLen = totalWidth;
+        document.getElementById('stats').innerHTML = `
+            Długość ściany: <b>${wallLen}</b><br>
+            Suma paneli: <b>${panelsLen}</b>
+        `;
+    }
+</script>
+
+</body>
+</html>
