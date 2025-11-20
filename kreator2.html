@@ -1,4 +1,4 @@
-<!-- kreator2.html v0.004 Zmiana nazewnictwa: ściana → obszar roboczy, odcinek → segment -->
+<!-- kreator2.html v0.005 Układanie 2D: panele width×height, tryb poziomy/pionowy -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -115,6 +115,13 @@
         .panel-btn:hover { background: #f0f2f5; border-color: #aaa; transform: translateY(-1px); }
         .panel-btn span { font-size: 0.8em; font-weight: normal; color: #666; }
 
+        .mode-toggle {
+            background: var(--primary); color: white; border: 2px solid var(--primary);
+            padding: 8px 15px; border-radius: 4px; font-weight: bold; font-size: 0.9em;
+            margin-left: auto;
+        }
+        .mode-toggle:hover { background: #4a2e5e; border-color: #4a2e5e; }
+
         /* WORKSPACE */
         .workspace {
             display: flex;
@@ -163,10 +170,13 @@
             justify-content: center;
             align-items: center;
         }
-        svg { display: block; background: #fff; box-shadow: 0 5px 25px rgba(0,0,0,0.05); }
-        .panel-rect { stroke: rgba(0,0,0,0.1); stroke-width: 1; cursor: crosshair; transition: fill-opacity 0.1s; }
+        svg { display: block; background: #f8f9fa; box-shadow: 0 5px 25px rgba(0,0,0,0.05); }
+
+        .wall-bg { fill: #e0e0e0; stroke: #777; stroke-width: 2; }
+        .panel-rect { stroke: rgba(255,255,255,0.3); stroke-width: 2; cursor: crosshair; transition: fill-opacity 0.1s; }
         .panel-rect.delete-mode { cursor: not-allowed; }
-        .panel-rect:hover { stroke: #666; stroke-width: 2px; }
+        .panel-rect:hover { stroke: #666; stroke-width: 3px; filter: brightness(1.1); }
+        .dim-text-panel { font-size: 14px; font-family: Arial, sans-serif; fill: white; font-weight: bold; text-shadow: 0 0 3px rgba(0,0,0,0.8); pointer-events: none; }
 
         .canvas-zoom {
             position: absolute; bottom: 20px; right: 20px;
@@ -208,12 +218,13 @@
             <button class="btn-danger" onclick="resetWall()">Resetuj Obszar</button>
         </div>
 
-        <!-- Konfiguracja Przycisków -->
+        <!-- Konfiguracja Paneli -->
         <div class="card">
-            <h3>2. Konfiguracja Przycisków</h3>
-            <p style="font-size:0.8em; color:#666; margin-bottom:5px;">Zdefiniuj, jakie szerokości paneli mają być dostępne w górnym pasku.</p>
-            <div class="row-inputs" style="display:flex; gap:5px;">
-                <input type="number" id="newVariantInput" placeholder="np. 45">
+            <h3>2. Konfiguracja Paneli</h3>
+            <p style="font-size:0.8em; color:#666; margin-bottom:5px;">Zdefiniuj wymiary paneli (szer × wys) dostępne do układania.</p>
+            <div class="row-inputs" style="display:grid; grid-template-columns:1fr 1fr auto; gap:5px;">
+                <input type="number" id="newVariantWidth" placeholder="Szer.">
+                <input type="number" id="newVariantHeight" placeholder="Wys.">
                 <button class="btn-secondary" onclick="addVariantDefinition()">Dodaj</button>
             </div>
             <div id="variantConfigList" class="variant-config-list"></div>
@@ -257,6 +268,7 @@
         <div class="top-bar" id="topBar">
             <div class="top-bar-title">Dodaj Panel:</div>
             <div id="topVariantsButtons" style="display:flex; gap:8px; overflow-x:auto;"></div>
+            <button class="mode-toggle" id="modeToggleBtn" onclick="toggleLayoutMode()">➡ Dodaj poziomo</button>
         </div>
 
         <!-- WORKSPACE -->
@@ -283,15 +295,13 @@
 
 </div>
 
+<script src="references/rozmiary.js"></script>
 <script>
     // --- DANE ---
     const Collections = {
         Standard: ['DIANA', 'LUNA', 'SWEET', 'TANGO', 'NUBUK', 'TREND', 'OLIMP', 'TRINITY'],
-        Premium: ['KRONOS', 'RODOS', 'FOREST', 'CROWN', 'MONOLITH', 'EVO', 'FRESH', 'PRESTON']
-    };
-    const Prices = {
-        Standard: { "20x20": 21, "30x30": 24, "30x60": 28, "40x40": 26 },
-        Premium:  { "20x20": 25, "30x30": 28, "30x60": 33, "40x40": 31 }
+        Premium: ['KRONOS', 'RODOS', 'FOREST', 'CROWN', 'MONOLITH', 'EVO', 'FRESH', 'PRESTON'],
+        Exclusive: ['VELVET', 'ALCANTARA', 'LOFT', 'JAZZ']
     };
 
     // Paleta wizualna
@@ -307,12 +317,18 @@
 
     // --- STAN ---
     let wallData = { segments: [] };
-    let variants = [50, 40, 30, 20, 10]; // Domyślne szerokości
-    let panels = [];
+    let variants = [
+        {width: 50, height: 100},
+        {width: 40, height: 80},
+        {width: 30, height: 60},
+        {width: 20, height: 40}
+    ]; // Domyślne wymiary
+    let panels = []; // {width, height, x, y, style}
     let activeTool = { type: 'color', value: visualPalette[0].hex }; // 'eraser' lub {type, value}
     let styleMapping = {};
+    let layoutMode = 'horizontal'; // 'horizontal' | 'vertical'
     let zoomLevel = 1.0;
-    const STORAGE_KEY = 'panelConfig_V5_Saves';
+    const STORAGE_KEY = 'panelConfig_V6_Saves';
 
     // --- INIT ---
     document.addEventListener('DOMContentLoaded', () => {
@@ -327,18 +343,24 @@
 
     // --- 1. ZARZĄDZANIE WARIANTAMI (SEKCJA 2 + TOP BAR) ---
     function addVariantDefinition() {
-        const val = parseFloat(document.getElementById('newVariantInput').value);
-        if (val > 0 && !variants.includes(val)) {
-            variants.push(val);
-            variants.sort((a,b) => b-a);
-            renderVariantConfig();
-            renderTopBar();
-            document.getElementById('newVariantInput').value = '';
+        const w = parseFloat(document.getElementById('newVariantWidth').value);
+        const h = parseFloat(document.getElementById('newVariantHeight').value);
+
+        if (w > 0 && h > 0) {
+            const exists = variants.some(v => v.width === w && v.height === h);
+            if (!exists) {
+                variants.push({width: w, height: h});
+                variants.sort((a,b) => (b.width * b.height) - (a.width * a.height));
+                renderVariantConfig();
+                renderTopBar();
+                document.getElementById('newVariantWidth').value = '';
+                document.getElementById('newVariantHeight').value = '';
+            }
         }
     }
 
-    function removeVariantDefinition(val) {
-        variants = variants.filter(v => v !== val);
+    function removeVariantDefinition(w, h) {
+        variants = variants.filter(v => !(v.width === w && v.height === h));
         renderVariantConfig();
         renderTopBar();
     }
@@ -350,7 +372,7 @@
         variants.forEach(v => {
             const tag = document.createElement('div');
             tag.className = 'variant-tag';
-            tag.innerHTML = `${v} cm <span onclick="removeVariantDefinition(${v})">&times;</span>`;
+            tag.innerHTML = `${v.width}×${v.height} cm <span onclick="removeVariantDefinition(${v.width}, ${v.height})">&times;</span>`;
             c.appendChild(tag);
         });
     }
@@ -362,10 +384,16 @@
         variants.forEach(v => {
             const btn = document.createElement('button');
             btn.className = 'panel-btn';
-            btn.innerHTML = `+ ${v} <span>cm</span>`;
-            btn.onclick = () => addPanel(v);
+            btn.innerHTML = `+ ${v.width}×${v.height}`;
+            btn.onclick = () => addPanel(v.width, v.height);
             c.appendChild(btn);
         });
+    }
+
+    function toggleLayoutMode() {
+        layoutMode = layoutMode === 'horizontal' ? 'vertical' : 'horizontal';
+        const btn = document.getElementById('modeToggleBtn');
+        btn.innerHTML = layoutMode === 'horizontal' ? '➡ Dodaj poziomo' : '⬆ Dodaj pionowo';
     }
 
     // --- 2. NARZĘDZIA (LEFT VERTICAL BAR) ---
@@ -413,12 +441,29 @@
     }
 
     // --- 3. INTERAKCJA Z PROJEKTEM ---
-    function addPanel(width) {
+    function addPanel(width, height) {
         // Nowy panel otrzymuje styl z aktywnego narzędzia (jeśli to nie gumka)
         let style = { type: 'color', value: '#cccccc' }; // Default
         if (activeTool !== 'eraser') style = { ...activeTool };
 
-        panels.push({ width, style });
+        // Oblicz pozycję (x, y) na podstawie trybu i ostatniego panelu
+        let x = 50, y = 0; // Domyślnie: lewy dolny róg
+
+        if (panels.length > 0) {
+            const lastPanel = panels[panels.length - 1];
+
+            if (layoutMode === 'horizontal') {
+                // Dodaj obok (w prawo)
+                x = lastPanel.x + lastPanel.width;
+                y = lastPanel.y;
+            } else {
+                // Dodaj nad (w górę)
+                x = lastPanel.x;
+                y = lastPanel.y + lastPanel.height;
+            }
+        }
+
+        panels.push({ width, height, x, y, style });
         draw();
         updateMappingUI();
     }
@@ -444,7 +489,8 @@
             wall: wallData,
             panels: panels,
             variants: variants,
-            mapping: styleMapping
+            mapping: styleMapping,
+            mode: layoutMode
         });
         if(saves.length > 5) saves.pop();
         localStorage.setItem(STORAGE_KEY, JSON.stringify(saves));
@@ -472,6 +518,11 @@
             panels = s.panels;
             variants = s.variants || variants;
             styleMapping = s.mapping || {};
+            layoutMode = s.mode || 'horizontal';
+
+            const btn = document.getElementById('modeToggleBtn');
+            btn.innerHTML = layoutMode === 'horizontal' ? '➡ Dodaj poziomo' : '⬆ Dodaj pionowo';
+
             draw();
             renderSegmentsList();
             renderVariantConfig();
@@ -480,7 +531,7 @@
         }
     }
 
-    // --- 5. LOGIKA ŚCIANY ---
+    // --- 5. LOGIKA OBSZARU ROBOCZEGO ---
     function addSegment() {
         const w = parseFloat(document.getElementById('segWidth').value);
         const sh = parseFloat(document.getElementById('segStartHeight').value);
@@ -552,7 +603,7 @@
             const sel = document.createElement('select'); sel.className='map-select';
             sel.onchange = (e) => { styleMapping[val]=e.target.value; recalculatePrice(); };
 
-            ['Standard','Premium'].forEach(grp => {
+            ['Standard','Premium','Exclusive'].forEach(grp => {
                 const g = document.createElement('optgroup'); g.label=grp;
                 Collections[grp].forEach(col => {
                     const o = document.createElement('option'); o.value=col; o.text=col;
@@ -569,7 +620,7 @@
     }
 
     function recalculatePrice() {
-        let total=0, area=0, startX=50;
+        let total = 0, area = 0;
         const opts = {
             foam: document.getElementById('optFoam').checked,
             velcro: document.getElementById('optVelcro').checked,
@@ -578,49 +629,40 @@
         };
 
         panels.forEach(p => {
-            const h = getGeoHeight(startX, startX+p.width);
             const col = styleMapping[p.style.value] || 'DIANA';
-            const isPrem = Collections.Premium.includes(col);
+            let category = 'Standard';
+            if (Collections.Premium.includes(col)) category = 'Premium';
+            if (Collections.Exclusive.includes(col)) category = 'Exclusive';
 
-            // Uproszczona cena (w realu tutaj wklejamy logikę z sizes)
-            const k = `${p.width}x${h}`;
-            let base = (isPrem ? Prices.Premium[k] : Prices.Standard[k]);
-            if(!base) base = ((p.width*h)/10000) * 300; // Fallback m2
+            // Pobierz cenę z cennika (rozmiary.js)
+            const key = `${p.width}x${p.height}`;
+            let base = 0;
+
+            if (category === 'Standard' && RozmStandard[key]) {
+                base = RozmStandard[key];
+            } else if (category === 'Premium' && RozmPremium[key]) {
+                base = RozmPremium[key];
+            } else if (category === 'Exclusive' && RozmExclusive[key]) {
+                base = RozmExclusive[key];
+            } else {
+                // Fallback: cena za m² (300 zł/m²)
+                base = ((p.width * p.height) / 10000) * 300;
+            }
 
             let extra = 0;
-            const m2 = (p.width*h)/10000;
-            if(opts.foam) extra += (m2<0.4?6:15);
-            if(opts.velcro) extra += (m2<0.4?8:20);
+            const m2 = (p.width * p.height) / 10000;
+            if(opts.foam) extra += (m2 < 0.4 ? 6 : 15);
+            if(opts.velcro) extra += (m2 < 0.4 ? 8 : 20);
 
-            total += base+extra;
+            total += base + extra;
             area += m2;
-            startX += p.width;
         });
 
         total += opts.glue * 36;
-        if(opts.shipping && panels.length>0) total += 39;
+        if(opts.shipping && panels.length > 0) total += 39;
 
         document.getElementById('totalPriceDisplay').innerText = total.toFixed(2) + " zł";
         document.getElementById('priceDetails').innerHTML = `Pow: ${area.toFixed(2)} m² | Paneli: ${panels.length}`;
-    }
-
-    function getGeoHeight(x1, x2) {
-        let maxH = 0;
-        let cx = 50;
-
-        wallData.segments.forEach(s => {
-            const segStart = cx;
-            const segEnd = cx + s.width;
-
-            // Sprawdź, czy segment nachodzi na zakres panelu [x1, x2]
-            if (segEnd > x1 && segStart < x2) {
-                maxH = Math.max(maxH, s.startHeight, s.endHeight);
-            }
-
-            cx += s.width;
-        });
-
-        return Math.ceil(maxH);
     }
 
     // --- 7. WIZUALIZACJA ---
@@ -647,7 +689,7 @@
         const W = totalW + padX * 2, H = maxH + padY * 2;
         const startX = padX, floorY = H - padY;
 
-        // Budowanie ścieżki ściany
+        // Budowanie ścieżki obszaru roboczego
         let cx = startX;
         let d = `M ${cx} ${floorY}`;
 
@@ -665,15 +707,28 @@
         const uTex = [...new Set(panels.filter(p=>p.style.type==='image').map(p=>p.style.value))];
         uTex.forEach((src,i)=> defs+=`<pattern id="pt${i}" patternUnits="userSpaceOnUse" width="50" height="50"><image href="${src}" x="0" y="0" width="50" height="50" preserveAspectRatio="xMidYMid slice"/></pattern>`);
 
-        let px = startX;
         const pSvg = panels.map((p,i)=>{
             const fill = p.style.type==='color' ? p.style.value : `url(#pt${uTex.indexOf(p.style.value)})`;
             const cls = activeTool==='eraser' ? 'panel-rect delete-mode' : 'panel-rect';
-            const el = `<g onclick="onPanelClick(${i})"><rect x="${px}" y="0" width="${p.width}" height="${H}" fill="${fill}" class="${cls}"/><text x="${px+p.width/2}" y="${floorY-20}" text-anchor="middle" class="dim-text-panel">${p.width}</text><line x1="${px}" y1="0" x2="${px}" y2="${H}" stroke="rgba(0,0,0,0.1)" pointer-events="none"/></g>`;
-            px+=p.width; return el;
+
+            // Pozycja panelu (x,y od lewego dolnego rogu)
+            const panelX = p.x;
+            const panelY = floorY - p.y - p.height;
+
+            return `<g onclick="onPanelClick(${i})">
+                <rect x="${panelX}" y="${panelY}" width="${p.width}" height="${p.height}" fill="${fill}" class="${cls}"/>
+                <text x="${panelX + p.width/2}" y="${panelY + p.height/2 + 5}" text-anchor="middle" class="dim-text-panel">${p.width}×${p.height}</text>
+                <line x1="${panelX}" y1="${panelY}" x2="${panelX}" y2="${panelY + p.height}" stroke="rgba(0,0,0,0.15)" stroke-width="1"/>
+                <line x1="${panelX + p.width}" y1="${panelY}" x2="${panelX + p.width}" y2="${panelY + p.height}" stroke="rgba(0,0,0,0.15)" stroke-width="1"/>
+            </g>`;
         }).join('');
 
-        svg.innerHTML = `<svg width="${W*zoomLevel}px" viewBox="0 0 ${W} ${H}"><defs>${defs}</defs><path d="${d}" class="wall-bg"/><g clip-path="url(#wc)">${pSvg}</g><path d="${d}" fill="none" stroke="#555" stroke-width="2"/></svg>`;
+        svg.innerHTML = `<svg width="${W*zoomLevel}px" viewBox="0 0 ${W} ${H}">
+            <defs>${defs}</defs>
+            <path d="${d}" class="wall-bg"/>
+            <g clip-path="url(#wc)">${pSvg}</g>
+            <path d="${d}" fill="none" stroke="#555" stroke-width="2"/>
+        </svg>`;
     }
 
     function changeZoom(d) {
