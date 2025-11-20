@@ -1,4 +1,4 @@
-<!-- kreator2.html v0.008 Fix: wymiary wewnątrz (wys. 90°), panele widoczne, horizontal od dołu -->
+<!-- kreator2.html v0.009 Smart placement: validation, overflow hatching, auto-mode switch, preview indicator -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -330,6 +330,7 @@
     let styleMapping = {};
     let layoutMode = 'horizontal'; // 'horizontal' | 'vertical'
     let zoomLevel = 1.0;
+    let selectedPanelSize = null; // {width, height} - wybrany panel do dodania
     const STORAGE_KEY = 'panelConfig_V6_Saves';
 
     // --- INIT ---
@@ -387,7 +388,18 @@
             const btn = document.createElement('button');
             btn.className = 'panel-btn';
             btn.innerHTML = `+ ${v.width}×${v.height}`;
-            btn.onclick = () => addPanel(v.width, v.height);
+            btn.onmouseenter = () => {
+                selectedPanelSize = {width: v.width, height: v.height};
+                draw();
+            };
+            btn.onmouseleave = () => {
+                selectedPanelSize = null;
+                draw();
+            };
+            btn.onclick = () => {
+                selectedPanelSize = null;
+                addPanel(v.width, v.height);
+            };
             c.appendChild(btn);
         });
     }
@@ -443,29 +455,127 @@
     }
 
     // --- 3. INTERAKCJA Z PROJEKTEM ---
-    function addPanel(width, height) {
-        // Nowy panel otrzymuje styl z aktywnego narzędzia (jeśli to nie gumka)
-        let style = { type: 'color', value: '#cccccc' }; // Default
-        if (activeTool !== 'eraser') style = { ...activeTool };
 
-        // Oblicz pozycję (x, y) na podstawie trybu i ostatniego panelu
-        let x = 50, y = 0; // Domyślnie: lewy dolny róg
+    // Sprawdza wysokość obszaru roboczego w danym punkcie X
+    function getHeightAtPosition(x) {
+        if (wallData.segments.length === 0) return 0;
+
+        let currentX = 50;
+        let currentHeight = 0;
+
+        for (let i = 0; i < wallData.segments.length; i++) {
+            const seg = wallData.segments[i];
+            const segStart = currentX;
+            const segEnd = currentX + seg.width;
+
+            if (x >= segStart && x < segEnd) {
+                // X jest w tym segmencie - interpoluj wysokość
+                const ratio = (x - segStart) / seg.width;
+                return seg.startHeight + ratio * (seg.endHeight - seg.startHeight);
+            }
+
+            if (x >= segEnd && i === wallData.segments.length - 1) {
+                // X jest za ostatnim segmentem
+                return seg.endHeight;
+            }
+
+            currentX += seg.width;
+        }
+
+        return 0;
+    }
+
+    // Sprawdza czy panel mieści się w obszarze roboczym
+    function checkPanelFits(x, y, width, height) {
+        if (wallData.segments.length === 0) return true;
+
+        // Sprawdź czy panel nie wychodzi poza szerokość obszaru
+        let totalWidth = 50; // startX
+        wallData.segments.forEach(s => totalWidth += s.width);
+
+        if (x + width > totalWidth + 50) return false;
+
+        // Sprawdź czy panel nie wychodzi ponad wysokość w każdym punkcie
+        const samples = 5; // Sprawdź w 5 punktach szerokości panelu
+        for (let i = 0; i <= samples; i++) {
+            const sampleX = x + (width * i / samples);
+            const maxHeight = getHeightAtPosition(sampleX);
+            if (y + height > maxHeight) return false;
+        }
+
+        return true;
+    }
+
+    // Znajduje następną możliwą pozycję dla panelu
+    function findNextValidPosition(width, height) {
+        if (wallData.segments.length === 0) {
+            return { x: 50, y: 0, mode: 'horizontal', fits: false };
+        }
+
+        // Zacznij od pozycji bazowej
+        let x = 50, y = 0;
 
         if (panels.length > 0) {
             const lastPanel = panels[panels.length - 1];
 
             if (layoutMode === 'horizontal') {
-                // Dodaj obok (w prawo) - ZAWSZE od dołu (y=0)
                 x = lastPanel.x + lastPanel.width;
                 y = 0;
             } else {
-                // Dodaj nad (w górę) - ta sama pozycja X
                 x = lastPanel.x;
                 y = lastPanel.y + lastPanel.height;
             }
         }
 
-        panels.push({ width, height, x, y, style });
+        // Sprawdź czy pasuje w bieżącym trybie
+        if (checkPanelFits(x, y, width, height)) {
+            return { x, y, mode: layoutMode, fits: true };
+        }
+
+        // Jeśli nie pasuje, spróbuj drugi tryb
+        const altMode = layoutMode === 'horizontal' ? 'vertical' : 'horizontal';
+
+        if (panels.length > 0) {
+            const lastPanel = panels[panels.length - 1];
+
+            if (altMode === 'horizontal') {
+                x = lastPanel.x + lastPanel.width;
+                y = 0;
+            } else {
+                x = lastPanel.x;
+                y = lastPanel.y + lastPanel.height;
+            }
+        }
+
+        if (checkPanelFits(x, y, width, height)) {
+            return { x, y, mode: altMode, fits: true };
+        }
+
+        // Nic nie pasuje
+        return { x, y, mode: layoutMode, fits: false };
+    }
+
+    function addPanel(width, height) {
+        // Nowy panel otrzymuje styl z aktywnego narzędzia (jeśli to nie gumka)
+        let style = { type: 'color', value: '#cccccc' }; // Default
+        if (activeTool !== 'eraser') style = { ...activeTool };
+
+        // Znajdź następną możliwą pozycję
+        const nextPos = findNextValidPosition(width, height);
+
+        if (!nextPos.fits) {
+            alert('Panel nie mieści się w obszarze roboczym!\nWybierz mniejszy panel lub zmień tryb układania.');
+            return;
+        }
+
+        // Jeśli tryb się zmienił automatycznie, zaktualizuj UI
+        if (nextPos.mode !== layoutMode) {
+            layoutMode = nextPos.mode;
+            const btn = document.getElementById('modeToggleBtn');
+            btn.innerHTML = layoutMode === 'horizontal' ? '➡ Dodaj poziomo' : '⬆ Dodaj pionowo';
+        }
+
+        panels.push({ width, height, x: nextPos.x, y: nextPos.y, style });
         draw();
         updateMappingUI();
     }
@@ -721,6 +831,16 @@
         const uTex = [...new Set(panels.filter(p=>p.style.type==='image').map(p=>p.style.value))];
         uTex.forEach((src,i)=> defs+=`<pattern id="pt${i}" patternUnits="userSpaceOnUse" width="50" height="50"><image href="${src}" x="0" y="0" width="50" height="50" preserveAspectRatio="xMidYMid slice"/></pattern>`);
 
+        // Dodaj wzory overflow do defs
+        panels.forEach((p, i) => {
+            const fits = checkPanelFits(p.x, p.y, p.width, p.height);
+            if (!fits) {
+                defs += `<pattern id="ovf${i}" patternUnits="userSpaceOnUse" width="10" height="10" patternTransform="rotate(45)">
+                    <line x1="0" y1="0" x2="0" y2="10" stroke="#dc3545" stroke-width="2"/>
+                </pattern>`;
+            }
+        });
+
         const pSvg = panels.map((p,i)=>{
             const fill = p.style.type==='color' ? p.style.value : `url(#pt${uTex.indexOf(p.style.value)})`;
             const cls = activeTool==='eraser' ? 'panel-rect delete-mode' : 'panel-rect';
@@ -728,6 +848,9 @@
             // Pozycja panelu (x,y od lewego dolnego rogu)
             const panelX = p.x;
             const panelY = floorY - p.y - p.height;
+
+            // Sprawdź czy panel wystaje poza obszar
+            const fits = checkPanelFits(p.x, p.y, p.width, p.height);
 
             // Wymiary WEWNĄTRZ panelu
             // Szerokość - poziomo na dole
@@ -738,12 +861,35 @@
 
             return `<g onclick="onPanelClick(${i})">
                 <rect x="${panelX}" y="${panelY}" width="${p.width}" height="${p.height}" fill="${fill}" class="${cls}"/>
+                ${fits ? '' : `<rect x="${panelX}" y="${panelY}" width="${p.width}" height="${p.height}" fill="url(#ovf${i})" opacity="0.4" pointer-events="none"/>`}
                 <text x="${panelX + p.width/2}" y="${widthTextY}" text-anchor="middle" class="dim-text-panel">${p.width}</text>
                 <text x="${heightTextX}" y="${heightTextY}" text-anchor="middle" class="dim-text-panel" transform="rotate(-90 ${heightTextX} ${heightTextY})">${p.height}</text>
                 <line x1="${panelX}" y1="${panelY}" x2="${panelX}" y2="${panelY + p.height}" stroke="rgba(0,0,0,0.15)" stroke-width="1"/>
                 <line x1="${panelX + p.width}" y1="${panelY}" x2="${panelX + p.width}" y2="${panelY + p.height}" stroke="rgba(0,0,0,0.15)" stroke-width="1"/>
             </g>`;
         }).join('');
+
+        // Preview następnego panelu (jeśli wybrano w topBar)
+        let previewSVG = '';
+        if (selectedPanelSize) {
+            const nextPos = findNextValidPosition(selectedPanelSize.width, selectedPanelSize.height);
+            if (nextPos.fits) {
+                const prevX = nextPos.x;
+                const prevY = floorY - nextPos.y - selectedPanelSize.height;
+
+                // Przeźroczysty prostokąt
+                previewSVG += `<rect x="${prevX}" y="${prevY}" width="${selectedPanelSize.width}" height="${selectedPanelSize.height}"
+                    fill="rgba(40, 167, 69, 0.2)" stroke="#28a745" stroke-width="2" stroke-dasharray="5,5" pointer-events="none"/>`;
+
+                // Strzałka wskazująca lewy dolny róg
+                const arrowX = prevX - 15;
+                const arrowY = prevY + selectedPanelSize.height + 15;
+                previewSVG += `<path d="M ${arrowX} ${arrowY - 10} L ${arrowX} ${arrowY} L ${arrowX + 10} ${arrowY}"
+                    fill="none" stroke="#28a745" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
+                previewSVG += `<path d="M ${arrowX} ${arrowY} L ${prevX} ${prevY + selectedPanelSize.height}"
+                    stroke="#28a745" stroke-width="1.5" stroke-dasharray="3,3"/>`;
+            }
+        }
 
         // Wymiarowanie segmentów (wysokości)
         let dimensionsSVG = '';
@@ -777,6 +923,7 @@
             <defs>${defs}</defs>
             <path d="${d}" class="wall-bg"/>
             ${pSvg}
+            ${previewSVG}
             <path d="${d}" fill="none" stroke="#555" stroke-width="2"/>
             ${dimensionsSVG}
         </svg>`;
