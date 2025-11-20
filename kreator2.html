@@ -1,0 +1,614 @@
+<!-- Kreator_Paneli_v1.005_Final_Layout.html -->
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kreator Paneli (Final Layout)</title>
+    <style>
+        :root {
+            --primary: #5d3a75;
+            --bg: #f4f6f9;
+            --text: #333;
+            --border: #ccc;
+            --active-border: #28a745;
+            --toolbar-bg: #fff;
+            --danger: #dc3545;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+            height: 95vh;
+            box-sizing: border-box;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 20px;
+            height: 100%;
+        }
+
+        /* --- LEWA KOLUMNA (KONFIGURACJA) --- */
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            height: 100%;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        h3 { margin-top: 0; font-size: 1.1em; border-bottom: 2px solid #f0f0f0; padding-bottom: 8px; margin-bottom: 12px; color: #444; }
+        label { display: block; font-size: 0.85em; font-weight: 600; color: #555; margin-bottom: 4px; }
+        input[type="number"], select { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 4px; box-sizing: border-box; }
+        
+        /* Przyciski */
+        button { cursor: pointer; transition: 0.2s; }
+        .btn-secondary { background: #e2e6ea; color: #333; border: 1px solid #ced4da; padding: 6px 12px; border-radius: 4px; font-size: 0.9em; }
+        .btn-secondary:hover { background: #dbe2e8; }
+        .btn-danger { background: #fff5f5; color: var(--danger); border: 1px solid #f5c6cb; padding: 8px; border-radius: 4px; width: 100%; margin-top: 10px;}
+        .btn-danger:hover { background: #f8d7da; }
+        .btn-add-segment { width: 100%; background: #e9ecef; border: 1px solid #ced4da; color: #333; padding: 8px; border-radius: 4px; margin-top: 5px; font-weight: bold;}
+
+        /* Lista Odcinków */
+        .segment-row { display: flex; justify-content: space-between; align-items: center; padding: 8px; background: #fafafa; border-bottom: 1px solid #eee; font-size: 0.9em; }
+        .btn-x { padding: 2px 8px; font-size: 0.8em; color: var(--danger); border: 1px solid var(--danger); background: #fff; border-radius: 4px; }
+
+        /* Lista Wariantów (Config) */
+        .variant-config-list { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
+        .variant-tag { background: #eee; padding: 4px 8px; border-radius: 12px; font-size: 0.85em; display: flex; align-items: center; gap: 5px; }
+        .variant-tag span { cursor: pointer; color: #999; font-weight: bold; }
+        .variant-tag span:hover { color: var(--danger); }
+
+        /* Mapowanie */
+        .mapping-item { background: #fcfcfc; border: 1px solid #eee; padding: 8px; margin-bottom: 5px; border-radius: 4px; display: flex; gap: 10px; align-items: center; }
+        .map-swatch { width: 24px; height: 24px; border-radius: 50%; border: 1px solid #ccc; flex-shrink: 0; }
+        .map-select { font-size: 0.85em; padding: 4px; }
+
+        /* Podsumowanie */
+        .price-summary { background: #e8f5e9; border: 1px solid #c8e6c9; padding: 10px; border-radius: 6px; margin-top: 10px; }
+        .total-price { font-size: 1.4em; font-weight: bold; color: #2e7d32; text-align: right; }
+
+        /* --- PRAWA STRONA (PROJEKT) --- */
+        .project-area {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+            border: 1px solid #ddd;
+        }
+
+        /* TOP BAR */
+        .top-bar {
+            background: var(--toolbar-bg);
+            padding: 10px 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            min-height: 50px;
+        }
+        .top-bar-title { font-size: 0.8em; font-weight: bold; color: #888; text-transform: uppercase; margin-right: 5px; }
+        .panel-btn {
+            background: #fff; border: 1px solid #ccc; padding: 8px 15px; border-radius: 4px;
+            font-weight: bold; color: #333; font-size: 0.95em; display: flex; align-items: center; gap: 5px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .panel-btn:hover { background: #f0f2f5; border-color: #aaa; transform: translateY(-1px); }
+        .panel-btn span { font-size: 0.8em; font-weight: normal; color: #666; }
+
+        /* WORKSPACE */
+        .workspace {
+            display: flex;
+            flex-grow: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* LEFT VERTICAL BAR (TOOLS) */
+        .tools-bar {
+            width: 60px;
+            background: #fcfcfc;
+            border-right: 1px solid #eee;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px 5px;
+            gap: 10px;
+            overflow-y: auto;
+            z-index: 2;
+        }
+        
+        .tool-btn {
+            width: 40px; height: 40px; border-radius: 50%; 
+            border: 2px solid #ddd; cursor: pointer; position: relative; flex-shrink: 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: transform 0.1s;
+            background-size: cover; background-position: center;
+        }
+        .tool-btn:hover { transform: scale(1.1); z-index: 3; }
+        .tool-btn.active { border-color: var(--active-border); transform: scale(1.1); box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.2); }
+        .tool-btn.eraser { 
+            background: #fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23d32f2f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>') no-repeat center;
+            border-color: #f5c6cb;
+        }
+        .tool-btn.eraser.active { background-color: #ffecec; border-color: #dc3545; box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2); }
+        
+        .tool-sep { width: 60%; height: 1px; background: #ddd; margin: 5px 0; }
+
+        /* CANVAS */
+        .canvas-wrapper {
+            flex-grow: 1;
+            background: #eef1f5;
+            overflow: auto;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        svg { display: block; background: #fff; box-shadow: 0 5px 25px rgba(0,0,0,0.05); }
+        .panel-rect { stroke: rgba(0,0,0,0.1); stroke-width: 1; cursor: crosshair; transition: fill-opacity 0.1s; }
+        .panel-rect.delete-mode { cursor: not-allowed; }
+        .panel-rect:hover { stroke: #666; stroke-width: 2px; }
+
+        .canvas-zoom {
+            position: absolute; bottom: 20px; right: 20px;
+            background: rgba(255,255,255,0.9); padding: 5px 10px; border-radius: 20px;
+            display: flex; gap: 5px; border: 1px solid #ccc; align-items: center;
+            font-size: 0.85em; font-weight: bold; color: #555;
+        }
+
+        /* Zapis */
+        .save-slot { background: #f8f9fa; border: 1px solid #eee; padding: 8px; margin-bottom: 5px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85em; }
+
+        @media (max-width: 900px) { 
+            .layout { grid-template-columns: 1fr; height: auto; display: block; } 
+            .controls { height: auto; margin-bottom: 20px; overflow: visible; }
+            .project-area { height: 600px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="layout">
+    
+    <!-- 1. LEWA KOLUMNA (KONFIGURACJA) -->
+    <div class="controls">
+        
+        <!-- Kształt Ściany -->
+        <div class="card">
+            <h3>1. Kształt Ściany</h3>
+            <div class="form-group">
+                <label>Wysokość START [cm]:</label>
+                <input type="number" id="startHeight" value="140" onchange="updateStartHeight()">
+            </div>
+            <div id="segmentsContainer"></div>
+            
+            <div style="background:#fdfdfd; padding:10px; border:1px dashed #ccc; margin-top:10px; border-radius:4px;">
+                <div class="row-inputs" style="display:grid; grid-template-columns:1fr 1fr; gap:5px;">
+                    <input type="number" id="segWidth" placeholder="Szer.">
+                    <input type="number" id="segEndHeight" placeholder="Wys. końcowa">
+                </div>
+                <button class="btn-add-segment" onclick="addSegment()">+ Dodaj Odcinek</button>
+            </div>
+            <button class="btn-danger" onclick="resetWall()">Resetuj Ścianę</button>
+        </div>
+
+        <!-- Konfiguracja Przycisków -->
+        <div class="card">
+            <h3>2. Konfiguracja Przycisków</h3>
+            <p style="font-size:0.8em; color:#666; margin-bottom:5px;">Zdefiniuj, jakie szerokości paneli mają być dostępne w górnym pasku.</p>
+            <div class="row-inputs" style="display:flex; gap:5px;">
+                <input type="number" id="newVariantInput" placeholder="np. 45">
+                <button class="btn-secondary" onclick="addVariantDefinition()">Dodaj</button>
+            </div>
+            <div id="variantConfigList" class="variant-config-list"></div>
+        </div>
+
+        <!-- Wycena i Mapowanie -->
+        <div class="card" style="border-left: 5px solid #28a745;">
+            <h3>3. Wycena i Materiały</h3>
+            
+            <div id="mappingContainer" style="margin-bottom:15px;"></div>
+
+            <div style="font-size:0.9em; margin-bottom:10px; display:grid; grid-template-columns: 1fr 1fr; gap:5px;">
+                <label style="font-weight:normal;"><input type="checkbox" id="optFoam" onchange="recalculatePrice()"> Podwójna pianka</label>
+                <label style="font-weight:normal;"><input type="checkbox" id="optVelcro" onchange="recalculatePrice()"> Rzep montażowy</label>
+                <label style="font-weight:normal;"><input type="checkbox" id="optShipping" checked onchange="recalculatePrice()"> Wysyłka</label>
+            </div>
+            <div class="form-group">
+                <label>Klej (szt):</label>
+                <input type="number" id="optGlue" value="0" onchange="recalculatePrice()">
+            </div>
+
+            <div class="price-summary">
+                <div class="total-price" id="totalPriceDisplay">0.00 zł</div>
+                <div style="font-size:0.8em; color:#555; margin-top:5px;" id="priceDetails"></div>
+            </div>
+        </div>
+
+        <!-- Zapis -->
+        <div class="card">
+            <h3>Zapisane Projekty</h3>
+            <button class="btn-secondary" style="width:100%; margin-bottom:10px; background:#e3f2fd; border-color:#90caf9; color:#1565c0;" onclick="saveCurrentLayout()">💾 Zapisz obecny układ</button>
+            <div id="savesContainer"></div>
+        </div>
+
+    </div>
+
+    <!-- 2. PRAWA STRONA (PROJEKT) -->
+    <div class="project-area">
+        
+        <!-- TOP BAR: SZYBKIE DODAWANIE -->
+        <div class="top-bar" id="topBar">
+            <div class="top-bar-title">Dodaj Panel:</div>
+            <div id="topVariantsButtons" style="display:flex; gap:8px; overflow-x:auto;"></div>
+        </div>
+
+        <!-- WORKSPACE -->
+        <div class="workspace">
+            <!-- LEFT BAR: NARZĘDZIA -->
+            <div class="tools-bar" id="toolsBar">
+                <!-- Generowane JS (Kolory + Gumka) -->
+            </div>
+
+            <!-- CANVAS -->
+            <div class="canvas-wrapper">
+                <div id="svgWrapper"></div>
+                
+                <div class="canvas-zoom">
+                    <button onclick="changeZoom(-0.1)" class="btn-secondary" style="padding:2px 6px;">-</button>
+                    <span id="zoomLabel">100%</span>
+                    <button onclick="changeZoom(0.1)" class="btn-secondary" style="padding:2px 6px;">+</button>
+                    <span style="color:#ccc">|</span>
+                    <button onclick="undoPanel()" class="btn-secondary" title="Cofnij" style="padding:2px 6px;">↩</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // --- DANE ---
+    const Collections = {
+        Standard: ['DIANA', 'LUNA', 'SWEET', 'TANGO', 'NUBUK', 'TREND', 'OLIMP', 'TRINITY'],
+        Premium: ['KRONOS', 'RODOS', 'FOREST', 'CROWN', 'MONOLITH', 'EVO', 'FRESH', 'PRESTON']
+    };
+    const Prices = {
+        Standard: { "20x20": 21, "30x30": 24, "30x60": 28, "40x40": 26 }, 
+        Premium:  { "20x20": 25, "30x30": 28, "30x60": 33, "40x40": 31 }
+    };
+
+    // Paleta wizualna
+    const visualPalette = [
+        { hex: '#5d3a75', name: 'Fiolet' }, { hex: '#8e8e93', name: 'Szary' },
+        { hex: '#d2b48c', name: 'Beż' }, { hex: '#1a2a6c', name: 'Granat' },
+        { hex: '#2d5a27', name: 'Zieleń' }, { hex: '#e6bece', name: 'Pudrowy' },
+        { hex: '#d4af37', name: 'Żółty' }, { hex: '#333333', name: 'Grafit' }
+    ];
+    // Dekor (Base64)
+    const floralTex = "data:image/svg+xml,%3Csvg width='50' height='50' viewBox='0 0 50 50' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='50' height='50' fill='%236a4c93'/%3E%3Ccircle cx='25' cy='25' r='10' fill='%23ffffff' opacity='0.2'/%3E%3Cpath d='M25 15 L35 25 L25 35 L15 25 Z' fill='%23ffffff' opacity='0.2'/%3E%3C/svg%3E";
+    const visualTextures = [{ file: floralTex, name: 'Dekor' }];
+
+    // --- STAN ---
+    let wallData = { startHeight: 140, segments: [] };
+    let variants = [50, 40, 30, 20, 10]; // Domyślne szerokości
+    let panels = []; 
+    let activeTool = { type: 'color', value: visualPalette[0].hex }; // 'eraser' lub {type, value}
+    let styleMapping = {}; 
+    let zoomLevel = 1.0;
+    const STORAGE_KEY = 'panelConfig_V5_Saves';
+
+    // --- INIT ---
+    document.addEventListener('DOMContentLoaded', () => {
+        renderSegmentsList();
+        renderVariantConfig(); // Lewy panel (konfiguracja)
+        renderTopBar();        // Górny pasek (użycie)
+        renderToolsBar();      // Pasek narzędzi
+        renderSaves();
+        draw();
+        updateMappingUI();
+    });
+
+    // --- 1. ZARZĄDZANIE WARIANTAMI (SEKCJA 2 + TOP BAR) ---
+    function addVariantDefinition() {
+        const val = parseFloat(document.getElementById('newVariantInput').value);
+        if (val > 0 && !variants.includes(val)) {
+            variants.push(val);
+            variants.sort((a,b) => b-a);
+            renderVariantConfig();
+            renderTopBar();
+            document.getElementById('newVariantInput').value = '';
+        }
+    }
+    
+    function removeVariantDefinition(val) {
+        variants = variants.filter(v => v !== val);
+        renderVariantConfig();
+        renderTopBar();
+    }
+
+    function renderVariantConfig() {
+        // Lista w sekcji 2 (do usuwania)
+        const c = document.getElementById('variantConfigList');
+        c.innerHTML = '';
+        variants.forEach(v => {
+            const tag = document.createElement('div');
+            tag.className = 'variant-tag';
+            tag.innerHTML = `${v} cm <span onclick="removeVariantDefinition(${v})">&times;</span>`;
+            c.appendChild(tag);
+        });
+    }
+
+    function renderTopBar() {
+        // Przyciski w Top Bar (do używania)
+        const c = document.getElementById('topVariantsButtons');
+        c.innerHTML = '';
+        variants.forEach(v => {
+            const btn = document.createElement('button');
+            btn.className = 'panel-btn';
+            btn.innerHTML = `+ ${v} <span>cm</span>`;
+            btn.onclick = () => addPanel(v);
+            c.appendChild(btn);
+        });
+    }
+
+    // --- 2. NARZĘDZIA (LEFT VERTICAL BAR) ---
+    function renderToolsBar() {
+        const c = document.getElementById('toolsBar');
+        c.innerHTML = '';
+
+        // 1. Gumka
+        const eraser = document.createElement('div');
+        eraser.className = `tool-btn eraser ${activeTool==='eraser'?'active':''}`;
+        eraser.title = "Usuń Panel (Kliknij panel aby usunąć)";
+        eraser.onclick = () => setActiveTool('eraser');
+        c.appendChild(eraser);
+        
+        c.appendChild(document.createElement('div')).className = 'tool-sep';
+
+        // 2. Kolory
+        visualPalette.forEach(item => {
+            const el = document.createElement('div');
+            const isActive = activeTool.type === 'color' && activeTool.value === item.hex;
+            el.className = `tool-btn ${isActive?'active':''}`;
+            el.style.backgroundColor = item.hex;
+            el.title = item.name;
+            el.onclick = () => setActiveTool({ type: 'color', value: item.hex });
+            c.appendChild(el);
+        });
+
+        c.appendChild(document.createElement('div')).className = 'tool-sep';
+
+        // 3. Tekstury
+        visualTextures.forEach(item => {
+            const el = document.createElement('div');
+            const isActive = activeTool.type === 'image' && activeTool.value === item.file;
+            el.className = `tool-btn ${isActive?'active':''}`;
+            el.style.backgroundImage = `url('${item.file}')`;
+            el.title = item.name;
+            el.onclick = () => setActiveTool({ type: 'image', value: item.file });
+            c.appendChild(el);
+        });
+    }
+
+    function setActiveTool(tool) {
+        activeTool = tool;
+        renderToolsBar(); // Odśwież ramki
+    }
+
+    // --- 3. INTERAKCJA Z PROJEKTEM ---
+    function addPanel(width) {
+        // Nowy panel otrzymuje styl z aktywnego narzędzia (jeśli to nie gumka)
+        let style = { type: 'color', value: '#cccccc' }; // Default
+        if (activeTool !== 'eraser') style = { ...activeTool };
+        
+        panels.push({ width, style });
+        draw();
+        updateMappingUI();
+    }
+
+    function onPanelClick(index) {
+        if (activeTool === 'eraser') {
+            panels.splice(index, 1); // USUŃ
+        } else {
+            panels[index].style = { ...activeTool }; // MALUJ
+        }
+        draw();
+        updateMappingUI();
+    }
+    
+    function undoPanel() { panels.pop(); draw(); updateMappingUI(); }
+
+    // --- 4. ZAPIS (FIFO) ---
+    function saveCurrentLayout() {
+        let saves = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        saves.unshift({
+            id: Date.now(),
+            date: new Date().toLocaleTimeString(),
+            wall: wallData,
+            panels: panels,
+            variants: variants,
+            mapping: styleMapping
+        });
+        if(saves.length > 5) saves.pop();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(saves));
+        renderSaves();
+    }
+
+    function renderSaves() {
+        const c = document.getElementById('savesContainer');
+        c.innerHTML = '';
+        const saves = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        if(saves.length===0) c.innerHTML='<div style="color:#999; font-size:0.8em;">Pusto</div>';
+        
+        saves.forEach(s => {
+            const d = document.createElement('div'); d.className='save-slot';
+            d.innerHTML = `<span>${s.date} (${s.panels.length} el.)</span> 
+                <button class="btn-secondary" style="padding:2px 5px; font-size:0.8em;" onclick="loadSave(${s.id})">Wczytaj</button>`;
+            c.appendChild(d);
+        });
+    }
+
+    function loadSave(id) {
+        const s = JSON.parse(localStorage.getItem(STORAGE_KEY)).find(x=>x.id===id);
+        if(s && confirm("Wczytać projekt?")) {
+            wallData = s.wall; panels = s.panels; variants = s.variants || variants; styleMapping = s.mapping || {};
+            document.getElementById('startHeight').value = wallData.startHeight;
+            draw(); renderSegmentsList(); renderVariantConfig(); renderTopBar(); updateMappingUI();
+        }
+    }
+
+    // --- 5. LOGIKA ŚCIANY ---
+    function updateStartHeight() {
+        const v = parseFloat(document.getElementById('startHeight').value);
+        if(v>0) { wallData.startHeight=v; draw(); updateMappingUI(); }
+    }
+    function addSegment() {
+        const w = parseFloat(document.getElementById('segWidth').value);
+        const h = parseFloat(document.getElementById('segEndHeight').value);
+        if(w>0 && h>0) {
+            wallData.segments.push({width:w, endHeight:h});
+            document.getElementById('segWidth').value='';
+            renderSegmentsList(); draw(); updateMappingUI();
+        }
+    }
+    function removeSegment(i) { wallData.segments.splice(i,1); renderSegmentsList(); draw(); updateMappingUI(); }
+    function resetWall() { if(confirm("Reset?")) { wallData.segments=[]; wallData.startHeight=140; renderSegmentsList(); draw(); updateMappingUI(); }}
+    function renderSegmentsList() {
+        const c = document.getElementById('segmentsContainer'); c.innerHTML='';
+        let ph=wallData.startHeight;
+        wallData.segments.forEach((s,i)=>{
+            c.innerHTML+=`<div class="segment-row"><span>${i+1}. <b>${s.width}</b>cm &rarr; <b>${s.endHeight}</b>cm</span><button class="btn-x" onclick="removeSegment(${i})">X</button></div>`;
+            ph=s.endHeight;
+        });
+    }
+
+    // --- 6. WYCENA & MAPOWANIE ---
+    function updateMappingUI() {
+        const used = [...new Set(panels.map(p=>p.style.value))];
+        const c = document.getElementById('mappingContainer'); c.innerHTML='';
+        if(used.length===0) { c.innerHTML='<div style="color:#999; font-size:0.8em;">Brak paneli</div>'; recalculatePrice(); return; }
+
+        used.forEach(val => {
+            const row = document.createElement('div'); row.className='mapping-item';
+            const sw = document.createElement('div'); sw.className='map-swatch';
+            if(val.includes('data:image')) { sw.style.backgroundImage=`url('${val}')`; sw.style.backgroundSize='cover'; }
+            else sw.style.backgroundColor=val;
+            
+            const sel = document.createElement('select'); sel.className='map-select';
+            sel.onchange = (e) => { styleMapping[val]=e.target.value; recalculatePrice(); };
+            
+            ['Standard','Premium'].forEach(grp => {
+                const g = document.createElement('optgroup'); g.label=grp;
+                Collections[grp].forEach(col => {
+                    const o = document.createElement('option'); o.value=col; o.text=col;
+                    if(styleMapping[val]===col) o.selected=true;
+                    g.appendChild(o);
+                });
+                sel.appendChild(g);
+            });
+            if(!styleMapping[val]) { styleMapping[val]=Collections.Standard[0]; sel.value=Collections.Standard[0]; }
+
+            row.appendChild(sw); row.appendChild(sel); c.appendChild(row);
+        });
+        recalculatePrice();
+    }
+
+    function recalculatePrice() {
+        let total=0, area=0, startX=50;
+        const opts = {
+            foam: document.getElementById('optFoam').checked,
+            velcro: document.getElementById('optVelcro').checked,
+            glue: parseInt(document.getElementById('optGlue').value)||0,
+            shipping: document.getElementById('optShipping').checked
+        };
+
+        panels.forEach(p => {
+            const h = getGeoHeight(startX, startX+p.width);
+            const col = styleMapping[p.style.value] || 'DIANA';
+            const isPrem = Collections.Premium.includes(col);
+            
+            // Uproszczona cena (w realu tutaj wklejamy logikę z sizes)
+            const k = `${p.width}x${h}`;
+            let base = (isPrem ? Prices.Premium[k] : Prices.Standard[k]);
+            if(!base) base = ((p.width*h)/10000) * 300; // Fallback m2
+
+            let extra = 0;
+            const m2 = (p.width*h)/10000;
+            if(opts.foam) extra += (m2<0.4?6:15);
+            if(opts.velcro) extra += (m2<0.4?8:20);
+
+            total += base+extra;
+            area += m2;
+            startX += p.width;
+        });
+
+        total += opts.glue * 36;
+        if(opts.shipping && panels.length>0) total += 39;
+
+        document.getElementById('totalPriceDisplay').innerText = total.toFixed(2) + " zł";
+        document.getElementById('priceDetails').innerHTML = `Pow: ${area.toFixed(2)} m² | Paneli: ${panels.length}`;
+    }
+
+    function getGeoHeight(x1, x2) {
+        let max=wallData.startHeight, cx=50;
+        wallData.segments.forEach(s=>{
+            if(cx+s.width>x1 && cx<x2) max=Math.max(max, s.endHeight);
+            cx+=s.width;
+        });
+        return Math.ceil(max);
+    }
+
+    // --- 7. WIZUALIZACJA ---
+    function draw() {
+        const svg = document.getElementById('svgWrapper');
+        let totalW=0, maxH=wallData.startHeight;
+        wallData.segments.forEach(s=>{ totalW+=s.width; if(s.endHeight>maxH) maxH=s.endHeight; });
+        if(totalW===0) totalW=200;
+
+        const padX=50, padY=60;
+        const W = totalW+padX*2, H = maxH+padY*2;
+        const startX = padX, floorY = H-padY;
+
+        let d = `M ${startX} ${floorY} L ${startX} ${floorY-wallData.startHeight}`;
+        let cx=startX, cy=wallData.startHeight;
+        wallData.segments.forEach(s=>{ cx+=s.width; cy=s.endHeight; d+=` L ${cx} ${floorY-cy}`; });
+        d+=` L ${cx} ${floorY} Z`;
+
+        let defs = `<clipPath id="wc"><path d="${d}"/></clipPath>`;
+        const uTex = [...new Set(panels.filter(p=>p.style.type==='image').map(p=>p.style.value))];
+        uTex.forEach((src,i)=> defs+=`<pattern id="pt${i}" patternUnits="userSpaceOnUse" width="50" height="50"><image href="${src}" x="0" y="0" width="50" height="50" preserveAspectRatio="xMidYMid slice"/></pattern>`);
+
+        let px=startX;
+        const pSvg = panels.map((p,i)=>{
+            const fill = p.style.type==='color' ? p.style.value : `url(#pt${uTex.indexOf(p.style.value)})`;
+            const cls = activeTool==='eraser' ? 'panel-rect delete-mode' : 'panel-rect';
+            const el = `<g onclick="onPanelClick(${i})"><rect x="${px}" y="0" width="${p.width}" height="${H}" fill="${fill}" class="${cls}"/><text x="${px+p.width/2}" y="${floorY-20}" text-anchor="middle" class="dim-text-panel">${p.width}</text><line x1="${px}" y1="0" x2="${px}" y2="${H}" stroke="rgba(0,0,0,0.1)" pointer-events="none"/></g>`;
+            px+=p.width; return el;
+        }).join('');
+
+        svg.innerHTML = `<svg width="${W*zoomLevel}px" viewBox="0 0 ${W} ${H}"><defs>${defs}</defs><path d="${d}" class="wall-bg"/><g clip-path="url(#wc)">${pSvg}</g><path d="${d}" fill="none" stroke="#555" stroke-width="2"/></svg>`;
+    }
+    function changeZoom(d) { zoomLevel = Math.max(0.2, Math.min(3.0, zoomLevel + d)); document.getElementById('zoomLabel').innerText = Math.round(zoomLevel*100)+'%'; draw(); }
+</script>
+
+</body>
+</html>
