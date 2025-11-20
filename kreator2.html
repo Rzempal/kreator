@@ -1,4 +1,4 @@
-<!-- kreator2.html v0.006 Preset obszaru, poprawione wymiarowanie canvas -->
+<!-- kreator2.html v0.007 Wymiarowanie paneli: zasady rysunku technicznego -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -729,15 +729,28 @@
             const panelX = p.x;
             const panelY = floorY - p.y - p.height;
 
-            // Wymiary paneli na 2 linie (szer / wys)
             return `<g onclick="onPanelClick(${i})">
                 <rect x="${panelX}" y="${panelY}" width="${p.width}" height="${p.height}" fill="${fill}" class="${cls}"/>
-                <text x="${panelX + p.width/2}" y="${panelY + p.height/2 - 2}" text-anchor="middle" class="dim-text-panel">${p.width}</text>
-                <text x="${panelX + p.width/2}" y="${panelY + p.height/2 + 12}" text-anchor="middle" class="dim-text-panel">${p.height}</text>
                 <line x1="${panelX}" y1="${panelY}" x2="${panelX}" y2="${panelY + p.height}" stroke="rgba(0,0,0,0.15)" stroke-width="1"/>
                 <line x1="${panelX + p.width}" y1="${panelY}" x2="${panelX + p.width}" y2="${panelY + p.height}" stroke="rgba(0,0,0,0.15)" stroke-width="1"/>
             </g>`;
         }).join('');
+
+        // Wymiarowanie paneli (na zewnątrz - zasady rysunku technicznego)
+        let panelDimsSVG = '';
+        panels.forEach((p, i) => {
+            const panelX = p.x;
+            const panelY = floorY - p.y - p.height;
+
+            // Szerokość - na dole panelu (wycentrowana)
+            const dimYPanel = floorY + 10;
+            panelDimsSVG += `<text x="${panelX + p.width/2}" y="${dimYPanel}" text-anchor="middle" class="dim-text-external" font-size="11" font-weight="bold">${p.width}</text>`;
+
+            // Wysokość - po prawej stronie panelu (wycentrowana wertykalnie)
+            const dimXPanel = panelX + p.width + 5;
+            const dimYPanelMid = panelY + p.height/2;
+            panelDimsSVG += `<text x="${dimXPanel}" y="${dimYPanelMid + 4}" text-anchor="start" class="dim-text-external" font-size="11" font-weight="bold">${p.height}</text>`;
+        });
 
         // Wymiarowanie segmentów (wysokości)
         let dimensionsSVG = '';
@@ -772,6 +785,7 @@
             <path d="${d}" class="wall-bg"/>
             <g clip-path="url(#wc)">${pSvg}</g>
             <path d="${d}" fill="none" stroke="#555" stroke-width="2"/>
+            ${panelDimsSVG}
             ${dimensionsSVG}
         </svg>`;
     }
