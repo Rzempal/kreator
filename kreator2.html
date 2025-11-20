@@ -1,4 +1,4 @@
-<!-- kreator2.html v0.005 Układanie 2D: panele width×height, tryb poziomy/pionowy -->
+<!-- kreator2.html v0.006 Preset obszaru, poprawione wymiarowanie canvas -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -177,6 +177,8 @@
         .panel-rect.delete-mode { cursor: not-allowed; }
         .panel-rect:hover { stroke: #666; stroke-width: 3px; filter: brightness(1.1); }
         .dim-text-panel { font-size: 14px; font-family: Arial, sans-serif; fill: white; font-weight: bold; text-shadow: 0 0 3px rgba(0,0,0,0.8); pointer-events: none; }
+        .dim-text-external { font-size: 11px; font-family: Arial, sans-serif; fill: #444; font-weight: normal; }
+        .dim-line { stroke: #444; stroke-width: 1; stroke-dasharray: 2,2; }
 
         .canvas-zoom {
             position: absolute; bottom: 20px; right: 20px;
@@ -215,6 +217,7 @@
                 </div>
                 <button class="btn-add-segment" onclick="addSegment()">+ Dodaj Segment</button>
             </div>
+            <button class="btn-secondary" style="width:100%; margin-top:10px; background:#e8f5e9; border-color:#81c784; color:#2e7d32;" onclick="loadPresetWorkspace()">📋 Wczytaj przykład</button>
             <button class="btn-danger" onclick="resetWall()">Resetuj Obszar</button>
         </div>
 
@@ -318,10 +321,9 @@
     // --- STAN ---
     let wallData = { segments: [] };
     let variants = [
-        {width: 50, height: 100},
-        {width: 40, height: 80},
-        {width: 30, height: 60},
-        {width: 20, height: 40}
+        {width: 30, height: 100},
+        {width: 20, height: 140},
+        {width: 30, height: 40}
     ]; // Domyślne wymiary
     let panels = []; // {width, height, x, y, style}
     let activeTool = { type: 'color', value: visualPalette[0].hex }; // 'eraser' lub {type, value}
@@ -532,6 +534,18 @@
     }
 
     // --- 5. LOGIKA OBSZARU ROBOCZEGO ---
+    function loadPresetWorkspace() {
+        wallData.segments = [
+            {width: 60, startHeight: 140, endHeight: 140},
+            {width: 200, startHeight: 140, endHeight: 140},
+            {width: 60, startHeight: 140, endHeight: 140},
+            {width: 100, startHeight: 140, endHeight: 80}
+        ];
+        renderSegmentsList();
+        draw();
+        updateMappingUI();
+    }
+
     function addSegment() {
         const w = parseFloat(document.getElementById('segWidth').value);
         const sh = parseFloat(document.getElementById('segStartHeight').value);
@@ -715,19 +729,50 @@
             const panelX = p.x;
             const panelY = floorY - p.y - p.height;
 
+            // Wymiary paneli na 2 linie (szer / wys)
             return `<g onclick="onPanelClick(${i})">
                 <rect x="${panelX}" y="${panelY}" width="${p.width}" height="${p.height}" fill="${fill}" class="${cls}"/>
-                <text x="${panelX + p.width/2}" y="${panelY + p.height/2 + 5}" text-anchor="middle" class="dim-text-panel">${p.width}×${p.height}</text>
+                <text x="${panelX + p.width/2}" y="${panelY + p.height/2 - 2}" text-anchor="middle" class="dim-text-panel">${p.width}</text>
+                <text x="${panelX + p.width/2}" y="${panelY + p.height/2 + 12}" text-anchor="middle" class="dim-text-panel">${p.height}</text>
                 <line x1="${panelX}" y1="${panelY}" x2="${panelX}" y2="${panelY + p.height}" stroke="rgba(0,0,0,0.15)" stroke-width="1"/>
                 <line x1="${panelX + p.width}" y1="${panelY}" x2="${panelX + p.width}" y2="${panelY + p.height}" stroke="rgba(0,0,0,0.15)" stroke-width="1"/>
             </g>`;
         }).join('');
+
+        // Wymiarowanie segmentów (wysokości)
+        let dimensionsSVG = '';
+        let segX = startX;
+        wallData.segments.forEach((s, idx) => {
+            const topYStart = floorY - s.startHeight;
+            const topYEnd = floorY - s.endHeight;
+
+            // Linia wymiarowa na początku segmentu
+            dimensionsSVG += `<line x1="${segX}" y1="${floorY}" x2="${segX}" y2="${topYStart - 10}" class="dim-line" stroke="#888" />`;
+            dimensionsSVG += `<text x="${segX + 5}" y="${topYStart - 15}" text-anchor="start" class="dim-text-external" font-weight="bold">${s.startHeight}</text>`;
+
+            // Wymiar szerokości segmentu (na dole)
+            const segMidX = segX + s.width / 2;
+            const dimY = floorY + 30;
+            dimensionsSVG += `<line x1="${segX}" y1="${dimY}" x2="${segX + s.width}" y2="${dimY}" stroke="#444" stroke-width="1" />`;
+            dimensionsSVG += `<line x1="${segX}" y1="${dimY-5}" x2="${segX}" y2="${dimY+5}" stroke="#444" stroke-width="1" />`;
+            dimensionsSVG += `<line x1="${segX + s.width}" y1="${dimY-5}" x2="${segX + s.width}" y2="${dimY+5}" stroke="#444" stroke-width="1" />`;
+            dimensionsSVG += `<text x="${segMidX}" y="${dimY + 15}" text-anchor="middle" class="dim-text-external" font-size="12" font-weight="bold">${s.width}</text>`;
+
+            segX += s.width;
+
+            // Linia wymiarowa na końcu ostatniego segmentu
+            if (idx === wallData.segments.length - 1) {
+                dimensionsSVG += `<line x1="${segX}" y1="${floorY}" x2="${segX}" y2="${topYEnd - 10}" class="dim-line" stroke="#888" />`;
+                dimensionsSVG += `<text x="${segX - 5}" y="${topYEnd - 15}" text-anchor="end" class="dim-text-external" font-weight="bold">${s.endHeight}</text>`;
+            }
+        });
 
         svg.innerHTML = `<svg width="${W*zoomLevel}px" viewBox="0 0 ${W} ${H}">
             <defs>${defs}</defs>
             <path d="${d}" class="wall-bg"/>
             <g clip-path="url(#wc)">${pSvg}</g>
             <path d="${d}" fill="none" stroke="#555" stroke-width="2"/>
+            ${dimensionsSVG}
         </svg>`;
     }
 
