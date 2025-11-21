@@ -74,7 +74,8 @@ Format Wyjściowy
 
 **Uzasadnienie:**
 * **X:** [dlaczego tak zrobiono]
-**COMMIT & PUSH**
+  
+**[COMMIT & Push]**
 * **commit:** *[1# + opis]*
 
 **[SUGESTIE DO DYSKUSJI]**
