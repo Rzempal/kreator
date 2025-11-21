@@ -1,4 +1,4 @@
-<!-- kreator2.html v0.009 Smart placement: validation, overflow hatching, auto-mode switch, preview indicator -->
+<!-- kreator2.html v0.010 Auto-preview: stały podgląd ostatnio użytego rozmiaru (desktop + mobile) -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -330,7 +330,8 @@
     let styleMapping = {};
     let layoutMode = 'horizontal'; // 'horizontal' | 'vertical'
     let zoomLevel = 1.0;
-    let selectedPanelSize = null; // {width, height} - wybrany panel do dodania
+    let selectedPanelSize = null; // {width, height} - wybrany panel do dodania (hover)
+    let lastUsedPanelSize = null; // {width, height} - ostatnio dodany panel (auto-preview)
     const STORAGE_KEY = 'panelConfig_V6_Saves';
 
     // --- INIT ---
@@ -576,6 +577,10 @@
         }
 
         panels.push({ width, height, x: nextPos.x, y: nextPos.y, style });
+
+        // Zapamiętaj rozmiar dla auto-preview
+        lastUsedPanelSize = { width, height };
+
         draw();
         updateMappingUI();
     }
@@ -869,25 +874,32 @@
             </g>`;
         }).join('');
 
-        // Preview następnego panelu (jeśli wybrano w topBar)
+        // Preview następnego panelu (hover ma priorytet, potem auto-preview)
         let previewSVG = '';
-        if (selectedPanelSize) {
-            const nextPos = findNextValidPosition(selectedPanelSize.width, selectedPanelSize.height);
+        const previewSize = selectedPanelSize || lastUsedPanelSize; // Hover lub ostatnio użyty
+
+        if (previewSize) {
+            const nextPos = findNextValidPosition(previewSize.width, previewSize.height);
             if (nextPos.fits) {
                 const prevX = nextPos.x;
-                const prevY = floorY - nextPos.y - selectedPanelSize.height;
+                const prevY = floorY - nextPos.y - previewSize.height;
+
+                // Kolor: zielony dla hover, niebieski dla auto-preview
+                const isHover = selectedPanelSize !== null;
+                const strokeColor = isHover ? '#28a745' : '#007bff';
+                const fillColor = isHover ? 'rgba(40, 167, 69, 0.2)' : 'rgba(0, 123, 255, 0.15)';
 
                 // Przeźroczysty prostokąt
-                previewSVG += `<rect x="${prevX}" y="${prevY}" width="${selectedPanelSize.width}" height="${selectedPanelSize.height}"
-                    fill="rgba(40, 167, 69, 0.2)" stroke="#28a745" stroke-width="2" stroke-dasharray="5,5" pointer-events="none"/>`;
+                previewSVG += `<rect x="${prevX}" y="${prevY}" width="${previewSize.width}" height="${previewSize.height}"
+                    fill="${fillColor}" stroke="${strokeColor}" stroke-width="2" stroke-dasharray="5,5" pointer-events="none"/>`;
 
                 // Strzałka wskazująca lewy dolny róg
                 const arrowX = prevX - 15;
-                const arrowY = prevY + selectedPanelSize.height + 15;
+                const arrowY = prevY + previewSize.height + 15;
                 previewSVG += `<path d="M ${arrowX} ${arrowY - 10} L ${arrowX} ${arrowY} L ${arrowX + 10} ${arrowY}"
-                    fill="none" stroke="#28a745" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
-                previewSVG += `<path d="M ${arrowX} ${arrowY} L ${prevX} ${prevY + selectedPanelSize.height}"
-                    stroke="#28a745" stroke-width="1.5" stroke-dasharray="3,3"/>`;
+                    fill="none" stroke="${strokeColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
+                previewSVG += `<path d="M ${arrowX} ${arrowY} L ${prevX} ${prevY + previewSize.height}"
+                    stroke="${strokeColor}" stroke-width="1.5" stroke-dasharray="3,3"/>`;
             }
         }
 
