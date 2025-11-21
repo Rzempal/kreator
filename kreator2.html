@@ -1,4 +1,4 @@
-<!-- kreator2.html v0.012 Smart snap: klikanie = preview, przycisk = dodanie, snap do krawędzi paneli -->
+<!-- kreator2.html v0.013 Rozdzielenie wyboru od dodawania: przycisk wybiera, Dodaj dodaje, silny snap ↙ -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -111,9 +111,25 @@
             background: #fff; border: 1px solid #ccc; padding: 8px 15px; border-radius: 4px;
             font-weight: bold; color: #333; font-size: 0.95em; display: flex; align-items: center; gap: 5px;
             box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
         }
         .panel-btn:hover { background: #f0f2f5; border-color: #aaa; transform: translateY(-1px); }
+        .panel-btn.active {
+            background: #e8f5e9;
+            border: 2px solid #28a745;
+            color: #28a745;
+            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.2);
+            transform: scale(1.05);
+        }
         .panel-btn span { font-size: 0.8em; font-weight: normal; color: #666; }
+
+        .btn-add-panel {
+            background: #28a745; color: white; border: 2px solid #28a745;
+            padding: 8px 20px; border-radius: 4px; font-weight: bold; font-size: 0.95em;
+            margin-left: 10px; cursor: pointer; transition: 0.2s;
+        }
+        .btn-add-panel:hover { background: #218838; border-color: #1e7e34; transform: translateY(-1px); }
+        .btn-add-panel:disabled { background: #ccc; border-color: #ccc; cursor: not-allowed; opacity: 0.6; }
 
         .mode-toggle {
             background: var(--primary); color: white; border: 2px solid var(--primary);
@@ -333,6 +349,7 @@
     let selectedPanelSize = null; // {width, height} - wybrany panel do dodania (hover)
     let lastUsedPanelSize = null; // {width, height} - ostatnio dodany panel (auto-preview)
     let previewPosition = null; // {x, y} - pozycja preview (z myszki lub smart snap)
+    let selectedVariant = null; // {width, height} - aktywnie wybrany rozmiar (dla podświetlenia)
     const STORAGE_KEY = 'panelConfig_V6_Saves';
 
     // --- INIT ---
@@ -387,17 +404,37 @@
         });
     }
 
+    function selectVariant(width, height) {
+        selectedVariant = {width, height};
+        lastUsedPanelSize = {width, height};
+        previewPosition = null; // Reset preview position przy zmianie rozmiaru
+        renderTopBar(); // Odśwież aby pokazać active state
+        draw();
+    }
+
+    function addPanelFromButton() {
+        if (!lastUsedPanelSize) {
+            alert('Najpierw wybierz rozmiar panelu!');
+            return;
+        }
+        addPanel(lastUsedPanelSize.width, lastUsedPanelSize.height);
+    }
+
     function renderTopBar() {
-        // Przyciski w Top Bar (dodawanie paneli)
+        // Przyciski w Top Bar (wybór rozmiaru)
         const c = document.getElementById('topVariantsButtons');
         c.innerHTML = '';
+
         variants.forEach(v => {
             const btn = document.createElement('button');
-            btn.className = 'panel-btn';
-            btn.innerHTML = `+ ${v.width}×${v.height}`;
+            const isActive = selectedVariant && selectedVariant.width === v.width && selectedVariant.height === v.height;
+            btn.className = `panel-btn ${isActive ? 'active' : ''}`;
+            btn.innerHTML = `${v.width}×${v.height}`;
             btn.onmouseenter = () => {
-                selectedPanelSize = {width: v.width, height: v.height};
-                draw();
+                if (!isActive) {
+                    selectedPanelSize = {width: v.width, height: v.height};
+                    draw();
+                }
             };
             btn.onmouseleave = () => {
                 selectedPanelSize = null;
@@ -405,11 +442,18 @@
             };
             btn.onclick = () => {
                 selectedPanelSize = null;
-                lastUsedPanelSize = {width: v.width, height: v.height};
-                addPanel(v.width, v.height);
+                selectVariant(v.width, v.height);
             };
             c.appendChild(btn);
         });
+
+        // Przycisk Dodaj
+        const addBtn = document.createElement('button');
+        addBtn.className = 'btn-add-panel';
+        addBtn.innerHTML = '✓ Dodaj';
+        addBtn.disabled = !lastUsedPanelSize;
+        addBtn.onclick = addPanelFromButton;
+        c.appendChild(addBtn);
     }
 
     // --- 2. NARZĘDZIA (LEFT VERTICAL BAR) ---
@@ -473,88 +517,91 @@
         return false; // Brak kolizji
     }
 
-    // Smart snap do pustej przestrzeni - dopasowanie do krawędzi
+    // Silny snap do pustej przestrzeni - snap do najbliższej krawędzi w lewo i w dół
     function findBestSnapPosition(clickX, clickY, width, height) {
-        const SNAP_THRESHOLD = 10; // Próg przyciągania (10cm)
+        // Znajdź najbliższą krawędź w LEWO (dla X) i w DÓŁ (dla Y)
 
-        let bestX = clickX;
-        let bestY = clickY;
+        let snapX = clickX;
+        let snapY = clickY;
 
-        // 1. Najpierw spróbuj dokładnie w klikniętym miejscu
-        if (!checkPanelCollision(clickX, clickY, width, height) &&
-            checkPanelFits(clickX, clickY, width, height)) {
-            // Snap do krawędzi najbliższych paneli
-            let snapX = clickX;
-            let snapY = clickY;
+        // 1. SNAP X (w lewo) - znajdź najbliższą krawędź po lewej stronie
+        let leftEdges = [50]; // Lewa krawędź obszaru (startX)
 
-            // Szukaj najbliższych krawędzi paneli
-            panels.forEach(p => {
-                // Snap do prawej krawędzi panelu (p.x + p.width)
-                if (Math.abs(p.x + p.width - clickX) < SNAP_THRESHOLD) {
-                    snapX = p.x + p.width;
-                }
-                // Snap do lewej krawędzi panelu (p.x - width)
-                if (Math.abs(p.x - width - clickX) < SNAP_THRESHOLD) {
-                    snapX = p.x - width;
-                }
-                // Snap do górnej krawędzi panelu (p.y + p.height)
-                if (Math.abs(p.y + p.height - clickY) < SNAP_THRESHOLD) {
-                    snapY = p.y + p.height;
-                }
-                // Snap do dolnej krawędzi panelu (p.y - height)
-                if (Math.abs(p.y - height - clickY) < SNAP_THRESHOLD) {
-                    snapY = p.y - height;
-                }
-            });
-
-            // Sprawdź czy po snapie dalej nie ma kolizji
-            if (!checkPanelCollision(snapX, snapY, width, height) &&
-                checkPanelFits(snapX, snapY, width, height)) {
-                return { x: snapX, y: snapY };
-            }
-
-            return { x: clickX, y: clickY };
-        }
-
-        // 2. Jeśli w klikniętym miejscu jest kolizja, znajdź najbliższe wolne
-        const searchRadius = 50; // Szukaj w promieniu 50cm
-        let minDistance = Infinity;
-
-        // Przeszukaj obszar wokół kliknięcia
-        for (let dy = -searchRadius; dy <= searchRadius; dy += 5) {
-            for (let dx = -searchRadius; dx <= searchRadius; dx += 5) {
-                const testX = clickX + dx;
-                const testY = clickY + dy;
-
-                if (!checkPanelCollision(testX, testY, width, height) &&
-                    checkPanelFits(testX, testY, width, height)) {
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    if (distance < minDistance) {
-                        minDistance = distance;
-                        bestX = testX;
-                        bestY = testY;
-                    }
-                }
-            }
-        }
-
-        // Snap do krawędzi paneli
+        // Dodaj prawe krawędzie wszystkich paneli jako potencjalne punkty snap
         panels.forEach(p => {
-            if (Math.abs(p.x + p.width - bestX) < SNAP_THRESHOLD) {
-                bestX = p.x + p.width;
-            }
-            if (Math.abs(p.x - width - bestX) < SNAP_THRESHOLD) {
-                bestX = p.x - width;
-            }
-            if (Math.abs(p.y + p.height - bestY) < SNAP_THRESHOLD) {
-                bestY = p.y + p.height;
-            }
-            if (Math.abs(p.y - height - bestY) < SNAP_THRESHOLD) {
-                bestY = p.y - height;
+            leftEdges.push(p.x + p.width); // Prawa krawędź panelu = lewa dla nowego
+        });
+
+        // Znajdź najbliższą krawędź w lewo od kliknięcia
+        let closestLeftEdge = 50; // Domyślnie lewa krawędź obszaru
+        let minLeftDistance = Infinity;
+
+        leftEdges.forEach(edge => {
+            if (edge <= clickX) { // Tylko krawędzie po lewej
+                const distance = clickX - edge;
+                if (distance < minLeftDistance) {
+                    minLeftDistance = distance;
+                    closestLeftEdge = edge;
+                }
             }
         });
 
-        return { x: bestX, y: bestY };
+        snapX = closestLeftEdge;
+
+        // 2. SNAP Y (w dół) - znajdź najbliższą krawędź poniżej
+        let bottomEdges = [0]; // Dolna krawędź obszaru (floor)
+
+        // Dodaj górne krawędzie wszystkich paneli jako potencjalne punkty snap
+        panels.forEach(p => {
+            bottomEdges.push(p.y + p.height); // Górna krawędź panelu = dolna dla nowego
+        });
+
+        // Znajdź najbliższą krawędź w dół od kliknięcia
+        let closestBottomEdge = 0; // Domyślnie dolna krawędź obszaru
+        let minBottomDistance = Infinity;
+
+        bottomEdges.forEach(edge => {
+            if (edge <= clickY) { // Tylko krawędzie poniżej
+                const distance = clickY - edge;
+                if (distance < minBottomDistance) {
+                    minBottomDistance = distance;
+                    closestBottomEdge = edge;
+                }
+            }
+        });
+
+        snapY = closestBottomEdge;
+
+        // 3. Sprawdź czy po snapie nie ma kolizji i panel się mieści
+        if (checkPanelCollision(snapX, snapY, width, height) ||
+            !checkPanelFits(snapX, snapY, width, height)) {
+            // Jeśli jest kolizja, spróbuj znaleźć najbliższe wolne miejsce
+            const searchRadius = 50;
+            let minDistance = Infinity;
+            let bestX = clickX;
+            let bestY = clickY;
+
+            for (let dy = -searchRadius; dy <= searchRadius; dy += 5) {
+                for (let dx = -searchRadius; dx <= searchRadius; dx += 5) {
+                    const testX = snapX + dx;
+                    const testY = snapY + dy;
+
+                    if (!checkPanelCollision(testX, testY, width, height) &&
+                        checkPanelFits(testX, testY, width, height)) {
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        if (distance < minDistance) {
+                            minDistance = distance;
+                            bestX = testX;
+                            bestY = testY;
+                        }
+                    }
+                }
+            }
+
+            return { x: bestX, y: bestY };
+        }
+
+        return { x: snapX, y: snapY };
     }
 
     // Sprawdza wysokość obszaru roboczego w danym punkcie X
@@ -1097,9 +1144,16 @@
                 fillColor = 'rgba(0, 123, 255, 0.15)';
             }
 
-            // Przeźroczysty prostokąt (bez strzałki)
+            // Przeźroczysty prostokąt
             previewSVG += `<rect x="${prevX}" y="${prevY}" width="${previewSize.width}" height="${previewSize.height}"
                 fill="${fillColor}" stroke="${strokeColor}" stroke-width="2" stroke-dasharray="5,5" pointer-events="none"/>`;
+
+            // Strzałka ↙ w lewym dolnym rogu (wewnątrz preview)
+            const arrowX = prevX + 15; // 15px od lewej krawędzi
+            const arrowY = prevY + previewSize.height - 15; // 15px od dolnej krawędzi
+            const arrowSize = 12;
+
+            previewSVG += `<text x="${arrowX}" y="${arrowY}" font-size="20" fill="${strokeColor}" font-weight="bold" pointer-events="none">↙</text>`;
         }
 
         // Wymiarowanie segmentów (wysokości)
