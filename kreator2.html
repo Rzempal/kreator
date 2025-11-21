@@ -1,4 +1,4 @@
-<!-- kreator2.html v0.011 Free placement: klikanie w obszar + snap to grid (siatka 5cm) -->
+<!-- kreator2.html v0.012 Smart snap: klikanie = preview, przycisk = dodanie, snap do krawędzi paneli -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -269,9 +269,9 @@
 
         <!-- TOP BAR: SZYBKIE DODAWANIE -->
         <div class="top-bar" id="topBar">
-            <div class="top-bar-title">Wybierz rozmiar:</div>
+            <div class="top-bar-title">Dodaj panel:</div>
             <div id="topVariantsButtons" style="display:flex; gap:8px; overflow-x:auto;"></div>
-            <div class="top-bar-title" style="margin-left:auto; font-size:0.75em; color:#999;">Kliknij w obszar roboczy aby dodać panel</div>
+            <div class="top-bar-title" style="margin-left:auto; font-size:0.75em; color:#999;">Kliknij w obszar aby ustawić pozycję preview</div>
         </div>
 
         <!-- WORKSPACE -->
@@ -332,8 +332,7 @@
     let zoomLevel = 1.0;
     let selectedPanelSize = null; // {width, height} - wybrany panel do dodania (hover)
     let lastUsedPanelSize = null; // {width, height} - ostatnio dodany panel (auto-preview)
-    let previewPosition = null; // {x, y} - pozycja preview (z myszki lub auto)
-    const GRID_SIZE = 5; // Siatka co 5cm
+    let previewPosition = null; // {x, y} - pozycja preview (z myszki lub smart snap)
     const STORAGE_KEY = 'panelConfig_V6_Saves';
 
     // --- INIT ---
@@ -389,13 +388,13 @@
     }
 
     function renderTopBar() {
-        // Przyciski w Top Bar (wybór rozmiaru)
+        // Przyciski w Top Bar (dodawanie paneli)
         const c = document.getElementById('topVariantsButtons');
         c.innerHTML = '';
         variants.forEach(v => {
             const btn = document.createElement('button');
             btn.className = 'panel-btn';
-            btn.innerHTML = `${v.width}×${v.height}`;
+            btn.innerHTML = `+ ${v.width}×${v.height}`;
             btn.onmouseenter = () => {
                 selectedPanelSize = {width: v.width, height: v.height};
                 draw();
@@ -407,7 +406,7 @@
             btn.onclick = () => {
                 selectedPanelSize = null;
                 lastUsedPanelSize = {width: v.width, height: v.height};
-                draw(); // Pokaż preview
+                addPanel(v.width, v.height);
             };
             c.appendChild(btn);
         });
@@ -459,9 +458,103 @@
 
     // --- 3. INTERAKCJA Z PROJEKTEM ---
 
-    // Przyciąganie do siatki
-    function snapToGrid(value) {
-        return Math.round(value / GRID_SIZE) * GRID_SIZE;
+    // Sprawdza kolizję z innymi panelami
+    function checkPanelCollision(x, y, width, height, excludeIndex = -1) {
+        for (let i = 0; i < panels.length; i++) {
+            if (i === excludeIndex) continue;
+            const p = panels[i];
+
+            // Sprawdź czy prostokąty się nakładają
+            if (!(x + width <= p.x || x >= p.x + p.width ||
+                  y + height <= p.y || y >= p.y + p.height)) {
+                return true; // Kolizja!
+            }
+        }
+        return false; // Brak kolizji
+    }
+
+    // Smart snap do pustej przestrzeni - dopasowanie do krawędzi
+    function findBestSnapPosition(clickX, clickY, width, height) {
+        const SNAP_THRESHOLD = 10; // Próg przyciągania (10cm)
+
+        let bestX = clickX;
+        let bestY = clickY;
+
+        // 1. Najpierw spróbuj dokładnie w klikniętym miejscu
+        if (!checkPanelCollision(clickX, clickY, width, height) &&
+            checkPanelFits(clickX, clickY, width, height)) {
+            // Snap do krawędzi najbliższych paneli
+            let snapX = clickX;
+            let snapY = clickY;
+
+            // Szukaj najbliższych krawędzi paneli
+            panels.forEach(p => {
+                // Snap do prawej krawędzi panelu (p.x + p.width)
+                if (Math.abs(p.x + p.width - clickX) < SNAP_THRESHOLD) {
+                    snapX = p.x + p.width;
+                }
+                // Snap do lewej krawędzi panelu (p.x - width)
+                if (Math.abs(p.x - width - clickX) < SNAP_THRESHOLD) {
+                    snapX = p.x - width;
+                }
+                // Snap do górnej krawędzi panelu (p.y + p.height)
+                if (Math.abs(p.y + p.height - clickY) < SNAP_THRESHOLD) {
+                    snapY = p.y + p.height;
+                }
+                // Snap do dolnej krawędzi panelu (p.y - height)
+                if (Math.abs(p.y - height - clickY) < SNAP_THRESHOLD) {
+                    snapY = p.y - height;
+                }
+            });
+
+            // Sprawdź czy po snapie dalej nie ma kolizji
+            if (!checkPanelCollision(snapX, snapY, width, height) &&
+                checkPanelFits(snapX, snapY, width, height)) {
+                return { x: snapX, y: snapY };
+            }
+
+            return { x: clickX, y: clickY };
+        }
+
+        // 2. Jeśli w klikniętym miejscu jest kolizja, znajdź najbliższe wolne
+        const searchRadius = 50; // Szukaj w promieniu 50cm
+        let minDistance = Infinity;
+
+        // Przeszukaj obszar wokół kliknięcia
+        for (let dy = -searchRadius; dy <= searchRadius; dy += 5) {
+            for (let dx = -searchRadius; dx <= searchRadius; dx += 5) {
+                const testX = clickX + dx;
+                const testY = clickY + dy;
+
+                if (!checkPanelCollision(testX, testY, width, height) &&
+                    checkPanelFits(testX, testY, width, height)) {
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        bestX = testX;
+                        bestY = testY;
+                    }
+                }
+            }
+        }
+
+        // Snap do krawędzi paneli
+        panels.forEach(p => {
+            if (Math.abs(p.x + p.width - bestX) < SNAP_THRESHOLD) {
+                bestX = p.x + p.width;
+            }
+            if (Math.abs(p.x - width - bestX) < SNAP_THRESHOLD) {
+                bestX = p.x - width;
+            }
+            if (Math.abs(p.y + p.height - bestY) < SNAP_THRESHOLD) {
+                bestY = p.y + p.height;
+            }
+            if (Math.abs(p.y - height - bestY) < SNAP_THRESHOLD) {
+                bestY = p.y - height;
+            }
+        });
+
+        return { x: bestX, y: bestY };
     }
 
     // Sprawdza wysokość obszaru roboczego w danym punkcie X
@@ -568,52 +661,44 @@
         let style = { type: 'color', value: '#cccccc' }; // Default
         if (activeTool !== 'eraser') style = { ...activeTool };
 
-        // Znajdź następną możliwą pozycję
-        const nextPos = findNextValidPosition(width, height);
+        let x, y;
 
-        if (!nextPos.fits) {
-            alert('Panel nie mieści się w obszarze roboczym!\nWybierz mniejszy panel.');
-            return;
+        // Użyj pozycji z preview (jeśli użytkownik kliknął w obszar) lub auto pozycja
+        if (previewPosition) {
+            x = previewPosition.x;
+            y = previewPosition.y;
+
+            // Sprawdź czy w tym miejscu panel się mieści
+            if (checkPanelCollision(x, y, width, height) || !checkPanelFits(x, y, width, height)) {
+                alert('Panel nie mieści się w wybranym miejscu!\nKliknij w inne miejsce lub wybierz mniejszy panel.');
+                return;
+            }
+
+            // Zresetuj preview po dodaniu
+            previewPosition = null;
+        } else {
+            // Brak preview - użyj auto pozycji (sekwencyjne dodawanie)
+            const nextPos = findNextValidPosition(width, height);
+
+            if (!nextPos.fits) {
+                alert('Panel nie mieści się w obszarze roboczym!\nWybierz mniejszy panel lub kliknij w obszar aby ustawić pozycję.');
+                return;
+            }
+
+            // Zaktualizuj tryb dla następnego automatycznego dodawania
+            if (nextPos.mode !== layoutMode) {
+                layoutMode = nextPos.mode;
+            }
+
+            x = nextPos.x;
+            y = nextPos.y;
         }
 
-        // Zaktualizuj tryb dla następnego automatycznego dodawania
-        if (nextPos.mode !== layoutMode) {
-            layoutMode = nextPos.mode;
-        }
-
-        panels.push({ width, height, x: nextPos.x, y: nextPos.y, style });
+        panels.push({ width, height, x, y, style });
 
         // Zapamiętaj rozmiar dla auto-preview
         lastUsedPanelSize = { width, height };
 
-        draw();
-        updateMappingUI();
-    }
-
-    function addPanelAtPosition(clickX, clickY) {
-        if (!lastUsedPanelSize) {
-            alert('Najpierw wybierz rozmiar panelu z górnego paska!');
-            return;
-        }
-
-        const width = lastUsedPanelSize.width;
-        const height = lastUsedPanelSize.height;
-
-        // Snap to grid
-        const x = snapToGrid(clickX);
-        const y = snapToGrid(clickY);
-
-        // Sprawdź czy panel mieści się w tym miejscu
-        if (!checkPanelFits(x, y, width, height)) {
-            alert('Panel nie mieści się w tym miejscu!\nWybierz inne miejsce lub mniejszy panel.');
-            return;
-        }
-
-        // Dodaj panel
-        let style = { type: 'color', value: '#cccccc' };
-        if (activeTool !== 'eraser') style = { ...activeTool };
-
-        panels.push({ width, height, x, y, style });
         draw();
         updateMappingUI();
     }
@@ -654,6 +739,7 @@
         const yFromBottom = floorY - coords.y;
         const x = coords.x;
 
+        // Smart snap (tylko podgląd, bez kolizji - pokazujemy gdzie będzie)
         previewPosition = { x, y: yFromBottom };
         draw();
     }
@@ -680,7 +766,10 @@
         const yFromBottom = floorY - coords.y - lastUsedPanelSize.height; // Pozycja lewego dolnego rogu
         const x = coords.x;
 
-        addPanelAtPosition(x, yFromBottom);
+        // Smart snap do pustej przestrzeni
+        const snapped = findBestSnapPosition(x, yFromBottom, lastUsedPanelSize.width, lastUsedPanelSize.height);
+        previewPosition = snapped; // Ustaw preview w snappowanym miejscu
+        draw();
     }
 
     function onPanelClick(index) {
@@ -976,14 +1065,10 @@
         if (previewSize) {
             let prevX, prevY;
 
-            // Użyj pozycji z myszy (jeśli istnieje) lub znajdź następną wolną
+            // Użyj pozycji z previewPosition (już snappowanej) lub znajdź następną wolną
             if (previewPosition) {
-                // Snap to grid
-                const snappedX = snapToGrid(previewPosition.x);
-                const snappedY = snapToGrid(previewPosition.y);
-
-                prevX = snappedX;
-                prevY = floorY - snappedY - previewSize.height;
+                prevX = previewPosition.x;
+                prevY = floorY - previewPosition.y - previewSize.height;
             } else {
                 // Fallback: znajdź następną pozycję automatycznie
                 const nextPos = findNextValidPosition(previewSize.width, previewSize.height);
@@ -996,11 +1081,12 @@
             // Sprawdź czy panel mieści się (dla kolorowania)
             const yFromBottom = floorY - prevY - previewSize.height;
             const fits = checkPanelFits(prevX, yFromBottom, previewSize.width, previewSize.height);
+            const hasCollision = checkPanelCollision(prevX, yFromBottom, previewSize.width, previewSize.height);
 
-            // Kolor: zielony dla hover, niebieski jeśli mieści się, czerwony jeśli nie
+            // Kolor: zielony dla hover, niebieski jeśli mieści się, czerwony jeśli kolizja lub nie mieści się
             const isHover = selectedPanelSize !== null;
             let strokeColor, fillColor;
-            if (!fits) {
+            if (!fits || hasCollision) {
                 strokeColor = '#dc3545'; // Czerwony
                 fillColor = 'rgba(220, 53, 69, 0.15)';
             } else if (isHover) {
