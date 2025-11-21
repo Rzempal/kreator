@@ -1,4 +1,4 @@
-<!-- kreator2.html v0.021 UX: komunikaty osadzone w projekcie (zamiast alert/confirm) -->
+<!-- kreator2.html v0.022 UX: panel poza obszarem (warning, przezroczystość, toggle przycisków) -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -693,7 +693,17 @@
             };
             btn.onclick = () => {
                 selectedPanelSize = null;
-                selectVariant(v.width, v.height);
+                // Toggle: jeśli już active, odkliknij (wyłącz preview)
+                if (isActive) {
+                    selectedVariant = null;
+                    lastUsedPanelSize = null;
+                    previewPosition = null;
+                    previewLocked = false;
+                } else {
+                    selectVariant(v.width, v.height);
+                }
+                renderTopBar();
+                draw();
             };
             c.appendChild(btn);
         });
@@ -1070,8 +1080,8 @@
             const nextPos = findNextValidPosition(width, height);
 
             if (!nextPos.fits) {
-                showProjectMessage('Panel nie mieści się w obszarze roboczym! Wybierz mniejszy panel lub kliknij w obszar aby ustawić pozycję.', 'error');
-                return;
+                showProjectMessage('Panel częściowo poza obszarem i zostanie ucięty', 'warning');
+                // Pozwól dodać panel mimo że częściowo poza obszarem
             }
 
             // Zaktualizuj tryb dla następnego automatycznego dodawania
@@ -1558,16 +1568,6 @@
         const uTex = [...new Set(panels.filter(p=>p.style.type==='image').map(p=>p.style.value))];
         uTex.forEach((src,i)=> defs+=`<pattern id="pt${i}" patternUnits="userSpaceOnUse" width="50" height="50"><image href="${src}" x="0" y="0" width="50" height="50" preserveAspectRatio="xMidYMid slice"/></pattern>`);
 
-        // Dodaj wzory overflow do defs (szare linie ukośne dla części poza obszarem - "do ucięcia")
-        panels.forEach((p, i) => {
-            const fits = checkPanelFits(p.x, p.y, p.width, p.height);
-            if (!fits) {
-                defs += `<pattern id="ovf${i}" patternUnits="userSpaceOnUse" width="10" height="10" patternTransform="rotate(45)">
-                    <line x1="0" y1="0" x2="0" y2="10" stroke="#999" stroke-width="2"/>
-                </pattern>`;
-            }
-        });
-
         const pSvg = panels.map((p,i)=>{
             const fill = p.style.type==='color' ? p.style.value : `url(#pt${uTex.indexOf(p.style.value)})`;
             const cls = activeTool==='eraser' ? 'panel-rect delete-mode' : 'panel-rect';
@@ -1590,8 +1590,8 @@
             const textColor = getContrastColor(p.style.value);
 
             return `<g onclick="onPanelClick(${i})">
-                <rect x="${panelX}" y="${panelY}" width="${p.width}" height="${p.height}" fill="${fill}" class="${cls}"/>
-                ${fits ? '' : `<rect x="${panelX}" y="${panelY}" width="${p.width}" height="${p.height}" fill="url(#ovf${i})" opacity="0.4" pointer-events="none"/>`}
+                ${!fits ? `<rect x="${panelX}" y="${panelY}" width="${p.width}" height="${p.height}" fill="${fill}" opacity="0.3" stroke="#999" stroke-width="2" stroke-dasharray="5,5" pointer-events="none"/>` : ''}
+                <rect x="${panelX}" y="${panelY}" width="${p.width}" height="${p.height}" fill="${fill}" ${!fits ? 'clip-path="url(#wc)"' : ''} class="${cls}"/>
                 <text x="${panelX + p.width/2}" y="${widthTextY}" text-anchor="middle" class="dim-text-panel" fill="${textColor.fill}" style="text-shadow: ${textColor.shadow}">${p.width}</text>
                 <text x="${heightTextX}" y="${heightTextY}" text-anchor="middle" class="dim-text-panel" fill="${textColor.fill}" style="text-shadow: ${textColor.shadow}" transform="rotate(-90 ${heightTextX} ${heightTextY})">${p.height}</text>
                 <line x1="${panelX}" y1="${panelY}" x2="${panelX}" y2="${panelY + p.height}" stroke="rgba(0,0,0,0.15)" stroke-width="1"/>
