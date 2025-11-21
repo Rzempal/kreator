@@ -1,4 +1,4 @@
-<!-- kreator2.html v0.018 Fix: wycena + wymiary wewnątrz paneli (font 11px, automatyczny kontrast tekstu, import danych cenowych) -->
+<!-- kreator2.html v0.019 UX: nagłówek "Projekt", przycisk czyszczenia, szczegółowa lista materiałów w wycenie -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -260,9 +260,15 @@
                 <label style="font-weight:normal;"><input type="checkbox" id="optVelcro" onchange="recalculatePrice()"> Rzep montażowy</label>
                 <label style="font-weight:normal;"><input type="checkbox" id="optShipping" checked onchange="recalculatePrice()"> Wysyłka</label>
             </div>
-            <div class="form-group">
-                <label>Klej (szt):</label>
-                <input type="number" id="optGlue" value="0" onchange="recalculatePrice()">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                <div class="form-group">
+                    <label>Otwory na kontakt (szt):</label>
+                    <input type="number" id="optOutlets" value="0" min="0" onchange="recalculatePrice()">
+                </div>
+                <div class="form-group">
+                    <label>Klej (szt):</label>
+                    <input type="number" id="optGlue" value="0" min="0" onchange="recalculatePrice()">
+                </div>
             </div>
 
             <div class="price-summary">
@@ -282,6 +288,11 @@
 
     <!-- 2. PRAWA STRONA (PROJEKT) -->
     <div class="project-area">
+
+        <!-- NAGŁÓWEK PROJEKTU -->
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 20px; border-radius: 8px 8px 0 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+            <h2 style="margin: 0; font-size: 1.3em; font-weight: 600;">Projekt</h2>
+        </div>
 
         <!-- TOP BAR: SZYBKIE DODAWANIE -->
         <div class="top-bar" id="topBar">
@@ -306,7 +317,8 @@
                     <span id="zoomLabel">100%</span>
                     <button onclick="changeZoom(0.1)" class="btn-secondary" style="padding:2px 6px;">+</button>
                     <span style="color:#ccc">|</span>
-                    <button onclick="undoPanel()" class="btn-secondary" title="Cofnij" style="padding:2px 6px;">↩</button>
+                    <button onclick="undoPanel()" class="btn-secondary" title="Cofnij ostatni panel" style="padding:2px 6px;">↩</button>
+                    <button onclick="clearWorkspace()" class="btn-secondary" title="Wyczyść obszar roboczy" style="padding:2px 6px;">🗑️</button>
                 </div>
             </div>
         </div>
@@ -988,6 +1000,18 @@
 
     function undoPanel() { panels.pop(); draw(); updateMappingUI(); }
 
+    function clearWorkspace() {
+        if (panels.length === 0) {
+            alert('Obszar roboczy jest już pusty!');
+            return;
+        }
+        if (confirm(`Czy na pewno chcesz usunąć wszystkie panele (${panels.length} szt)?`)) {
+            panels = [];
+            draw();
+            updateMappingUI();
+        }
+    }
+
     // --- 4. ZAPIS (FIFO) ---
     function saveCurrentLayout() {
         let saves = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
@@ -1137,13 +1161,23 @@
     }
 
     function recalculatePrice() {
-        let total = 0, area = 0;
         const opts = {
             foam: document.getElementById('optFoam').checked,
             velcro: document.getElementById('optVelcro').checked,
             glue: parseInt(document.getElementById('optGlue').value)||0,
+            outlets: parseInt(document.getElementById('optOutlets')?.value || 0),
             shipping: document.getElementById('optShipping').checked
         };
+
+        if (panels.length === 0) {
+            document.getElementById('totalPriceDisplay').innerText = "0.00 zł";
+            document.getElementById('priceDetails').innerHTML = '<div style="color:#999; font-size:0.9em;">Brak paneli</div>';
+            return;
+        }
+
+        // GRUPOWANIE PANELI (rozmiar × tkanina)
+        const groups = {};
+        let totalArea = 0;
 
         panels.forEach(p => {
             const col = styleMapping[p.style.value] || 'DIANA';
@@ -1151,10 +1185,22 @@
             if (Collections.Premium.includes(col)) category = 'Premium';
             if (Collections.Exclusive.includes(col)) category = 'Exclusive';
 
-            // Pobierz cenę z cennika (rozmiary.js)
             const key = `${p.width}x${p.height}`;
-            let base = 0;
+            const groupKey = `${key}|${col}|${category}`;
 
+            if (!groups[groupKey]) {
+                groups[groupKey] = {
+                    size: `${p.width}×${p.height} cm`,
+                    fabric: col,
+                    category: category,
+                    count: 0,
+                    unitPrice: 0,
+                    area: 0
+                };
+            }
+
+            // Pobierz cenę jednostkową
+            let base = 0;
             if (category === 'Standard' && RozmStandard[key]) {
                 base = RozmStandard[key];
             } else if (category === 'Premium' && RozmPremium[key]) {
@@ -1162,24 +1208,133 @@
             } else if (category === 'Exclusive' && RozmExclusive[key]) {
                 base = RozmExclusive[key];
             } else {
-                // Fallback: cena za m² (300 zł/m²)
                 base = ((p.width * p.height) / 10000) * 300;
             }
 
-            let extra = 0;
-            const m2 = (p.width * p.height) / 10000;
-            if(opts.foam) extra += (m2 < 0.4 ? 6 : 15);
-            if(opts.velcro) extra += (m2 < 0.4 ? 8 : 20);
-
-            total += base + extra;
-            area += m2;
+            groups[groupKey].count++;
+            groups[groupKey].unitPrice = base;
+            groups[groupKey].area += (p.width * p.height) / 10000;
+            totalArea += (p.width * p.height) / 10000;
         });
 
-        total += opts.glue * 36;
-        if(opts.shipping && panels.length > 0) total += 39;
+        // GENEROWANIE LISTY MATERIAŁÓW
+        let html = '<div style="font-size:0.85em; line-height:1.6;">';
 
-        document.getElementById('totalPriceDisplay').innerText = total.toFixed(2) + " zł";
-        document.getElementById('priceDetails').innerHTML = `Pow: ${area.toFixed(2)} m² | Paneli: ${panels.length}`;
+        // === PANELE ===
+        html += '<div style="font-weight:bold; margin-bottom:8px; padding-bottom:4px; border-bottom:2px solid #28a745; color:#28a745;">═══ PANELE ═══</div>';
+        let panelsTotal = 0;
+
+        Object.values(groups).forEach(g => {
+            const subtotal = g.count * g.unitPrice;
+            panelsTotal += subtotal;
+            html += `<div style="margin-bottom:4px; padding-left:8px;">
+                <span style="font-weight:500;">${g.size}</span>
+                <span style="color:#666;">(${g.fabric})</span> -
+                ${g.count} szt × ${g.unitPrice.toFixed(2)} zł =
+                <span style="font-weight:bold;">${subtotal.toFixed(2)} zł</span>
+            </div>`;
+        });
+
+        // === DODATKI ===
+        html += '<div style="font-weight:bold; margin:12px 0 8px 0; padding-bottom:4px; border-bottom:2px solid #ff9800; color:#ff9800;">═══ DODATKI ═══</div>';
+        let extrasTotal = 0;
+
+        // Pianka
+        if (opts.foam) {
+            let foamCost = 0;
+            let foamDetails = [];
+            panels.forEach(p => {
+                const m2 = (p.width * p.height) / 10000;
+                let cost = 0;
+                if (m2 < 0.4) cost = 6;
+                else if (m2 < 0.9) cost = 15;
+                else if (m2 < 1.5) cost = 30;
+                else if (m2 < 2.0) cost = 60;
+                else cost = 100;
+                foamCost += cost;
+            });
+            extrasTotal += foamCost;
+            html += `<div style="margin-bottom:4px; padding-left:8px;">
+                ☑ Podwójna pianka - ${panels.length} paneli (6-100 zł) =
+                <span style="font-weight:bold;">${foamCost.toFixed(2)} zł</span>
+            </div>`;
+        }
+
+        // Rzep
+        if (opts.velcro) {
+            let velcroCost = 0;
+            panels.forEach(p => {
+                const m2 = (p.width * p.height) / 10000;
+                let cost = 0;
+                if (m2 < 0.4) cost = 8;
+                else if (m2 < 0.9) cost = 20;
+                else if (m2 < 1.5) cost = 40;
+                else if (m2 < 2.0) cost = 70;
+                else cost = 120;
+                velcroCost += cost;
+            });
+            extrasTotal += velcroCost;
+            html += `<div style="margin-bottom:4px; padding-left:8px;">
+                ☑ Rzep montażowy - ${panels.length} paneli (8-120 zł) =
+                <span style="font-weight:bold;">${velcroCost.toFixed(2)} zł</span>
+            </div>`;
+        }
+
+        // Otwory na kontakt
+        if (opts.outlets > 0) {
+            const outletsCost = opts.outlets * 39;
+            extrasTotal += outletsCost;
+            html += `<div style="margin-bottom:4px; padding-left:8px;">
+                Otwory na kontakt - ${opts.outlets} szt × 39 zł =
+                <span style="font-weight:bold;">${outletsCost.toFixed(2)} zł</span>
+            </div>`;
+        }
+
+        // Klej
+        if (opts.glue > 0) {
+            const glueCost = opts.glue * 36;
+            extrasTotal += glueCost;
+            html += `<div style="margin-bottom:4px; padding-left:8px;">
+                Klej montażowy - ${opts.glue} szt × 36 zł =
+                <span style="font-weight:bold;">${glueCost.toFixed(2)} zł</span>
+            </div>`;
+        }
+
+        if (extrasTotal === 0) {
+            html += '<div style="margin-bottom:4px; padding-left:8px; color:#999;">Brak wybranych dodatków</div>';
+        }
+
+        // === LOGISTYKA ===
+        html += '<div style="font-weight:bold; margin:12px 0 8px 0; padding-bottom:4px; border-bottom:2px solid #2196f3; color:#2196f3;">═══ LOGISTYKA ═══</div>';
+        let shippingCost = 0;
+        if (opts.shipping) {
+            shippingCost = 39; // Uproszczona wersja, można rozszerzyć o kalkulację gabarytu
+            html += `<div style="margin-bottom:4px; padding-left:8px;">
+                ☑ Wysyłka = <span style="font-weight:bold;">${shippingCost.toFixed(2)} zł</span>
+            </div>`;
+        } else {
+            html += '<div style="margin-bottom:4px; padding-left:8px; color:#999;">Brak wysyłki</div>';
+        }
+
+        // === PODSUMOWANIE ===
+        html += '<div style="font-weight:bold; margin:12px 0 8px 0; padding-bottom:4px; border-bottom:2px solid #333; color:#333;">═══ PODSUMOWANIE ═══</div>';
+        html += `<div style="margin-bottom:4px; padding-left:8px;">
+            Suma paneli: <span style="font-weight:bold;">${panelsTotal.toFixed(2)} zł</span>
+            <span style="color:#666;">(${panels.length} szt, ${totalArea.toFixed(2)} m²)</span>
+        </div>`;
+        html += `<div style="margin-bottom:4px; padding-left:8px;">
+            Suma dodatków: <span style="font-weight:bold;">${extrasTotal.toFixed(2)} zł</span>
+        </div>`;
+        html += `<div style="margin-bottom:4px; padding-left:8px;">
+            Wysyłka: <span style="font-weight:bold;">${shippingCost.toFixed(2)} zł</span>
+        </div>`;
+        html += '<div style="margin-top:8px; padding-top:8px; border-top:2px solid #333;"></div>';
+
+        const grandTotal = panelsTotal + extrasTotal + shippingCost;
+        html += '</div>';
+
+        document.getElementById('totalPriceDisplay').innerText = grandTotal.toFixed(2) + " zł";
+        document.getElementById('priceDetails').innerHTML = html;
     }
 
     // --- 7. WIZUALIZACJA ---
