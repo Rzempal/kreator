@@ -241,7 +241,7 @@ W sekcji "Wycena i Materiały":
 
 ```
 kreator/
-├── kreator2.html           # Główny plik aplikacji (all-in-one)
+├── kreator.html           # Główny plik aplikacji (all-in-one)
 ├── references/
 │   ├── analiza_cenowa.md   # Dokumentacja algorytmów wyceny
 │   ├── rozmiary.js         # Tabele cenowe (referencyjna kopia)
