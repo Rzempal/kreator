@@ -1,4 +1,4 @@
-<!-- kreator2.html v0.014 Fix: snap do wszystkich 4 krawędzi paneli (lewo, prawo, góra, dół) -->
+<!-- kreator2.html v0.015 Fix: zamrożenie preview po snapie (możliwość dojechania do przycisku Dodaj) -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -349,6 +349,7 @@
     let selectedPanelSize = null; // {width, height} - wybrany panel do dodania (hover)
     let lastUsedPanelSize = null; // {width, height} - ostatnio dodany panel (auto-preview)
     let previewPosition = null; // {x, y} - pozycja preview (z myszki lub smart snap)
+    let previewLocked = false; // Czy preview jest "zamrożony" po snapie
     let selectedVariant = null; // {width, height} - aktywnie wybrany rozmiar (dla podświetlenia)
     const STORAGE_KEY = 'panelConfig_V6_Saves';
 
@@ -408,6 +409,7 @@
         selectedVariant = {width, height};
         lastUsedPanelSize = {width, height};
         previewPosition = null; // Reset preview position przy zmianie rozmiaru
+        previewLocked = false; // Odblokuj preview przy zmianie rozmiaru
         renderTopBar(); // Odśwież aby pokazać active state
         draw();
     }
@@ -725,6 +727,7 @@
 
             // Zresetuj preview po dodaniu
             previewPosition = null;
+            previewLocked = false;
         } else {
             // Brak preview - użyj auto pozycji (sekwencyjne dodawanie)
             const nextPos = findNextValidPosition(width, height);
@@ -767,6 +770,11 @@
     function onCanvasMouseMove(event) {
         if (!lastUsedPanelSize) {
             previewPosition = null;
+            return;
+        }
+
+        // Jeśli preview jest zamrożony (po snapie), nie aktualizuj pozycji
+        if (previewLocked) {
             return;
         }
 
@@ -818,6 +826,7 @@
         // Smart snap do pustej przestrzeni
         const snapped = findBestSnapPosition(x, yFromBottom, lastUsedPanelSize.width, lastUsedPanelSize.height);
         previewPosition = snapped; // Ustaw preview w snappowanym miejscu
+        previewLocked = true; // Zamroź preview po snapie
         draw();
     }
 
