@@ -1,4 +1,4 @@
-<!-- kreator2.html v0.019 UX: nagłówek "Projekt", przycisk czyszczenia, szczegółowa lista materiałów w wycenie -->
+<!-- kreator2.html v0.020 Feature: dodawanie paneli na skosach (żółty preview, szare oznaczenie części do ucięcia) -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -877,9 +877,9 @@
             x = previewPosition.x;
             y = previewPosition.y;
 
-            // Sprawdź czy w tym miejscu panel się mieści
-            if (checkPanelCollision(x, y, width, height) || !checkPanelFits(x, y, width, height)) {
-                alert('Panel nie mieści się w wybranym miejscu!\nKliknij w inne miejsce lub wybierz mniejszy panel.');
+            // Sprawdź kolizję z innymi panelami (można dodać panel częściowo poza obszarem, ale nie na innym panelu)
+            if (checkPanelCollision(x, y, width, height)) {
+                alert('Panel koliduje z innym panelem!\nKliknij w inne miejsce lub wybierz mniejszy panel.');
                 return;
             }
 
@@ -1379,12 +1379,12 @@
         const uTex = [...new Set(panels.filter(p=>p.style.type==='image').map(p=>p.style.value))];
         uTex.forEach((src,i)=> defs+=`<pattern id="pt${i}" patternUnits="userSpaceOnUse" width="50" height="50"><image href="${src}" x="0" y="0" width="50" height="50" preserveAspectRatio="xMidYMid slice"/></pattern>`);
 
-        // Dodaj wzory overflow do defs
+        // Dodaj wzory overflow do defs (szare linie ukośne dla części poza obszarem - "do ucięcia")
         panels.forEach((p, i) => {
             const fits = checkPanelFits(p.x, p.y, p.width, p.height);
             if (!fits) {
                 defs += `<pattern id="ovf${i}" patternUnits="userSpaceOnUse" width="10" height="10" patternTransform="rotate(45)">
-                    <line x1="0" y1="0" x2="0" y2="10" stroke="#dc3545" stroke-width="2"/>
+                    <line x1="0" y1="0" x2="0" y2="10" stroke="#999" stroke-width="2"/>
                 </pattern>`;
             }
         });
@@ -1445,17 +1445,24 @@
             const fits = checkPanelFits(prevX, yFromBottom, previewSize.width, previewSize.height);
             const hasCollision = checkPanelCollision(prevX, yFromBottom, previewSize.width, previewSize.height);
 
-            // Kolor: zielony dla hover, niebieski jeśli mieści się, czerwony jeśli kolizja lub nie mieści się
+            // Kolor preview: czerwony (kolizja), żółty (poza obszarem), zielony (hover OK), niebieski (auto-preview OK)
             const isHover = selectedPanelSize !== null;
             let strokeColor, fillColor;
-            if (!fits || hasCollision) {
-                strokeColor = '#dc3545'; // Czerwony
+            if (hasCollision) {
+                // 🔴 Czerwony - kolizja z innym panelem (BLOKADA)
+                strokeColor = '#dc3545';
                 fillColor = 'rgba(220, 53, 69, 0.15)';
+            } else if (!fits) {
+                // 🟡 Żółty - częściowo poza obszarem (OSTRZEŻENIE - można dodać)
+                strokeColor = '#ffc107';
+                fillColor = 'rgba(255, 193, 7, 0.15)';
             } else if (isHover) {
-                strokeColor = '#28a745'; // Zielony
+                // 🟢 Zielony - hover, wszystko OK
+                strokeColor = '#28a745';
                 fillColor = 'rgba(40, 167, 69, 0.2)';
             } else {
-                strokeColor = '#007bff'; // Niebieski
+                // 🔵 Niebieski - auto-preview, wszystko OK
+                strokeColor = '#007bff';
                 fillColor = 'rgba(0, 123, 255, 0.15)';
             }
 
