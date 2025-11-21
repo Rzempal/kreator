@@ -1,4 +1,4 @@
-<!-- kreator2.html v0.020 Feature: dodawanie paneli na skosach (żółty preview, szare oznaczenie części do ucięcia) -->
+<!-- kreator2.html v0.021 UX: komunikaty osadzone w projekcie (zamiast alert/confirm) -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -206,6 +206,104 @@
         /* Zapis */
         .save-slot { background: #f8f9fa; border: 1px solid #eee; padding: 8px; margin-bottom: 5px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85em; }
 
+        /* Komunikaty projektu */
+        .project-messages {
+            position: relative;
+            min-height: 0;
+            transition: all 0.3s ease;
+        }
+        .project-message {
+            padding: 12px 20px;
+            margin: 10px 20px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            font-size: 0.9em;
+            animation: slideDown 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .project-message-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+        .project-message-icon {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .project-message-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .project-message-success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+        .project-message-error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+        .project-message-warning {
+            background: #fff3cd;
+            color: #856404;
+            border-left: 4px solid #ffc107;
+        }
+        .project-message-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-left: 4px solid #17a2b8;
+        }
+        .project-message-close {
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            opacity: 0.6;
+            padding: 0 5px;
+            line-height: 1;
+        }
+        .project-message-close:hover {
+            opacity: 1;
+        }
+        .project-message-btn {
+            padding: 4px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .project-message-btn-primary {
+            background: #28a745;
+            color: white;
+        }
+        .project-message-btn-primary:hover {
+            background: #218838;
+        }
+        .project-message-btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .project-message-btn-secondary:hover {
+            background: #5a6268;
+        }
+        @keyframes slideDown {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
         @media (max-width: 900px) {
             .layout { grid-template-columns: 1fr; height: auto; display: block; }
             .controls { height: auto; margin-bottom: 20px; overflow: visible; }
@@ -300,6 +398,9 @@
             <div id="topVariantsButtons" style="display:flex; gap:8px; overflow-x:auto;"></div>
             <div class="top-bar-title" style="margin-left:auto; font-size:0.75em; color:#999;">Kliknij w obszar aby ustawić pozycję preview</div>
         </div>
+
+        <!-- KOMUNIKATY PROJEKTU -->
+        <div id="projectMessages" class="project-messages"></div>
 
         <!-- WORKSPACE -->
         <div class="workspace">
@@ -423,6 +524,84 @@
     let selectedVariant = null; // {width, height} - aktywnie wybrany rozmiar (dla podświetlenia)
     const STORAGE_KEY = 'panelConfig_V6_Saves';
 
+    // --- SYSTEM KOMUNIKATÓW PROJEKTU ---
+    function showProjectMessage(text, type = 'info', duration = 4000) {
+        const container = document.getElementById('projectMessages');
+
+        // Usuń poprzednie komunikaty
+        container.innerHTML = '';
+
+        // Ikony dla typów
+        const icons = {
+            success: '✓',
+            info: 'ℹ',
+            warning: '⚠',
+            error: '✕'
+        };
+
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `project-message project-message-${type}`;
+        messageDiv.innerHTML = `
+            <div class="project-message-content">
+                <span class="project-message-icon">${icons[type]}</span>
+                <span>${text}</span>
+            </div>
+            <button class="project-message-close" onclick="this.parentElement.remove()">×</button>
+        `;
+
+        container.appendChild(messageDiv);
+
+        // Auto-hide po określonym czasie
+        if (duration > 0) {
+            setTimeout(() => {
+                if (messageDiv.parentElement) {
+                    messageDiv.remove();
+                }
+            }, duration);
+        }
+    }
+
+    function showProjectConfirm(text, onConfirm) {
+        const container = document.getElementById('projectMessages');
+
+        // Usuń poprzednie komunikaty
+        container.innerHTML = '';
+
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'project-message project-message-warning';
+        messageDiv.innerHTML = `
+            <div class="project-message-content">
+                <span class="project-message-icon">⚠</span>
+                <span>${text}</span>
+            </div>
+            <div class="project-message-actions">
+                <button class="project-message-btn project-message-btn-primary" onclick="handleConfirmYes()">TAK</button>
+                <button class="project-message-btn project-message-btn-secondary" onclick="handleConfirmNo()">ANULUJ</button>
+            </div>
+        `;
+
+        container.appendChild(messageDiv);
+
+        // Przechowuj callback w globalnej zmiennej tymczasowej
+        window._projectConfirmCallback = () => {
+            messageDiv.remove();
+            onConfirm();
+        };
+    }
+
+    function handleConfirmYes() {
+        if (window._projectConfirmCallback) {
+            window._projectConfirmCallback();
+            delete window._projectConfirmCallback;
+        }
+    }
+
+    function handleConfirmNo() {
+        const container = document.getElementById('projectMessages');
+        container.innerHTML = '';
+        delete window._projectConfirmCallback;
+    }
+
     // --- INIT ---
     document.addEventListener('DOMContentLoaded', () => {
         renderSegmentsList();
@@ -486,7 +665,7 @@
 
     function addPanelFromButton() {
         if (!lastUsedPanelSize) {
-            alert('Najpierw wybierz rozmiar panelu!');
+            showProjectMessage('Najpierw wybierz rozmiar panelu!', 'warning');
             return;
         }
         addPanel(lastUsedPanelSize.width, lastUsedPanelSize.height);
@@ -879,7 +1058,7 @@
 
             // Sprawdź kolizję z innymi panelami (można dodać panel częściowo poza obszarem, ale nie na innym panelu)
             if (checkPanelCollision(x, y, width, height)) {
-                alert('Panel koliduje z innym panelem!\nKliknij w inne miejsce lub wybierz mniejszy panel.');
+                showProjectMessage('Panel koliduje z innym panelem! Kliknij w inne miejsce lub wybierz mniejszy panel.', 'error');
                 return;
             }
 
@@ -891,7 +1070,7 @@
             const nextPos = findNextValidPosition(width, height);
 
             if (!nextPos.fits) {
-                alert('Panel nie mieści się w obszarze roboczym!\nWybierz mniejszy panel lub kliknij w obszar aby ustawić pozycję.');
+                showProjectMessage('Panel nie mieści się w obszarze roboczym! Wybierz mniejszy panel lub kliknij w obszar aby ustawić pozycję.', 'error');
                 return;
             }
 
@@ -1002,14 +1181,14 @@
 
     function clearWorkspace() {
         if (panels.length === 0) {
-            alert('Obszar roboczy jest już pusty!');
+            showProjectMessage('Obszar roboczy jest już pusty!', 'info');
             return;
         }
-        if (confirm(`Czy na pewno chcesz usunąć wszystkie panele (${panels.length} szt)?`)) {
+        showProjectConfirm(`Czy na pewno chcesz usunąć wszystkie panele (${panels.length} szt)?`, () => {
             panels = [];
             draw();
             updateMappingUI();
-        }
+        });
     }
 
     // --- 4. ZAPIS (FIFO) ---
