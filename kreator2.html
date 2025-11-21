@@ -1,4 +1,4 @@
-<!-- kreator2.html v0.015 Fix: zamrożenie preview po snapie (możliwość dojechania do przycisku Dodaj) -->
+<!-- kreator2.html v0.016 Fix: priorytet osi Y przy snapowaniu (preferowanie układania NAD zamiast OBOK) -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -579,20 +579,33 @@
         // 3. Sprawdź czy po snapie nie ma kolizji i panel się mieści
         if (checkPanelCollision(snapX, snapY, width, height) ||
             !checkPanelFits(snapX, snapY, width, height)) {
-            // Jeśli jest kolizja, spróbuj znaleźć najbliższe wolne miejsce
+
             const searchRadius = 50;
             let minDistance = Infinity;
-            let bestX = clickX;
-            let bestY = clickY;
+            let bestX = snapX;
+            let bestY = snapY;
 
-            for (let dy = -searchRadius; dy <= searchRadius; dy += 5) {
+            // PRIORYTET 1: Spróbuj zachować snapY (przesuwaj tylko X w prawo)
+            // To preferuje układanie NAD istniejącymi panelami
+            for (let dx = 5; dx <= searchRadius; dx += 5) {
+                const testX = snapX + dx;
+                if (!checkPanelCollision(testX, snapY, width, height) &&
+                    checkPanelFits(testX, snapY, width, height)) {
+                    return { x: testX, y: snapY }; // Znaleziono! Zachowano Y
+                }
+            }
+
+            // PRIORYTET 2: Szukaj w innych kierunkach z wagą preferującą małe zmiany Y
+            // Waga: małe zmiany Y są 3x lepsze niż małe zmiany X
+            for (let dy = 5; dy <= searchRadius; dy += 5) {
                 for (let dx = -searchRadius; dx <= searchRadius; dx += 5) {
                     const testX = snapX + dx;
                     const testY = snapY + dy;
 
                     if (!checkPanelCollision(testX, testY, width, height) &&
                         checkPanelFits(testX, testY, width, height)) {
-                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        // Waga: małe zmiany Y są bardziej preferowane (mnożnik 3)
+                        const distance = Math.sqrt(dx * dx + (dy * 3) * (dy * 3));
                         if (distance < minDistance) {
                             minDistance = distance;
                             bestX = testX;
