@@ -1,4 +1,4 @@
-<!-- kreator2.html v0.022 UX: panel poza obszarem (warning, przezroczystość, toggle przycisków) -->
+<!-- kreator2.html v0.023 Fix: bugi z dodawaniem paneli (pozycja + false positive warning) -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -989,10 +989,11 @@
         if (wallData.segments.length === 0) return true;
 
         // Sprawdź czy panel nie wychodzi poza szerokość obszaru
-        let totalWidth = 50; // startX
+        let totalWidth = 0;
         wallData.segments.forEach(s => totalWidth += s.width);
+        const maxX = 50 + totalWidth; // startX + suma szerokości segmentów
 
-        if (x + width > totalWidth + 50) return false;
+        if (x + width > maxX) return false;
 
         // Sprawdź czy panel nie wychodzi ponad wysokość w każdym punkcie
         const samples = 5; // Sprawdź w 5 punktach szerokości panelu
@@ -1026,6 +1027,10 @@
             }
         }
 
+        // Zapamiętaj pierwotną pozycję (z layoutMode)
+        const x1 = x;
+        const y1 = y;
+
         // Sprawdź czy pasuje w bieżącym trybie
         if (checkPanelFits(x, y, width, height)) {
             return { x, y, mode: layoutMode, fits: true };
@@ -1050,8 +1055,8 @@
             return { x, y, mode: altMode, fits: true };
         }
 
-        // Nic nie pasuje
-        return { x, y, mode: layoutMode, fits: false };
+        // Nic nie pasuje - zwróć PIERWOTNĄ pozycję (z layoutMode)
+        return { x: x1, y: y1, mode: layoutMode, fits: false };
     }
 
     function addPanel(width, height) {
