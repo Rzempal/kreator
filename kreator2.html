@@ -1,4 +1,4 @@
-<!-- kreator2.html v0.010 Auto-preview: stały podgląd ostatnio użytego rozmiaru (desktop + mobile) -->
+<!-- kreator2.html v0.011 Free placement: klikanie w obszar + snap to grid (siatka 5cm) -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -269,9 +269,9 @@
 
         <!-- TOP BAR: SZYBKIE DODAWANIE -->
         <div class="top-bar" id="topBar">
-            <div class="top-bar-title">Dodaj Panel:</div>
+            <div class="top-bar-title">Wybierz rozmiar:</div>
             <div id="topVariantsButtons" style="display:flex; gap:8px; overflow-x:auto;"></div>
-            <button class="mode-toggle" id="modeToggleBtn" onclick="toggleLayoutMode()">➡ Dodaj poziomo</button>
+            <div class="top-bar-title" style="margin-left:auto; font-size:0.75em; color:#999;">Kliknij w obszar roboczy aby dodać panel</div>
         </div>
 
         <!-- WORKSPACE -->
@@ -332,6 +332,8 @@
     let zoomLevel = 1.0;
     let selectedPanelSize = null; // {width, height} - wybrany panel do dodania (hover)
     let lastUsedPanelSize = null; // {width, height} - ostatnio dodany panel (auto-preview)
+    let previewPosition = null; // {x, y} - pozycja preview (z myszki lub auto)
+    const GRID_SIZE = 5; // Siatka co 5cm
     const STORAGE_KEY = 'panelConfig_V6_Saves';
 
     // --- INIT ---
@@ -343,6 +345,11 @@
         renderSaves();
         draw();
         updateMappingUI();
+
+        // Obsługa kliknięć w obszar roboczy
+        const svgWrapper = document.getElementById('svgWrapper');
+        svgWrapper.addEventListener('click', onCanvasClick);
+        svgWrapper.addEventListener('mousemove', onCanvasMouseMove);
     });
 
     // --- 1. ZARZĄDZANIE WARIANTAMI (SEKCJA 2 + TOP BAR) ---
@@ -382,13 +389,13 @@
     }
 
     function renderTopBar() {
-        // Przyciski w Top Bar (do używania)
+        // Przyciski w Top Bar (wybór rozmiaru)
         const c = document.getElementById('topVariantsButtons');
         c.innerHTML = '';
         variants.forEach(v => {
             const btn = document.createElement('button');
             btn.className = 'panel-btn';
-            btn.innerHTML = `+ ${v.width}×${v.height}`;
+            btn.innerHTML = `${v.width}×${v.height}`;
             btn.onmouseenter = () => {
                 selectedPanelSize = {width: v.width, height: v.height};
                 draw();
@@ -399,16 +406,11 @@
             };
             btn.onclick = () => {
                 selectedPanelSize = null;
-                addPanel(v.width, v.height);
+                lastUsedPanelSize = {width: v.width, height: v.height};
+                draw(); // Pokaż preview
             };
             c.appendChild(btn);
         });
-    }
-
-    function toggleLayoutMode() {
-        layoutMode = layoutMode === 'horizontal' ? 'vertical' : 'horizontal';
-        const btn = document.getElementById('modeToggleBtn');
-        btn.innerHTML = layoutMode === 'horizontal' ? '➡ Dodaj poziomo' : '⬆ Dodaj pionowo';
     }
 
     // --- 2. NARZĘDZIA (LEFT VERTICAL BAR) ---
@@ -456,6 +458,11 @@
     }
 
     // --- 3. INTERAKCJA Z PROJEKTEM ---
+
+    // Przyciąganie do siatki
+    function snapToGrid(value) {
+        return Math.round(value / GRID_SIZE) * GRID_SIZE;
+    }
 
     // Sprawdza wysokość obszaru roboczego w danym punkcie X
     function getHeightAtPosition(x) {
@@ -565,15 +572,13 @@
         const nextPos = findNextValidPosition(width, height);
 
         if (!nextPos.fits) {
-            alert('Panel nie mieści się w obszarze roboczym!\nWybierz mniejszy panel lub zmień tryb układania.');
+            alert('Panel nie mieści się w obszarze roboczym!\nWybierz mniejszy panel.');
             return;
         }
 
-        // Jeśli tryb się zmienił automatycznie, zaktualizuj UI
+        // Zaktualizuj tryb dla następnego automatycznego dodawania
         if (nextPos.mode !== layoutMode) {
             layoutMode = nextPos.mode;
-            const btn = document.getElementById('modeToggleBtn');
-            btn.innerHTML = layoutMode === 'horizontal' ? '➡ Dodaj poziomo' : '⬆ Dodaj pionowo';
         }
 
         panels.push({ width, height, x: nextPos.x, y: nextPos.y, style });
@@ -583,6 +588,99 @@
 
         draw();
         updateMappingUI();
+    }
+
+    function addPanelAtPosition(clickX, clickY) {
+        if (!lastUsedPanelSize) {
+            alert('Najpierw wybierz rozmiar panelu z górnego paska!');
+            return;
+        }
+
+        const width = lastUsedPanelSize.width;
+        const height = lastUsedPanelSize.height;
+
+        // Snap to grid
+        const x = snapToGrid(clickX);
+        const y = snapToGrid(clickY);
+
+        // Sprawdź czy panel mieści się w tym miejscu
+        if (!checkPanelFits(x, y, width, height)) {
+            alert('Panel nie mieści się w tym miejscu!\nWybierz inne miejsce lub mniejszy panel.');
+            return;
+        }
+
+        // Dodaj panel
+        let style = { type: 'color', value: '#cccccc' };
+        if (activeTool !== 'eraser') style = { ...activeTool };
+
+        panels.push({ width, height, x, y, style });
+        draw();
+        updateMappingUI();
+    }
+
+    function getSVGCoordinates(event) {
+        const svg = document.querySelector('#svgWrapper svg');
+        if (!svg) return null;
+
+        const pt = svg.createSVGPoint();
+        pt.x = event.clientX;
+        pt.y = event.clientY;
+
+        const svgP = pt.matrixTransform(svg.getScreenCTM().inverse());
+        return { x: svgP.x, y: svgP.y };
+    }
+
+    function onCanvasMouseMove(event) {
+        if (!lastUsedPanelSize) {
+            previewPosition = null;
+            return;
+        }
+
+        const coords = getSVGCoordinates(event);
+        if (!coords) return;
+
+        // Przelicz współrzędne z SVG (y od góry) na nasze (y od dołu)
+        // Znajdź floorY z obecnego obszaru
+        if (wallData.segments.length === 0) return;
+
+        let maxH = 0;
+        wallData.segments.forEach(s => {
+            maxH = Math.max(maxH, s.startHeight, s.endHeight);
+        });
+        const padY = 60;
+        const floorY = maxH + padY * 2 - padY;
+
+        // coords.y jest od góry SVG, musimy przeliczyć na y od dołu
+        const yFromBottom = floorY - coords.y;
+        const x = coords.x;
+
+        previewPosition = { x, y: yFromBottom };
+        draw();
+    }
+
+    function onCanvasClick(event) {
+        // Sprawdź czy kliknięto w panel (jeśli tak, niech onPanelClick to obsłuży)
+        if (event.target.closest('g[onclick]')) return;
+
+        if (!lastUsedPanelSize) return;
+
+        const coords = getSVGCoordinates(event);
+        if (!coords) return;
+
+        // Przelicz współrzędne z SVG (y od góry) na nasze (y od dołu)
+        if (wallData.segments.length === 0) return;
+
+        let maxH = 0;
+        wallData.segments.forEach(s => {
+            maxH = Math.max(maxH, s.startHeight, s.endHeight);
+        });
+        const padY = 60;
+        const floorY = maxH + padY * 2 - padY;
+
+        const yFromBottom = floorY - coords.y - lastUsedPanelSize.height; // Pozycja lewego dolnego rogu
+        const x = coords.x;
+
+        addPanelAtPosition(x, yFromBottom);
     }
 
     function onPanelClick(index) {
@@ -636,9 +734,6 @@
             variants = s.variants || variants;
             styleMapping = s.mapping || {};
             layoutMode = s.mode || 'horizontal';
-
-            const btn = document.getElementById('modeToggleBtn');
-            btn.innerHTML = layoutMode === 'horizontal' ? '➡ Dodaj poziomo' : '⬆ Dodaj pionowo';
 
             draw();
             renderSegmentsList();
@@ -874,33 +969,51 @@
             </g>`;
         }).join('');
 
-        // Preview następnego panelu (hover ma priorytet, potem auto-preview)
+        // Preview następnego panelu (z pozycji myszy lub auto)
         let previewSVG = '';
         const previewSize = selectedPanelSize || lastUsedPanelSize; // Hover lub ostatnio użyty
 
         if (previewSize) {
-            const nextPos = findNextValidPosition(previewSize.width, previewSize.height);
-            if (nextPos.fits) {
-                const prevX = nextPos.x;
-                const prevY = floorY - nextPos.y - previewSize.height;
+            let prevX, prevY;
 
-                // Kolor: zielony dla hover, niebieski dla auto-preview
-                const isHover = selectedPanelSize !== null;
-                const strokeColor = isHover ? '#28a745' : '#007bff';
-                const fillColor = isHover ? 'rgba(40, 167, 69, 0.2)' : 'rgba(0, 123, 255, 0.15)';
+            // Użyj pozycji z myszy (jeśli istnieje) lub znajdź następną wolną
+            if (previewPosition) {
+                // Snap to grid
+                const snappedX = snapToGrid(previewPosition.x);
+                const snappedY = snapToGrid(previewPosition.y);
 
-                // Przeźroczysty prostokąt
-                previewSVG += `<rect x="${prevX}" y="${prevY}" width="${previewSize.width}" height="${previewSize.height}"
-                    fill="${fillColor}" stroke="${strokeColor}" stroke-width="2" stroke-dasharray="5,5" pointer-events="none"/>`;
+                prevX = snappedX;
+                prevY = floorY - snappedY - previewSize.height;
+            } else {
+                // Fallback: znajdź następną pozycję automatycznie
+                const nextPos = findNextValidPosition(previewSize.width, previewSize.height);
+                if (!nextPos.fits) return; // Brak miejsca
 
-                // Strzałka wskazująca lewy dolny róg
-                const arrowX = prevX - 15;
-                const arrowY = prevY + previewSize.height + 15;
-                previewSVG += `<path d="M ${arrowX} ${arrowY - 10} L ${arrowX} ${arrowY} L ${arrowX + 10} ${arrowY}"
-                    fill="none" stroke="${strokeColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
-                previewSVG += `<path d="M ${arrowX} ${arrowY} L ${prevX} ${prevY + previewSize.height}"
-                    stroke="${strokeColor}" stroke-width="1.5" stroke-dasharray="3,3"/>`;
+                prevX = nextPos.x;
+                prevY = floorY - nextPos.y - previewSize.height;
             }
+
+            // Sprawdź czy panel mieści się (dla kolorowania)
+            const yFromBottom = floorY - prevY - previewSize.height;
+            const fits = checkPanelFits(prevX, yFromBottom, previewSize.width, previewSize.height);
+
+            // Kolor: zielony dla hover, niebieski jeśli mieści się, czerwony jeśli nie
+            const isHover = selectedPanelSize !== null;
+            let strokeColor, fillColor;
+            if (!fits) {
+                strokeColor = '#dc3545'; // Czerwony
+                fillColor = 'rgba(220, 53, 69, 0.15)';
+            } else if (isHover) {
+                strokeColor = '#28a745'; // Zielony
+                fillColor = 'rgba(40, 167, 69, 0.2)';
+            } else {
+                strokeColor = '#007bff'; // Niebieski
+                fillColor = 'rgba(0, 123, 255, 0.15)';
+            }
+
+            // Przeźroczysty prostokąt (bez strzałki)
+            previewSVG += `<rect x="${prevX}" y="${prevY}" width="${previewSize.width}" height="${previewSize.height}"
+                fill="${fillColor}" stroke="${strokeColor}" stroke-width="2" stroke-dasharray="5,5" pointer-events="none"/>`;
         }
 
         // Wymiarowanie segmentów (wysokości)
