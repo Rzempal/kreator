@@ -1,4 +1,4 @@
-<!-- kreator2.html v0.013 Rozdzielenie wyboru od dodawania: przycisk wybiera, Dodaj dodaje, silny snap ↙ -->
+<!-- kreator2.html v0.014 Fix: snap do wszystkich 4 krawędzi paneli (lewo, prawo, góra, dół) -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -527,9 +527,10 @@
         // 1. SNAP X (w lewo) - znajdź najbliższą krawędź po lewej stronie
         let leftEdges = [50]; // Lewa krawędź obszaru (startX)
 
-        // Dodaj prawe krawędzie wszystkich paneli jako potencjalne punkty snap
+        // Dodaj LEWĄ i PRAWĄ krawędź wszystkich paneli
         panels.forEach(p => {
-            leftEdges.push(p.x + p.width); // Prawa krawędź panelu = lewa dla nowego
+            leftEdges.push(p.x);           // Lewa krawędź panelu
+            leftEdges.push(p.x + p.width); // Prawa krawędź panelu
         });
 
         // Znajdź najbliższą krawędź w lewo od kliknięcia
@@ -551,9 +552,10 @@
         // 2. SNAP Y (w dół) - znajdź najbliższą krawędź poniżej
         let bottomEdges = [0]; // Dolna krawędź obszaru (floor)
 
-        // Dodaj górne krawędzie wszystkich paneli jako potencjalne punkty snap
+        // Dodaj DOLNĄ i GÓRNĄ krawędź wszystkich paneli
         panels.forEach(p => {
-            bottomEdges.push(p.y + p.height); // Górna krawędź panelu = dolna dla nowego
+            bottomEdges.push(p.y);             // Dolna krawędź panelu
+            bottomEdges.push(p.y + p.height);  // Górna krawędź panelu
         });
 
         // Znajdź najbliższą krawędź w dół od kliknięcia
