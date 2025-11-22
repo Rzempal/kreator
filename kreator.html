@@ -1,4 +1,4 @@
-<!-- kreator.html v0.036 FAZA 3: UX Improvements (Sidebar collapse, Eraser in toolbar, Hint relocation) -->
+<!-- kreator.html v0.037 FAZA 3: View headers as top-bar style (better mobile layout) -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -1067,7 +1067,8 @@
             background: rgba(30, 41, 59, 0.7);
             backdrop-filter: blur(var(--blur-base));
             border: 1px solid var(--color-surface-border);
-            border-radius: var(--radius-lg);
+            border-top: none; /* FAZA 3: No top border (header has it) */
+            border-radius: 0 0 var(--radius-lg) var(--radius-lg); /* FAZA 3: Only bottom corners */
             padding: var(--spacing-xl);
             box-shadow: var(--shadow-card);
             transition: all var(--transition-base);
@@ -1079,15 +1080,17 @@
         }
 
         .view-header {
-            font-size: 1.15em;
-            font-weight: 600;
-            background: var(--gradient-text);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: var(--spacing-lg);
-            padding-bottom: var(--spacing-md);
-            border-bottom: 2px solid rgba(148, 163, 184, 0.2);
+            font-size: 0.9em;
+            font-weight: 700;
+            color: var(--color-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(var(--blur-sm));
+            padding: var(--spacing-md) var(--spacing-lg);
+            border: 1px solid var(--color-surface-border);
+            border-radius: var(--radius-base) var(--radius-base) 0 0;
+            margin-bottom: 0;
         }
 
         .canvas-wrapper {
@@ -1922,8 +1925,8 @@
             <!-- CANVAS CONTAINER - dwa widoki -->
             <div class="canvas-container">
                 <!-- WIDOK FRONTALNY -->
+                <div class="view-header">📐 Widok Frontalny (rozwinięcie)</div>
                 <div class="view-section">
-                    <div class="view-header">📐 Widok Frontalny (rozwinięcie)</div>
                     <div class="canvas-wrapper">
                         <div id="svgWrapperFront"></div>
                     </div>
@@ -1943,8 +1946,8 @@
                 </div>
 
                 <!-- WIDOK Z GÓRY -->
+                <div class="view-header">🔍 Widok z Góry (rzut poziomy)</div>
                 <div class="view-section">
-                    <div class="view-header">🔍 Widok z Góry (rzut poziomy)</div>
                     <div class="canvas-wrapper">
                         <div id="svgWrapperTop"></div>
                     </div>
