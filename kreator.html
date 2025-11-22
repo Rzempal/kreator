@@ -1,4 +1,4 @@
-<!-- kreator.html v0.041 🐛 FIX: Collapse - inline style override fix -->
+<!-- kreator.html v0.042 ✨ REFACTOR: UI restructure (header top, collapse, right sidebar 2 sections, delete saves) -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -1137,6 +1137,15 @@
             display: none;
         }
 
+        /* Section collapse (left sidebar) */
+        .section-collapsed .collapse-icon {
+            transform: rotate(-90deg);
+        }
+
+        .section-content.collapsed {
+            display: none;
+        }
+
         .canvas-wrapper {
             position: relative;
             display: flex;
@@ -1853,6 +1862,11 @@
     <div class="animated-bg__blob"></div>
 </div>
 
+<!-- MAIN HEADER -->
+<div style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.3), rgba(118, 75, 162, 0.3)); backdrop-filter: blur(12px); padding: 20px; border-bottom: 1px solid rgba(148, 163, 184, 0.3); position: sticky; top: 0; z-index: 100;">
+    <h1 style="margin: 0; font-size: 1.6em; font-weight: 700; background: linear-gradient(to right, #06b6d4, #a78bfa, #f472b6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-align: center;">✨ Kreator Paneli Tapicerowanych</h1>
+</div>
+
 <div class="layout">
 
     <!-- 1. LEWA KOLUMNA (KONFIGURACJA) -->
@@ -1860,36 +1874,34 @@
 
         <!-- Kształt obszaru roboczego -->
         <div class="card delay-100">
-            <h3>1. Kształt obszaru roboczego</h3>
-            <div id="segmentsContainer"></div>
+            <!-- Section Header with Collapse Button -->
+            <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid rgba(148, 163, 184, 0.2);">
+                <h3 style="margin: 0;">1. Kształt obszaru roboczego</h3>
+                <button class="view-collapse-btn" onclick="toggleSection('segments')" title="Zwiń/rozwiń" style="margin: 0;">
+                    <span class="collapse-icon">▼</span>
+                </button>
+            </div>
 
-            <div style="background: rgba(15, 23, 42, 0.3); padding: 12px; border: 1px dashed rgba(148, 163, 184, 0.3); margin-top: 12px; border-radius: var(--radius-base);">
-                <div class="row-inputs" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
-                    <input type="number" id="segWidth" placeholder="Szer.">
-                    <input type="number" id="segStartHeight" placeholder="np. 140">
-                    <input type="number" id="segEndHeight" placeholder="Wys. końc.">
+            <!-- Collapsible Content -->
+            <div class="section-content" id="segmentsSection">
+                <div id="segmentsContainer"></div>
+
+                <div style="background: rgba(15, 23, 42, 0.3); padding: 12px; border: 1px dashed rgba(148, 163, 184, 0.3); margin-top: 12px; border-radius: var(--radius-base);">
+                    <div class="row-inputs" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
+                        <input type="number" id="segWidth" placeholder="Szer.">
+                        <input type="number" id="segStartHeight" placeholder="np. 140">
+                        <input type="number" id="segEndHeight" placeholder="Wys. końc.">
+                    </div>
+                    <button class="btn-add-segment" onclick="addSegment()">+ Dodaj Segment</button>
                 </div>
-                <button class="btn-add-segment" onclick="addSegment()">+ Dodaj Segment</button>
+                <button class="btn-secondary" style="width:100%; margin-top:12px; background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.1)); border-color: rgba(34, 197, 94, 0.5); color: #86efac;" onclick="loadPresetWorkspace()">📋 Wczytaj przykład U-shaped</button>
+                <button class="btn-danger" onclick="resetWall()">Resetuj Obszar</button>
             </div>
-            <button class="btn-secondary" style="width:100%; margin-top:12px; background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.1)); border-color: rgba(34, 197, 94, 0.5); color: #86efac;" onclick="loadPresetWorkspace()">📋 Wczytaj przykład U-shaped</button>
-            <button class="btn-danger" onclick="resetWall()">Resetuj Obszar</button>
-        </div>
-
-        <!-- Konfiguracja Paneli -->
-        <div class="card delay-200">
-            <h3>2. Konfiguracja Paneli</h3>
-            <p style="font-size:0.8em; color: var(--color-text-secondary); margin-bottom:8px;">Zdefiniuj wymiary paneli (szer × wys) dostępne do układania.</p>
-            <div class="row-inputs" style="display:grid; grid-template-columns:1fr 1fr auto; gap:5px;">
-                <input type="number" id="newVariantWidth" placeholder="Szer.">
-                <input type="number" id="newVariantHeight" placeholder="Wys.">
-                <button class="btn-secondary" onclick="addVariantDefinition()">Dodaj</button>
-            </div>
-            <div id="variantConfigList" class="variant-config-list"></div>
         </div>
 
         <!-- Wycena i Mapowanie -->
-        <div class="card delay-300" style="border-left: 4px solid var(--color-success);">
-            <h3>3. Wycena i Materiały</h3>
+        <div class="card delay-200" style="border-left: 4px solid var(--color-success);">
+            <h3>2. Wycena i Materiały</h3>
 
             <div id="mappingContainer" style="margin-bottom:15px;"></div>
 
@@ -1916,8 +1928,8 @@
         </div>
 
         <!-- Zapis -->
-        <div class="card delay-400">
-            <h3>Zapisane Projekty</h3>
+        <div class="card delay-300">
+            <h3>3. Zapisane Projekty</h3>
             <button class="btn-secondary" style="width:100%; margin-bottom:10px; background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(6, 182, 212, 0.1)); border-color: rgba(6, 182, 212, 0.5); color: #67e8f9;" onclick="saveCurrentLayout()">💾 Zapisz obecny układ</button>
             <div id="savesContainer"></div>
         </div>
@@ -1926,11 +1938,6 @@
 
     <!-- 2. PRAWA STRONA (PROJEKT) -->
     <div class="project-area fade-in-up delay-100">
-
-        <!-- NAGŁÓWEK PROJEKTU -->
-        <div style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.3), rgba(118, 75, 162, 0.3)); backdrop-filter: blur(8px); padding: 20px; border-bottom: 1px solid rgba(148, 163, 184, 0.2);">
-            <h2 style="margin: 0; font-size: 1.4em; font-weight: 700; background: linear-gradient(to right, #06b6d4, #a78bfa, #f472b6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">✨ Kreator Paneli Tapicerowanych</h2>
-        </div>
 
         <!-- TOP BAR: SZYBKIE DODAWANIE -->
         <div class="top-bar" id="topBar">
@@ -2009,11 +2016,32 @@
             <!-- FAZA 3: RIGHT SIDEBAR - Panel selection (mobile only) -->
             <div class="panel-sidebar" id="panelSidebar">
                 <div class="panel-sidebar-header">
-                    <h3>Wybierz panel:</h3>
+                    <h3>Panele</h3>
                     <button class="close-btn" onclick="togglePanelSidebar()">✕</button>
                 </div>
-                <div id="panelSidebarButtons" class="panel-sidebar-content">
-                    <!-- Generowane JS - kopia topVariantsButtons -->
+
+                <div class="panel-sidebar-content" style="overflow-y: auto; max-height: calc(100vh - 80px);">
+                    <!-- SEKCJA 1: Konfiguracja Paneli -->
+                    <div class="panel-sidebar-section" style="padding: 15px; border-bottom: 2px solid rgba(148, 163, 184, 0.2);">
+                        <h4 style="margin: 0 0 10px 0; font-size: 0.9em; color: var(--color-accent); text-transform: uppercase; letter-spacing: 0.5px;">⚙️ Konfiguracja Paneli</h4>
+                        <p style="font-size:0.75em; color: var(--color-text-secondary); margin-bottom:10px;">Zdefiniuj wymiary paneli (szer × wys) dostępne do układania.</p>
+
+                        <div class="row-inputs" style="display:grid; grid-template-columns:1fr 1fr auto; gap:5px; margin-bottom: 10px;">
+                            <input type="number" id="newVariantWidth" placeholder="Szer." style="font-size: 0.9em;">
+                            <input type="number" id="newVariantHeight" placeholder="Wys." style="font-size: 0.9em;">
+                            <button class="btn-secondary" onclick="addVariantDefinition()" style="font-size: 0.85em; padding: 8px 12px;">Dodaj</button>
+                        </div>
+
+                        <div id="variantConfigList" class="variant-config-list"></div>
+                    </div>
+
+                    <!-- SEKCJA 2: Wybierz Panel -->
+                    <div class="panel-sidebar-section" style="padding: 15px;">
+                        <h4 style="margin: 0 0 10px 0; font-size: 0.9em; color: var(--color-accent); text-transform: uppercase; letter-spacing: 0.5px;">📦 Wybierz Panel</h4>
+                        <div id="panelSidebarButtons" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px;">
+                            <!-- Generowane JS - kopia topVariantsButtons -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -3062,6 +3090,40 @@
         }
     }
 
+    // FAZA 3: Toggle section collapse/expand (for left sidebar sections)
+    function toggleSection(sectionName) {
+        const sectionId = sectionName + 'Section';
+        const section = document.getElementById(sectionId);
+
+        if (!section) {
+            console.error('toggleSection: section not found:', sectionId);
+            return;
+        }
+
+        const header = section.previousElementSibling;
+
+        if (!header) {
+            console.error('toggleSection: header not found for', sectionId);
+            return;
+        }
+
+        // Toggle classes
+        section.classList.toggle('collapsed');
+        header.classList.toggle('section-collapsed');
+
+        // Handle inline display (same fix as toggleViewSection)
+        if (section.classList.contains('collapsed')) {
+            section.style.display = 'none';
+        } else {
+            section.style.display = '';
+        }
+
+        // Haptic feedback
+        if (navigator.vibrate) {
+            navigator.vibrate(15);
+        }
+    }
+
     function changeView(mode) {
         // Validate mode
         if (!['frontal', 'top', 'dual'].includes(mode)) {
@@ -3260,7 +3322,8 @@
         saves.forEach(s => {
             const d = document.createElement('div'); d.className='save-slot';
             d.innerHTML = `<span>${s.date} (${s.panels.length} el.)</span>
-                <button class="btn-secondary" style="padding:2px 5px; font-size:0.8em;" onclick="loadSave(${s.id})">Wczytaj</button>`;
+                <button class="btn-secondary" style="padding:2px 5px; font-size:0.8em;" onclick="loadSave(${s.id})">Wczytaj</button>
+                <button class="btn-danger" style="padding:2px 5px; font-size:0.8em; margin-left: 4px;" onclick="deleteSave(${s.id})" title="Usuń zapis">🗑️</button>`;
             c.appendChild(d);
         });
     }
@@ -3283,6 +3346,24 @@
             renderVariantConfig();
             renderTopBar();
             updateMappingUI();
+        }
+    }
+
+    function deleteSave(id) {
+        if (!confirm("Czy na pewno usunąć ten zapis?")) {
+            return;
+        }
+
+        let saves = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        saves = saves.filter(s => s.id !== id);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(saves));
+        renderSaves();
+
+        showProjectMessage('🗑️ Zapis usunięty', 'info', 2000);
+
+        // Haptic feedback
+        if (navigator.vibrate) {
+            navigator.vibrate(20);
         }
     }
 
