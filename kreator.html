@@ -1,4 +1,4 @@
-<!-- kreator.html v0.035 FAZA 3: UX Fixes (No backdrop, Color icon, Panel burger right, View fix) -->
+<!-- kreator.html v0.036 FAZA 3: UX Improvements (Sidebar collapse, Eraser in toolbar, Hint relocation) -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -861,6 +861,35 @@
             transform: none;
         }
 
+        /* FAZA 3: Eraser button in toolbar */
+        .btn-eraser {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.1));
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            padding: 10px 20px;
+            border-radius: var(--radius-base);
+            font-weight: 600;
+            font-size: 0.95em;
+            margin-left: var(--spacing-sm);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
+        }
+
+        .btn-eraser:hover {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.3), rgba(239, 68, 68, 0.2));
+            border-color: rgba(239, 68, 68, 0.5);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-eraser.active {
+            background: linear-gradient(135deg, var(--color-danger), rgba(239, 68, 68, 0.8));
+            color: white;
+            border-color: var(--color-danger);
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.3), 0 4px 15px rgba(239, 68, 68, 0.5);
+        }
+
         .mode-toggle {
             background: linear-gradient(135deg, var(--color-accent), rgba(var(--color-accent-rgb), 0.7));
             color: white;
@@ -963,6 +992,32 @@
             margin: var(--spacing-sm) 0;
         }
 
+        /* FAZA 3: Sidebar collapse button */
+        .sidebar-collapse-btn {
+            display: none; /* Hidden on desktop */
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid var(--color-surface-border);
+            color: var(--color-text-secondary);
+            font-size: 1.3em;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            flex-shrink: 0;
+        }
+
+        .sidebar-collapse-btn:hover {
+            background: rgba(239, 68, 68, 0.3);
+            border-color: rgba(239, 68, 68, 0.5);
+            color: #ef4444;
+            transform: scale(1.1);
+        }
+
+        .sidebar-collapse-btn:active {
+            transform: scale(0.95);
+        }
+
         /* ===== CANVAS CONTAINER ===== */
         .canvas-container {
             flex-grow: 1;
@@ -988,6 +1043,24 @@
         .canvas-container::-webkit-scrollbar-thumb {
             background: rgba(168, 85, 247, 0.3);
             border-radius: 4px;
+        }
+
+        /* FAZA 3: Canvas hint (moved from top-bar) */
+        .canvas-hint {
+            text-align: center;
+            padding: var(--spacing-md);
+            font-size: 0.85em;
+            color: var(--color-text-secondary);
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px dashed var(--color-surface-border);
+            border-radius: var(--radius-base);
+            margin-top: var(--spacing-lg);
+            opacity: 0.7;
+            transition: opacity var(--transition-base);
+        }
+
+        .canvas-hint:hover {
+            opacity: 1;
         }
 
         .view-section {
@@ -1378,6 +1451,13 @@
                 display: flex !important;
             }
 
+            /* Show sidebar collapse button */
+            .sidebar-collapse-btn {
+                display: flex !important;
+                align-items: center;
+                justify-content: center;
+            }
+
             /* Hide desktop panel selection, show mobile panel sidebar */
             .panel-title-desktop,
             .panel-buttons-desktop {
@@ -1609,6 +1689,13 @@
                 display: flex !important;
             }
 
+            /* Show sidebar collapse button */
+            .sidebar-collapse-btn {
+                display: flex !important;
+                align-items: center;
+                justify-content: center;
+            }
+
             /* Hide desktop panel selection, show mobile panel sidebar */
             .panel-title-desktop,
             .panel-buttons-desktop {
@@ -1816,8 +1903,6 @@
             <div class="top-bar-title panel-title-desktop">Wybierz panel:</div>
             <div id="topVariantsButtons" class="panel-buttons-desktop" style="display:flex; gap:8px; overflow-x:auto;"></div>
 
-            <div class="top-bar-title" style="margin-left:auto; font-size:0.75em; color:#999;">Kliknij w obszar aby ustawić pozycję preview</div>
-
             <!-- Second Burger Menu for panels (visible only <900px) -->
             <button id="panelBurgerMenu" class="burger-btn burger-btn-right" onclick="togglePanelSidebar()" aria-label="Toggle panels sidebar" title="Panele" style="margin-left:auto;">
                 <span class="burger-icon">📐</span>
@@ -1847,6 +1932,7 @@
                 <!-- PRZYBORNIK (zsynchronizowany dla obu widoków) -->
                 <div class="toolbar-between">
                     <button id="addPanelBtn" onclick="addPanelFromButton()" class="btn-add-panel" disabled title="Dodaj wybrany panel">✓ Dodaj</button>
+                    <button id="eraserBtn" onclick="toggleEraser()" class="btn-eraser" title="Usuń panel (kliknij panel aby usunąć)">🗑️ Usuń</button>
                     <span style="color:#ccc">|</span>
                     <button onclick="changeZoom(-0.1)" class="btn-secondary" style="padding:2px 6px;">-</button>
                     <span id="zoomLabel">100%</span>
@@ -1862,6 +1948,11 @@
                     <div class="canvas-wrapper">
                         <div id="svgWrapperTop"></div>
                     </div>
+                </div>
+
+                <!-- FAZA 3: Canvas hint (moved from top-bar) -->
+                <div class="canvas-hint">
+                    💡 Kliknij w obszar aby ustawić pozycję preview
                 </div>
             </div>
 
@@ -2235,16 +2326,17 @@
         const c = document.getElementById('toolsBar');
         c.innerHTML = '';
 
-        // 1. Gumka
-        const eraser = document.createElement('div');
-        eraser.className = `tool-btn eraser ${activeTool==='eraser'?'active':''}`;
-        eraser.title = "Usuń Panel (Kliknij panel aby usunąć)";
-        eraser.onclick = () => setActiveTool('eraser');
-        c.appendChild(eraser);
+        // FAZA 3: Collapse button (mobile only)
+        const collapseBtn = document.createElement('button');
+        collapseBtn.className = 'sidebar-collapse-btn';
+        collapseBtn.innerHTML = '✕';
+        collapseBtn.title = 'Zwiń';
+        collapseBtn.onclick = toggleSidebar;
+        c.appendChild(collapseBtn);
 
         c.appendChild(document.createElement('div')).className = 'tool-sep';
 
-        // 2. Kolory
+        // 1. Kolory
         visualPalette.forEach(item => {
             const el = document.createElement('div');
             const isActive = activeTool.type === 'color' && activeTool.value === item.hex;
@@ -2257,7 +2349,7 @@
 
         c.appendChild(document.createElement('div')).className = 'tool-sep';
 
-        // 3. Tekstury
+        // 2. Tekstury
         visualTextures.forEach(item => {
             const el = document.createElement('div');
             const isActive = activeTool.type === 'image' && activeTool.value === item.file;
@@ -2272,6 +2364,32 @@
     function setActiveTool(tool) {
         activeTool = tool;
         renderToolsBar(); // Odśwież ramki
+        updateEraserButton(); // FAZA 3: Update toolbar eraser button
+    }
+
+    // FAZA 3: Toggle eraser from toolbar button
+    function toggleEraser() {
+        const isEraserActive = activeTool === 'eraser' || activeTool.type === 'eraser';
+        if (isEraserActive) {
+            // Deactivate eraser - go back to default color
+            setActiveTool({ type: 'color', value: visualPalette[0].hex });
+        } else {
+            // Activate eraser
+            setActiveTool('eraser');
+        }
+    }
+
+    // FAZA 3: Update eraser button state
+    function updateEraserButton() {
+        const eraserBtn = document.getElementById('eraserBtn');
+        if (eraserBtn) {
+            const isEraserActive = activeTool === 'eraser' || activeTool.type === 'eraser';
+            if (isEraserActive) {
+                eraserBtn.classList.add('active');
+            } else {
+                eraserBtn.classList.remove('active');
+            }
+        }
     }
 
     // --- 3. INTERAKCJA Z PROJEKTEM ---
