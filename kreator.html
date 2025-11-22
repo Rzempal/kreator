@@ -1,4 +1,4 @@
-<!-- kreator.html v0.042 ✨ REFACTOR: UI restructure (header top, collapse, right sidebar 2 sections, delete saves) -->
+<!-- kreator.html v0.043 ✨ REFACTOR: Top bar cleanup + toolbar rearrange -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -1946,12 +1946,13 @@
                 <span class="burger-icon">🎨</span>
             </button>
 
-            <!-- Panel variants shown on desktop, hidden on mobile -->
-            <div class="top-bar-title panel-title-desktop">Wybierz panel:</div>
-            <div id="topVariantsButtons" class="panel-buttons-desktop" style="display:flex; gap:8px; overflow-x:auto;"></div>
+            <!-- Hint: Choose color and size -->
+            <div style="flex: 1; text-align: center; font-size: 0.85em; color: var(--color-text-secondary); padding: 0 20px;">
+                ←💡 Wybierz kolor oraz rozmiar →
+            </div>
 
             <!-- Second Burger Menu for panels (visible only <900px) -->
-            <button id="panelBurgerMenu" class="burger-btn burger-btn-right" onclick="togglePanelSidebar()" aria-label="Toggle panels sidebar" title="Panele" style="margin-left:auto;">
+            <button id="panelBurgerMenu" class="burger-btn burger-btn-right" onclick="togglePanelSidebar()" aria-label="Toggle panels sidebar" title="Panele">
                 <span class="burger-icon">📐</span>
             </button>
         </div>
@@ -1981,17 +1982,21 @@
                     </div>
                 </div>
 
+                <!-- FAZA 3: Canvas hint (above toolbar) -->
+                <div class="canvas-hint">
+                    💡 Kliknij w obszar aby ustawić pozycję preview
+                </div>
+
                 <!-- PRZYBORNIK (zsynchronizowany dla obu widoków) -->
                 <div class="toolbar-between">
-                    <button id="addPanelBtn" onclick="addPanelFromButton()" class="btn-add-panel" disabled title="Dodaj wybrany panel">✓ Dodaj</button>
-                    <button id="eraserBtn" onclick="toggleEraser()" class="btn-eraser" title="Usuń panel (kliknij panel aby usunąć)">🗑️ Usuń</button>
+                    <button id="addPanelBtn" onclick="addPanelFromButton()" class="btn-add-panel" disabled title="Dodaj wybrany panel">Dodaj</button>
+                    <button id="eraserBtn" onclick="toggleEraser()" class="btn-eraser" title="Usuń panel (kliknij panel aby usunąć)">Usuń</button>
+                    <button onclick="undoPanel()" class="btn-secondary" title="Cofnij ostatni panel" style="padding:2px 6px;">↩️</button>
+                    <button onclick="clearWorkspace()" class="btn-secondary" title="Wyczyść obszar roboczy" style="padding:2px 6px;">❌</button>
                     <span style="color:#ccc">|</span>
                     <button onclick="changeZoom(-0.1)" class="btn-secondary" style="padding:2px 6px;">-</button>
                     <span id="zoomLabel">100%</span>
                     <button onclick="changeZoom(0.1)" class="btn-secondary" style="padding:2px 6px;">+</button>
-                    <span style="color:#ccc">|</span>
-                    <button onclick="undoPanel()" class="btn-secondary" title="Cofnij ostatni panel" style="padding:2px 6px;">↩</button>
-                    <button onclick="clearWorkspace()" class="btn-secondary" title="Wyczyść obszar roboczy" style="padding:2px 6px;">🗑️</button>
                 </div>
 
                 <!-- WIDOK Z GÓRY -->
@@ -2005,11 +2010,6 @@
                     <div class="canvas-wrapper">
                         <div id="svgWrapperTop"></div>
                     </div>
-                </div>
-
-                <!-- FAZA 3: Canvas hint (moved from top-bar) -->
-                <div class="canvas-hint">
-                    💡 Kliknij w obszar aby ustawić pozycję preview
                 </div>
             </div>
 
@@ -2328,28 +2328,30 @@
     }
 
     function renderTopBar() {
-        // Przyciski w Top Bar (wybór rozmiaru)
-        const c = document.getElementById('topVariantsButtons');
-        c.innerHTML = '';
+        // DEPRECATED: Top bar buttons removed (now in right sidebar only)
+        // Keep function for backward compatibility
+        renderPanelSidebarButtons();
 
+        // Aktualizuj stan przycisku "Dodaj" w toolbar
+        const addBtn = document.getElementById('addPanelBtn');
+        if (addBtn) {
+            addBtn.disabled = !lastUsedPanelSize;
+        }
+    }
+
+    // FAZA 3.5: Render panel sidebar buttons (right sidebar)
+    function renderPanelSidebarButtons() {
+        const panelSidebarButtons = document.getElementById('panelSidebarButtons');
+        if (!panelSidebarButtons) return;
+
+        panelSidebarButtons.innerHTML = '';
         variants.forEach(v => {
             const btn = document.createElement('button');
             const isActive = selectedVariant && selectedVariant.width === v.width && selectedVariant.height === v.height;
             btn.className = `panel-btn ${isActive ? 'active' : ''}`;
             btn.innerHTML = `${v.width}×${v.height}`;
-            btn.onmouseenter = () => {
-                if (!isActive) {
-                    selectedPanelSize = {width: v.width, height: v.height};
-                    draw();
-                }
-            };
-            btn.onmouseleave = () => {
-                selectedPanelSize = null;
-                draw();
-            };
             btn.onclick = () => {
                 selectedPanelSize = null;
-                // Toggle: jeśli już active, odkliknij (wyłącz preview)
                 if (isActive) {
                     selectedVariant = null;
                     lastUsedPanelSize = null;
@@ -2360,43 +2362,13 @@
                 }
                 renderTopBar();
                 draw();
-            };
-            c.appendChild(btn);
-        });
-
-        // FAZA 3: Also populate panel sidebar (mobile)
-        const panelSidebarButtons = document.getElementById('panelSidebarButtons');
-        if (panelSidebarButtons) {
-            panelSidebarButtons.innerHTML = '';
-            variants.forEach(v => {
-                const btn = document.createElement('button');
-                const isActive = selectedVariant && selectedVariant.width === v.width && selectedVariant.height === v.height;
-                btn.className = `panel-btn ${isActive ? 'active' : ''}`;
-                btn.innerHTML = `${v.width}×${v.height}`;
-                btn.onclick = () => {
-                    selectedPanelSize = null;
-                    if (isActive) {
-                        selectedVariant = null;
-                        lastUsedPanelSize = null;
-                        previewPosition = null;
-                        previewLocked = false;
-                    } else {
-                        selectVariant(v.width, v.height);
-                    }
-                    renderTopBar();
-                    draw();
-                    // Close panel sidebar after selection
+                // Close panel sidebar after selection (mobile)
+                if (window.innerWidth < 900) {
                     togglePanelSidebar();
-                };
-                panelSidebarButtons.appendChild(btn);
-            });
-        }
-
-        // Aktualizuj stan przycisku "Dodaj" w toolbar
-        const addBtn = document.getElementById('addPanelBtn');
-        if (addBtn) {
-            addBtn.disabled = !lastUsedPanelSize;
-        }
+                }
+            };
+            panelSidebarButtons.appendChild(btn);
+        });
     }
 
     // --- 2. NARZĘDZIA (LEFT VERTICAL BAR) ---
