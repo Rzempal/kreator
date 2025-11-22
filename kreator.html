@@ -929,6 +929,14 @@
             box-shadow: var(--shadow-card);
         }
 
+        /* Add panel button in toolbar - compact styling */
+        .toolbar-between .btn-add-panel {
+            padding: 8px 16px;
+            font-size: 0.95em;
+            margin: 0;
+            min-height: auto;
+        }
+
         /* ===== SAVE SLOTS ===== */
         .save-slot {
             background: rgba(15, 23, 42, 0.4);
@@ -1163,13 +1171,6 @@
                 flex-shrink: 0;
             }
 
-            .btn-add-panel {
-                padding: 8px 18px;
-                font-size: 0.9em;
-                min-height: 44px;
-                margin-left: var(--spacing-sm);
-            }
-
             .workspace {
                 flex-direction: column;
             }
@@ -1221,6 +1222,13 @@
                 min-height: 44px;
                 padding: 8px 12px !important;
                 font-size: 1em;
+            }
+
+            /* Add panel button - larger on mobile for visibility */
+            .toolbar-between .btn-add-panel {
+                min-width: 80px;
+                padding: 10px 16px !important;
+                font-size: 1em !important;
             }
 
             .toolbar-between span {
@@ -1363,11 +1371,6 @@
 
             .panel-btn {
                 min-height: 44px; /* Touch target */
-                flex-shrink: 0;
-            }
-
-            .btn-add-panel {
-                min-height: 44px;
                 flex-shrink: 0;
             }
 
@@ -1564,7 +1567,7 @@
 
         <!-- TOP BAR: SZYBKIE DODAWANIE -->
         <div class="top-bar" id="topBar">
-            <div class="top-bar-title">Dodaj panel:</div>
+            <div class="top-bar-title">Wybierz panel:</div>
             <div id="topVariantsButtons" style="display:flex; gap:8px; overflow-x:auto;"></div>
             <div class="top-bar-title" style="margin-left:auto; font-size:0.75em; color:#999;">Kliknij w obszar aby ustawić pozycję preview</div>
         </div>
@@ -1591,6 +1594,8 @@
 
                 <!-- PRZYBORNIK (zsynchronizowany dla obu widoków) -->
                 <div class="toolbar-between">
+                    <button id="addPanelBtn" onclick="addPanelFromButton()" class="btn-add-panel" disabled title="Dodaj wybrany panel">✓ Dodaj</button>
+                    <span style="color:#ccc">|</span>
                     <button onclick="changeZoom(-0.1)" class="btn-secondary" style="padding:2px 6px;">-</button>
                     <span id="zoomLabel">100%</span>
                     <button onclick="changeZoom(0.1)" class="btn-secondary" style="padding:2px 6px;">+</button>
@@ -1901,13 +1906,11 @@
             c.appendChild(btn);
         });
 
-        // Przycisk Dodaj
-        const addBtn = document.createElement('button');
-        addBtn.className = 'btn-add-panel';
-        addBtn.innerHTML = '✓ Dodaj';
-        addBtn.disabled = !lastUsedPanelSize;
-        addBtn.onclick = addPanelFromButton;
-        c.appendChild(addBtn);
+        // Aktualizuj stan przycisku "Dodaj" w toolbar
+        const addBtn = document.getElementById('addPanelBtn');
+        if (addBtn) {
+            addBtn.disabled = !lastUsedPanelSize;
+        }
     }
 
     // --- 2. NARZĘDZIA (LEFT VERTICAL BAR) ---
