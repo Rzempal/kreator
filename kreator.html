@@ -1,4 +1,4 @@
-<!-- kreator.html v0.033 FAZA 2: Simplified Touch Gestures (DRAG=PAN, zoom tylko przyciski) -->
+<!-- kreator.html v0.034 FAZA 3: Mobile-Specific UX (Adaptive sidebar, View toggle, Gestures) -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -634,6 +634,86 @@
             margin-right: var(--spacing-sm);
         }
 
+        /* BURGER MENU (FAZA 3) - visible only <900px */
+        .burger-btn {
+            display: none; /* Hidden on desktop */
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid var(--color-surface-border);
+            border-radius: var(--radius-base);
+            width: 44px;
+            height: 44px;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            font-size: 1.5em;
+            color: var(--color-text-primary);
+            padding: 0;
+        }
+
+        .burger-btn:hover {
+            background: rgba(30, 41, 59, 1);
+            border-color: rgba(var(--color-accent-rgb), 0.5);
+            transform: scale(1.05);
+        }
+
+        .burger-btn:active {
+            transform: scale(0.95);
+        }
+
+        .burger-icon {
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        .burger-btn.active .burger-icon {
+            transform: rotate(90deg);
+        }
+
+        /* VIEW TOGGLE (FAZA 3) */
+        .view-toggle {
+            display: flex;
+            gap: 4px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--color-surface-border);
+            border-radius: var(--radius-base);
+            padding: 4px;
+        }
+
+        .view-btn {
+            background: transparent;
+            border: none;
+            border-radius: calc(var(--radius-base) - 2px);
+            padding: 8px 12px;
+            font-weight: 700;
+            font-size: 0.85em;
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            min-width: 44px;
+            min-height: 36px;
+        }
+
+        .view-btn:hover {
+            background: rgba(30, 41, 59, 0.6);
+            color: var(--color-text-primary);
+        }
+
+        .view-btn.active {
+            background: linear-gradient(135deg, rgba(var(--color-accent-rgb), 0.3), rgba(var(--color-accent-secondary-rgb), 0.3));
+            color: var(--color-accent);
+            border: 1px solid rgba(var(--color-accent-rgb), 0.4);
+        }
+
+        .view-btn:active {
+            transform: scale(0.95);
+        }
+
+        .view-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
         .panel-btn {
             background: rgba(30, 41, 59, 0.6);
             backdrop-filter: blur(var(--blur-sm));
@@ -739,6 +819,27 @@
             z-index: 2;
             scrollbar-width: thin;
             scrollbar-color: rgba(168, 85, 247, 0.3) transparent;
+            /* FAZA 3: Sidebar transitions */
+            transition: transform 0.3s ease-out;
+        }
+
+        /* FAZA 3: Sidebar backdrop for overlay mode (<600px) */
+        .sidebar-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 998;
+            opacity: 0;
+            transition: opacity 0.3s ease-out;
+        }
+
+        .sidebar-backdrop.active {
+            display: block;
+            opacity: 1;
         }
 
         .tools-bar::-webkit-scrollbar {
@@ -1180,15 +1281,36 @@
                 flex-direction: column;
             }
 
+            /* FAZA 3: Sidebar as overlay (<600px) */
             .tools-bar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                bottom: 0;
                 width: 100%;
-                height: auto;
-                flex-direction: row;
-                border-right: none;
-                border-bottom: 1px solid var(--color-surface-border);
-                padding: var(--spacing-md);
-                overflow-x: auto;
+                max-width: 320px;
+                height: 100vh;
+                flex-direction: column;
+                border-right: 1px solid var(--color-surface-border);
+                border-bottom: none;
+                padding: var(--spacing-lg) var(--spacing-md);
+                padding-top: 80px; /* Space for top-bar */
+                overflow-y: auto;
+                overflow-x: hidden;
                 -webkit-overflow-scrolling: touch;
+                z-index: 999;
+                transform: translateX(-100%);
+                background: rgba(15, 23, 42, 0.95);
+                backdrop-filter: blur(var(--blur-lg));
+            }
+
+            .sidebar-open .tools-bar {
+                transform: translateX(0);
+            }
+
+            /* Show burger menu on mobile */
+            .burger-btn {
+                display: flex !important;
             }
 
             .tool-btn {
@@ -1379,16 +1501,36 @@
                 flex-shrink: 0;
             }
 
+            /* FAZA 3: Sidebar as slide-in (601-900px) */
             .tools-bar {
-                width: 100%;
-                height: auto;
-                flex-direction: row;
-                border-right: none;
-                border-bottom: 1px solid var(--color-surface-border);
-                padding: var(--spacing-md) var(--spacing-lg);
-                overflow-x: auto;
+                position: fixed;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                width: 280px;
+                height: 100vh;
+                flex-direction: column;
+                border-right: 1px solid var(--color-surface-border);
+                border-bottom: none;
+                padding: var(--spacing-lg);
+                padding-top: 80px; /* Space for top-bar */
+                overflow-y: auto;
+                overflow-x: hidden;
                 -webkit-overflow-scrolling: touch;
-                gap: var(--spacing-sm);
+                gap: var(--spacing-md);
+                z-index: 100;
+                transform: translateX(-100%);
+                background: rgba(15, 23, 42, 0.9);
+                backdrop-filter: blur(var(--blur-lg));
+            }
+
+            .sidebar-open .tools-bar {
+                transform: translateX(0);
+            }
+
+            /* Show burger menu */
+            .burger-btn {
+                display: flex !important;
             }
 
             .tool-btn {
@@ -1491,6 +1633,9 @@
     <div class="animated-bg__blob"></div>
 </div>
 
+<!-- FAZA 3: Sidebar backdrop (overlay mode <600px) -->
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
+
 <div class="layout">
 
     <!-- 1. LEWA KOLUMNA (KONFIGURACJA) -->
@@ -1572,6 +1717,18 @@
 
         <!-- TOP BAR: SZYBKIE DODAWANIE -->
         <div class="top-bar" id="topBar">
+            <!-- Burger Menu (visible only <900px) -->
+            <button id="burgerMenu" class="burger-btn" onclick="toggleSidebar()" aria-label="Toggle sidebar">
+                <span class="burger-icon">☰</span>
+            </button>
+
+            <!-- View Toggle (F/T/FT) -->
+            <div class="view-toggle" id="viewToggle">
+                <button class="view-btn" data-view="frontal" onclick="changeView('frontal')" title="Widok frontalny">F</button>
+                <button class="view-btn" data-view="top" onclick="changeView('top')" title="Widok z góry">T</button>
+                <button class="view-btn active" data-view="dual" onclick="changeView('dual')" title="Oba widoki">FT</button>
+            </div>
+
             <div class="top-bar-title">Wybierz panel:</div>
             <div id="topVariantsButtons" style="display:flex; gap:8px; overflow-x:auto;"></div>
             <div class="top-bar-title" style="margin-left:auto; font-size:0.75em; color:#999;">Kliknij w obszar aby ustawić pozycję preview</div>
@@ -1831,6 +1988,9 @@
         renderSaves();
         draw();
         updateMappingUI();
+
+        // FAZA 3: Initialize view mode (frontal/top/dual)
+        initializeView();
 
         // Obsługa kliknięć w obszar roboczy (mouse)
         const svgWrapper = document.getElementById('svgWrapperFront');
@@ -2468,19 +2628,25 @@
             }
         }
 
-        // Swipe detection (for future use - sidebar toggle)
+        // Swipe detection (FAZA 3: sidebar toggle)
         if (touchState.active && duration < 500) {
             const swipeThreshold = 50;
+            const screenWidth = window.innerWidth;
 
-            if (deltaX > swipeThreshold && deltaX > deltaY * 2) {
+            // Only enable swipe on <900px (when burger menu is visible)
+            if (screenWidth < 900 && deltaX > swipeThreshold && deltaX > deltaY * 2) {
                 event.preventDefault();
                 // Horizontal swipe detected
                 if (touchState.lastX > touchState.startX) {
-                    // Swipe right (future: open sidebar)
-                    console.log('Swipe right detected');
+                    // Swipe right - open sidebar
+                    if (!sidebarOpen) {
+                        toggleSidebar();
+                    }
                 } else {
-                    // Swipe left (future: close sidebar)
-                    console.log('Swipe left detected');
+                    // Swipe left - close sidebar
+                    if (sidebarOpen) {
+                        toggleSidebar();
+                    }
                 }
             }
         }
@@ -2511,6 +2677,114 @@
             if (navigator.vibrate) {
                 navigator.vibrate(50);
             }
+        }
+    }
+
+    // --- MOBILE UX FUNCTIONS (FAZA 3) ---
+
+    let sidebarOpen = false;
+    let currentView = 'dual'; // 'frontal' | 'top' | 'dual'
+
+    function toggleSidebar() {
+        const body = document.body;
+        const backdrop = document.getElementById('sidebarBackdrop');
+        const burgerBtn = document.getElementById('burgerMenu');
+
+        sidebarOpen = !sidebarOpen;
+
+        if (sidebarOpen) {
+            body.classList.add('sidebar-open');
+            backdrop.classList.add('active');
+            burgerBtn.classList.add('active');
+        } else {
+            body.classList.remove('sidebar-open');
+            backdrop.classList.remove('active');
+            burgerBtn.classList.remove('active');
+        }
+
+        // Haptic feedback
+        if (navigator.vibrate) {
+            navigator.vibrate(20);
+        }
+    }
+
+    function changeView(mode) {
+        // Validate mode
+        if (!['frontal', 'top', 'dual'].includes(mode)) {
+            console.error('Invalid view mode:', mode);
+            return;
+        }
+
+        // Check if dual view is allowed on small screens
+        const screenWidth = window.innerWidth;
+        if (mode === 'dual' && screenWidth < 600) {
+            showProjectMessage('📱 Obróć ekran dla widoku podwójnego', 'info', 3000);
+            return;
+        }
+
+        currentView = mode;
+
+        // Update button states
+        const viewButtons = document.querySelectorAll('.view-btn');
+        viewButtons.forEach(btn => {
+            const btnView = btn.getAttribute('data-view');
+            if (btnView === mode) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+
+        // Update view visibility
+        const frontalView = document.querySelector('.view-section:nth-of-type(1)');
+        const topView = document.querySelector('.view-section:nth-of-type(2)');
+        const canvasContainer = document.querySelector('.canvas-container');
+
+        if (mode === 'frontal') {
+            frontalView.style.display = 'flex';
+            topView.style.display = 'none';
+            canvasContainer.style.flexDirection = 'column';
+        } else if (mode === 'top') {
+            frontalView.style.display = 'none';
+            topView.style.display = 'flex';
+            canvasContainer.style.flexDirection = 'column';
+        } else if (mode === 'dual') {
+            frontalView.style.display = 'flex';
+            topView.style.display = 'flex';
+            // Keep current flex direction (responsive via CSS)
+            canvasContainer.style.flexDirection = '';
+        }
+
+        // Save preference to localStorage
+        localStorage.setItem('preferredView', mode);
+
+        // Haptic feedback
+        if (navigator.vibrate) {
+            navigator.vibrate(20);
+        }
+
+        // Redraw to ensure proper sizing
+        setTimeout(() => {
+            draw();
+            drawTopView();
+        }, 50);
+    }
+
+    // Initialize view from localStorage on page load
+    function initializeView() {
+        const savedView = localStorage.getItem('preferredView');
+        const screenWidth = window.innerWidth;
+
+        if (savedView && ['frontal', 'top', 'dual'].includes(savedView)) {
+            // Don't allow dual view on <600px
+            if (savedView === 'dual' && screenWidth < 600) {
+                changeView('frontal');
+            } else {
+                changeView(savedView);
+            }
+        } else {
+            // Default: dual on >600px, frontal on <600px
+            changeView(screenWidth >= 600 ? 'dual' : 'frontal');
         }
     }
 
