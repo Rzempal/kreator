@@ -1,4 +1,4 @@
-<!-- kreator.html v0.025 Przyciski +/- dla kątów (90/180/270) + master segment -->
+<!-- kreator.html v0.026 Master segment aligned + panele w widoku z góry -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -1889,6 +1889,8 @@
             return;
         }
 
+        const wallDepth = 2.5; // Stała grubość obszaru roboczego (nie zależy od pianki)
+
         // Oblicz pozycje 2D segmentów na podstawie kątów (trigonometria)
         let positions = [];
         let currentX = 0;
@@ -1939,17 +1941,24 @@
             };
         });
 
+        // Oblicz pozycję X mastera w widoku frontalnym (wyrównanie lewo-prawo)
+        const frontViewStartX = 50; // padX z widoku frontalnego
+        let masterFrontX = frontViewStartX;
+        for (let i = 0; i < masterIdx; i++) {
+            masterFrontX += wallData.segments[i].width;
+        }
+
         // Znajdź granice dla centrowania
         let minX = Math.min(...positions.map(p => p.x));
         let maxX = Math.max(...positions.map(p => p.x));
         let minY = Math.min(...positions.map(p => p.y));
         let maxY = Math.max(...positions.map(p => p.y));
 
-        // Dodaj padding dla grubości panelu
-        minX -= panelDepth;
-        maxX += panelDepth;
-        minY -= panelDepth;
-        maxY += panelDepth;
+        // Dodaj padding dla grubości ściany
+        minX -= wallDepth;
+        maxX += wallDepth;
+        minY -= wallDepth;
+        maxY += wallDepth;
 
         const rangeX = maxX - minX;
         const rangeY = maxY - minY;
@@ -1957,8 +1966,8 @@
         const W = rangeX + padX * 2;
         const H = rangeY + padY * 2;
 
-        // Przesunięcie do centrum
-        const offsetX = -minX + padX;
+        // Przesunięcie: master segment ma być w pozycji masterFrontX (wyrównanie z widokiem frontalnym)
+        const offsetX = masterFrontX;
         const offsetY = -minY + padY;
 
         // Rysowanie segmentów jako prostokątów (szerokość × głębokość)
@@ -1971,8 +1980,8 @@
             const x = pos.x + offsetX;
             const y = pos.y + offsetY;
 
-            // Prostokąt: szerokość segmentu × grubość panelu
-            segmentsSVG += `<rect x="0" y="${-panelDepth/2}" width="${seg.width}" height="${panelDepth}"
+            // Prostokąt: szerokość segmentu × grubość ściany
+            segmentsSVG += `<rect x="0" y="${-wallDepth/2}" width="${seg.width}" height="${wallDepth}"
                 fill="#7fa8d1" stroke="#4a7ba7" stroke-width="2"
                 transform="translate(${x}, ${y}) rotate(${angle})" />`;
 
@@ -1983,16 +1992,58 @@
                 style="text-shadow: 0 0 3px rgba(0,0,0,0.8)">${seg.width}</text>`;
 
             // Etykieta kąta (na końcu segmentu, jeśli nie 180°)
-            if (i > 0 && seg.angle !== 180) {
+            if (i > 0 && wallData.segments[i].angle !== 180) {
                 const endX = x + seg.width * Math.cos(pos.angle);
                 const endY = y + seg.width * Math.sin(pos.angle);
-                segmentsSVG += `<text x="${endX + 10}" y="${endY - 10}" text-anchor="start" font-size="10" fill="#666" font-weight="bold">${seg.angle}°</text>`;
+                segmentsSVG += `<text x="${endX + 10}" y="${endY - 10}" text-anchor="start" font-size="10" fill="#666" font-weight="bold">${wallData.segments[i].angle}°</text>`;
             }
         }
+
+        // Rysowanie paneli jako zaokrąglonych prostokątów
+        let panelsSVG = '';
+        panels.forEach((panel, idx) => {
+            // Znajdź segment(y) w którym znajduje się panel
+            let panelSegmentIdx = -1;
+            let panelOffsetInSegment = 0;
+            let accumulatedWidth = 0;
+
+            for (let i = 0; i < wallData.segments.length; i++) {
+                const seg = wallData.segments[i];
+                if (panel.x >= accumulatedWidth && panel.x < accumulatedWidth + seg.width) {
+                    panelSegmentIdx = i;
+                    panelOffsetInSegment = panel.x - accumulatedWidth;
+                    break;
+                }
+                accumulatedWidth += seg.width;
+            }
+
+            if (panelSegmentIdx === -1) return; // Panel poza obszarem
+
+            // Pozycja panelu w układzie współrzędnych widoku z góry
+            const segPos = positions[panelSegmentIdx];
+            const segAngle = segPos.angle;
+
+            // Pozycja początku panelu wzdłuż segmentu
+            const panelStartX = segPos.x + offsetX + panelOffsetInSegment * Math.cos(segAngle);
+            const panelStartY = segPos.y + offsetY + panelOffsetInSegment * Math.sin(segAngle);
+
+            // Kolor panelu
+            const fill = panel.style.type === 'color' ? panel.style.value : '#8e8e93';
+
+            // Prostokąt w widoku z góry: panel.height (wzdłuż ściany) × panelDepth (głębokość)
+            // Zaokrąglenie po bokach (początek i koniec wzdłuż ściany)
+            const cornerRadius = Math.min(panelDepth / 2, 2.5);
+
+            panelsSVG += `<rect x="0" y="${-panelDepth/2}" width="${panel.height}" height="${panelDepth}"
+                fill="${fill}" stroke="#555" stroke-width="1" opacity="0.8"
+                rx="${cornerRadius}" ry="${cornerRadius}"
+                transform="translate(${panelStartX}, ${panelStartY}) rotate(${segAngle * 180 / Math.PI})" />`;
+        });
 
         svg.innerHTML = `<svg width="${W*zoomLevel}px" viewBox="0 0 ${W} ${H}">
             <rect width="${W}" height="${H}" fill="#f8f9fa"/>
             ${segmentsSVG}
+            ${panelsSVG}
         </svg>`;
     }
 
