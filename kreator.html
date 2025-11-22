@@ -1727,7 +1727,8 @@
         isPinching: false,
         initialDistance: 0,
         initialZoom: 1.0,
-        touches: []
+        touches: [],
+        lastRedraw: 0
     };
 
     // --- SYSTEM KOMUNIKATÓW PROJEKTU ---
@@ -2409,12 +2410,16 @@
             // Apply zoom with limits (0.5x to 3x)
             const newZoom = Math.max(0.5, Math.min(3.0, touchState.initialZoom * scale));
 
-            // Smooth zoom update (debounced)
-            if (Math.abs(newZoom - zoomLevel) > 0.01) {
-                zoomLevel = newZoom;
-                document.getElementById('zoomLabel').textContent = Math.round(zoomLevel * 100) + '%';
+            // Update zoom immediately (no debouncing for smooth pinch)
+            zoomLevel = newZoom;
+            document.getElementById('zoomLabel').textContent = Math.round(zoomLevel * 100) + '%';
+
+            // Throttle redraw for performance (but zoom value updates always)
+            const now = Date.now();
+            if (!touchState.lastRedraw || now - touchState.lastRedraw > 16) { // ~60fps
                 draw();
                 drawTopView();
+                touchState.lastRedraw = now;
             }
             return;
         }
@@ -2504,7 +2509,9 @@
 
     function handleLongPress(event) {
         // Long press activates eraser mode
-        if (activeTool.type !== 'eraser') {
+        const isEraserActive = activeTool === 'eraser' || activeTool.type === 'eraser';
+
+        if (!isEraserActive) {
             setActiveTool('eraser');
             showProjectMessage('🗑️ Tryb usuwania aktywny (długie naciśnięcie)', 'info', 2000);
 
@@ -2579,8 +2586,11 @@
     }
 
     function onPanelClick(index) {
-        if (activeTool === 'eraser') {
+        const isEraserActive = activeTool === 'eraser' || activeTool.type === 'eraser';
+
+        if (isEraserActive) {
             panels.splice(index, 1); // USUŃ
+            // Eraser mode POZOSTAJE aktywny (nie wyłączamy)
         } else {
             panels[index].style = { ...activeTool }; // MALUJ
         }
