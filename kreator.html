@@ -1,144 +1,706 @@
-<!-- kreator2.html v0.023 Fix: bugi z dodawaniem paneli (pozycja + false positive warning) -->
+<!-- kreator.html v0.030 Full redesign - Dark theme + glassmorphism + animations -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kreator Paneli (Final Layout)</title>
+    <title>Kreator Paneli (Widok 2D + Top)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* ===== CSS VARIABLES ===== */
         :root {
-            --primary: #5d3a75;
-            --bg: #f4f6f9;
-            --text: #333;
-            --border: #ccc;
-            --active-border: #28a745;
-            --toolbar-bg: #fff;
-            --danger: #dc3545;
+            /* Dark Theme Colors */
+            --color-bg-primary: #0f172a;
+            --color-bg-gradient-from: #1e293b;
+            --color-bg-gradient-via: #7c3aed;
+            --color-bg-gradient-to: #1e293b;
+
+            --color-surface: rgba(30, 41, 59, 0.9);
+            --color-surface-hover: rgba(30, 41, 59, 0.95);
+            --color-surface-border: rgba(148, 163, 184, 0.2);
+
+            --color-text-primary: #f1f5f9;
+            --color-text-secondary: #94a3b8;
+            --color-text-muted: #64748b;
+
+            /* Gradient Accents */
+            --gradient-primary: linear-gradient(to right, #06b6d4, #a855f7, #ec4899);
+            --gradient-glow: linear-gradient(to right, #06b6d4, #8b5cf6);
+            --gradient-text: linear-gradient(to right, #06b6d4, #a78bfa, #f472b6);
+
+            /* App Accent - Kreator (purple-pink mix) */
+            --color-accent: #a855f7;
+            --color-accent-rgb: 168, 85, 247;
+            --color-accent-secondary: #ec4899;
+            --color-success: #22c55e;
+            --color-warning: #f59e0b;
+            --color-danger: #ef4444;
+
+            /* Spacing */
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --spacing-2xl: 3rem;
+
+            /* Border Radius */
+            --radius-sm: 8px;
+            --radius-base: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --radius-2xl: 32px;
+
+            /* Effects */
+            --blur-sm: 8px;
+            --blur-base: 12px;
+            --blur-lg: 24px;
+            --blur-xl: 40px;
+
+            /* Shadows */
+            --shadow-glow: 0 0 20px rgba(168, 85, 247, 0.4);
+            --shadow-glow-lg: 0 0 40px rgba(168, 85, 247, 0.6);
+            --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.3);
+            --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.4);
+
+            /* Transitions */
+            --transition-fast: 0.2s ease;
+            --transition-base: 0.3s ease;
+            --transition-slow: 0.5s ease-out;
+
+            /* Font */
+            --font-primary: 'Readex Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        /* ===== BASE STYLES ===== */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
+            font-family: var(--font-primary);
+            background: linear-gradient(to bottom right,
+                var(--color-bg-gradient-from),
+                var(--color-bg-gradient-via),
+                var(--color-bg-gradient-to));
+            color: var(--color-text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
             padding: 20px;
             max-width: 1600px;
             margin: 0 auto;
-            height: 95vh;
-            box-sizing: border-box;
+            position: relative;
+            overflow-x: hidden;
         }
 
+        /* ===== ANIMATIONS ===== */
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(50px, -50px) scale(1.1); }
+            50% { transform: translate(-30px, 30px) scale(0.95); }
+            75% { transform: translate(30px, 50px) scale(1.05); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes shimmer {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(100%); }
+        }
+
+        @keyframes glow-pulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(var(--color-accent-rgb), 0.4); }
+            50% { box-shadow: 0 0 40px rgba(var(--color-accent-rgb), 0.8); }
+        }
+
+        .fade-in-up {
+            opacity: 0;
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+
+        /* ===== ANIMATED BACKGROUND ===== */
+        .animated-bg {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .animated-bg__blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(var(--blur-xl));
+            opacity: 0.5;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .animated-bg__blob:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            background: rgba(139, 92, 246, 0.3);
+            top: -150px;
+            right: -150px;
+        }
+
+        .animated-bg__blob:nth-child(2) {
+            width: 400px;
+            height: 400px;
+            background: rgba(6, 182, 212, 0.3);
+            bottom: -200px;
+            left: -200px;
+            animation-delay: 5s;
+        }
+
+        .animated-bg__blob:nth-child(3) {
+            width: 350px;
+            height: 350px;
+            background: rgba(236, 72, 153, 0.3);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-delay: 10s;
+        }
+
+        /* ===== LAYOUT ===== */
         .layout {
             display: grid;
-            grid-template-columns: 350px 1fr;
-            gap: 20px;
-            height: 100%;
+            grid-template-columns: 380px 1fr;
+            gap: var(--spacing-xl);
+            height: 95vh;
+            position: relative;
+            z-index: 1;
         }
 
-        /* --- LEWA KOLUMNA (KONFIGURACJA) --- */
+        /* ===== CONTROLS (LEFT COLUMN) ===== */
         .controls {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: var(--spacing-lg);
             height: 100%;
             overflow-y: auto;
-            padding-right: 5px;
+            padding-right: var(--spacing-sm);
+            scrollbar-width: thin;
+            scrollbar-color: rgba(168, 85, 247, 0.3) rgba(30, 41, 59, 0.3);
         }
 
+        .controls::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .controls::-webkit-scrollbar-track {
+            background: rgba(30, 41, 59, 0.3);
+            border-radius: 4px;
+        }
+
+        .controls::-webkit-scrollbar-thumb {
+            background: rgba(168, 85, 247, 0.3);
+            border-radius: 4px;
+        }
+
+        .controls::-webkit-scrollbar-thumb:hover {
+            background: rgba(168, 85, 247, 0.5);
+        }
+
+        /* ===== CARDS ===== */
         .card {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            background: var(--color-surface);
+            backdrop-filter: blur(var(--blur-base));
+            -webkit-backdrop-filter: blur(var(--blur-base));
+            border: 1px solid var(--color-surface-border);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            box-shadow: var(--shadow-card);
+            transition: all var(--transition-base);
+            position: relative;
+            overflow: hidden;
         }
 
-        h3 { margin-top: 0; font-size: 1.1em; border-bottom: 2px solid #f0f0f0; padding-bottom: 8px; margin-bottom: 12px; color: #444; }
-        label { display: block; font-size: 0.85em; font-weight: 600; color: #555; margin-bottom: 4px; }
-        input[type="number"], select { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 4px; box-sizing: border-box; }
+        .card::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-xl);
+            opacity: 0;
+            transition: opacity var(--transition-base);
+            z-index: -1;
+            filter: blur(10px);
+        }
 
-        /* Przyciski */
-        button { cursor: pointer; transition: 0.2s; }
-        .btn-secondary { background: #e2e6ea; color: #333; border: 1px solid #ced4da; padding: 6px 12px; border-radius: 4px; font-size: 0.9em; }
-        .btn-secondary:hover { background: #dbe2e8; }
-        .btn-danger { background: #fff5f5; color: var(--danger); border: 1px solid #f5c6cb; padding: 8px; border-radius: 4px; width: 100%; margin-top: 10px;}
-        .btn-danger:hover { background: #f8d7da; }
-        .btn-add-segment { width: 100%; background: #e9ecef; border: 1px solid #ced4da; color: #333; padding: 8px; border-radius: 4px; margin-top: 5px; font-weight: bold;}
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-card-hover);
+            border-color: rgba(var(--color-accent-rgb), 0.3);
+        }
 
-        /* Lista Odcinków */
-        .segment-row { display: flex; justify-content: space-between; align-items: center; padding: 8px; background: #fafafa; border-bottom: 1px solid #eee; font-size: 0.9em; }
-        .segment-icon { font-size: 1.2em; margin-right: 8px; color: #999; }
-        .btn-x { padding: 2px 8px; font-size: 0.8em; color: var(--danger); border: 1px solid var(--danger); background: #fff; border-radius: 4px; }
+        .card:hover::before {
+            opacity: 0.3;
+        }
 
-        /* Lista Wariantów (Config) */
-        .variant-config-list { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
-        .variant-tag { background: #eee; padding: 4px 8px; border-radius: 12px; font-size: 0.85em; display: flex; align-items: center; gap: 5px; }
-        .variant-tag span { cursor: pointer; color: #999; font-weight: bold; }
-        .variant-tag span:hover { color: var(--danger); }
+        /* ===== TYPOGRAPHY ===== */
+        h3 {
+            margin: 0 0 var(--spacing-lg) 0;
+            font-size: 1.1em;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            padding-bottom: var(--spacing-sm);
+            border-bottom: 2px solid rgba(148, 163, 184, 0.2);
+        }
 
-        /* Mapowanie */
-        .mapping-item { background: #fcfcfc; border: 1px solid #eee; padding: 8px; margin-bottom: 5px; border-radius: 4px; display: flex; gap: 10px; align-items: center; }
-        .map-swatch { width: 24px; height: 24px; border-radius: 50%; border: 1px solid #ccc; flex-shrink: 0; }
-        .map-select { font-size: 0.85em; padding: 4px; }
+        label {
+            display: block;
+            font-size: 0.85em;
+            font-weight: 500;
+            color: var(--color-text-secondary);
+            margin-bottom: var(--spacing-xs);
+        }
 
-        /* Podsumowanie */
-        .price-summary { background: #e8f5e9; border: 1px solid #c8e6c9; padding: 10px; border-radius: 6px; margin-top: 10px; }
-        .total-price { font-size: 1.4em; font-weight: bold; color: #2e7d32; text-align: right; }
+        /* ===== FORM ELEMENTS ===== */
+        input[type="number"],
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: var(--spacing-md) var(--spacing-lg);
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--color-surface-border);
+            border-radius: var(--radius-base);
+            color: var(--color-text-primary);
+            font-family: var(--font-primary);
+            font-size: 0.9em;
+            transition: all var(--transition-base);
+            backdrop-filter: blur(var(--blur-sm));
+        }
 
-        /* --- PRAWA STRONA (PROJEKT) --- */
+        input[type="number"]:focus,
+        input[type="text"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 3px rgba(var(--color-accent-rgb), 0.2);
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        input[type="number"]::placeholder,
+        input[type="text"]::placeholder {
+            color: var(--color-text-muted);
+        }
+
+        input[type="checkbox"] {
+            accent-color: var(--color-accent);
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        /* ===== BUTTONS ===== */
+        button {
+            cursor: pointer;
+            transition: all var(--transition-base);
+            font-family: var(--font-primary);
+            border: none;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+        }
+
+        button:hover::before {
+            transform: translateX(100%);
+        }
+
+        .btn-secondary {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(var(--blur-sm));
+            border: 1px solid var(--color-surface-border);
+            color: var(--color-text-primary);
+            padding: 8px 16px;
+            border-radius: var(--radius-base);
+            font-size: 0.9em;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(30, 41, 59, 0.95);
+            border-color: rgba(var(--color-accent-rgb), 0.5);
+            transform: scale(1.05);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--color-danger), rgba(239, 68, 68, 0.7));
+            color: white;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            padding: var(--spacing-md);
+            border-radius: var(--radius-base);
+            width: 100%;
+            margin-top: var(--spacing-md);
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 6px 25px rgba(239, 68, 68, 0.5);
+        }
+
+        .btn-add-segment {
+            width: 100%;
+            background: linear-gradient(135deg, var(--color-accent), rgba(var(--color-accent-rgb), 0.7));
+            color: white;
+            padding: var(--spacing-md);
+            border-radius: var(--radius-base);
+            margin-top: var(--spacing-sm);
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(var(--color-accent-rgb), 0.3);
+        }
+
+        .btn-add-segment:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 6px 25px rgba(var(--color-accent-rgb), 0.5);
+        }
+
+        /* ===== SEGMENTS LIST ===== */
+        .segment-row {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: var(--spacing-sm);
+            align-items: center;
+            padding: var(--spacing-md);
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid rgba(148, 163, 184, 0.15);
+            border-radius: var(--radius-base);
+            margin-bottom: var(--spacing-xs);
+            font-size: 0.9em;
+            transition: all var(--transition-base);
+        }
+
+        .segment-row:hover {
+            background: rgba(15, 23, 42, 0.6);
+            border-color: rgba(var(--color-accent-rgb), 0.3);
+        }
+
+        .segment-icon {
+            font-size: 1.2em;
+            color: var(--color-accent);
+        }
+
+        .segment-info {
+            flex: 1;
+            color: var(--color-text-primary);
+        }
+
+        .segment-angle-input {
+            width: 45px;
+            padding: 4px;
+            font-size: 0.85em;
+            border: 1px solid var(--color-surface-border);
+            border-radius: var(--radius-sm);
+            margin-left: 5px;
+            text-align: center;
+            background: rgba(15, 23, 42, 0.5);
+            color: var(--color-text-primary);
+        }
+
+        .angle-btn {
+            padding: 4px 10px;
+            font-size: 0.8em;
+            border: 1px solid var(--color-surface-border);
+            background: rgba(30, 41, 59, 0.6);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            color: var(--color-text-primary);
+            font-weight: 600;
+            margin-left: 2px;
+            transition: all var(--transition-fast);
+        }
+
+        .angle-btn:hover {
+            background: rgba(168, 85, 247, 0.2);
+            border-color: var(--color-accent);
+            color: var(--color-accent);
+        }
+
+        .angle-btn:active {
+            transform: scale(0.95);
+        }
+
+        .master-radio {
+            margin-right: 5px;
+            cursor: pointer;
+            accent-color: var(--color-accent);
+        }
+
+        .btn-x {
+            padding: 4px 10px;
+            font-size: 0.8em;
+            color: var(--color-danger);
+            border: 1px solid rgba(239, 68, 68, 0.5);
+            background: rgba(239, 68, 68, 0.1);
+            border-radius: var(--radius-sm);
+            transition: all var(--transition-fast);
+        }
+
+        .btn-x:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: var(--color-danger);
+        }
+
+        /* ===== VARIANTS ===== */
+        .variant-config-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-md);
+        }
+
+        .variant-tag {
+            background: rgba(168, 85, 247, 0.15);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            padding: 6px 12px;
+            border-radius: var(--radius-lg);
+            font-size: 0.85em;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            color: var(--color-text-primary);
+            transition: all var(--transition-base);
+        }
+
+        .variant-tag:hover {
+            background: rgba(168, 85, 247, 0.25);
+            border-color: var(--color-accent);
+        }
+
+        .variant-tag span {
+            cursor: pointer;
+            color: var(--color-text-secondary);
+            font-weight: bold;
+            transition: color var(--transition-fast);
+        }
+
+        .variant-tag span:hover {
+            color: var(--color-danger);
+        }
+
+        /* ===== MAPPING ===== */
+        .mapping-item {
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid var(--color-surface-border);
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-sm);
+            border-radius: var(--radius-base);
+            display: flex;
+            gap: var(--spacing-md);
+            align-items: center;
+            transition: all var(--transition-base);
+        }
+
+        .mapping-item:hover {
+            background: rgba(15, 23, 42, 0.6);
+            border-color: rgba(var(--color-accent-rgb), 0.3);
+        }
+
+        .map-swatch {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid var(--color-surface-border);
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .map-select {
+            font-size: 0.85em;
+            padding: 6px;
+            flex: 1;
+        }
+
+        /* ===== PRICE SUMMARY ===== */
+        .price-summary {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.05));
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-base);
+            margin-top: var(--spacing-md);
+            backdrop-filter: blur(var(--blur-sm));
+        }
+
+        .total-price {
+            font-size: 1.5em;
+            font-weight: 700;
+            background: linear-gradient(to right, #22c55e, #86efac);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: right;
+        }
+
+        /* ===== PROJECT AREA (RIGHT SIDE) ===== */
         .project-area {
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            background: var(--color-surface);
+            backdrop-filter: blur(var(--blur-base));
+            -webkit-backdrop-filter: blur(var(--blur-base));
+            border: 1px solid var(--color-surface-border);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-card);
             display: flex;
             flex-direction: column;
             height: 100%;
             overflow: hidden;
-            border: 1px solid #ddd;
+            position: relative;
         }
 
-        /* TOP BAR */
+        .project-area::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-xl);
+            opacity: 0;
+            transition: opacity var(--transition-base);
+            z-index: -1;
+            filter: blur(15px);
+        }
+
+        .project-area:hover::before {
+            opacity: 0.2;
+        }
+
+        /* ===== TOP TOOLBAR ===== */
         .top-bar {
-            background: var(--toolbar-bg);
-            padding: 10px 15px;
-            border-bottom: 1px solid #eee;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(var(--blur-sm));
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--color-surface-border);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: var(--spacing-md);
             flex-wrap: wrap;
-            min-height: 50px;
+            min-height: 60px;
         }
-        .top-bar-title { font-size: 0.8em; font-weight: bold; color: #888; text-transform: uppercase; margin-right: 5px; }
+
+        .top-bar-title {
+            font-size: 0.75em;
+            font-weight: 700;
+            color: var(--color-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-right: var(--spacing-sm);
+        }
+
         .panel-btn {
-            background: #fff; border: 1px solid #ccc; padding: 8px 15px; border-radius: 4px;
-            font-weight: bold; color: #333; font-size: 0.95em; display: flex; align-items: center; gap: 5px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-            transition: all 0.2s ease;
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(var(--blur-sm));
+            border: 1px solid var(--color-surface-border);
+            padding: 10px 18px;
+            border-radius: var(--radius-base);
+            font-weight: 600;
+            color: var(--color-text-primary);
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            transition: all var(--transition-base);
         }
-        .panel-btn:hover { background: #f0f2f5; border-color: #aaa; transform: translateY(-1px); }
+
+        .panel-btn:hover {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: rgba(var(--color-accent-rgb), 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
         .panel-btn.active {
-            background: #e8f5e9;
-            border: 2px solid #28a745;
-            color: #28a745;
-            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.2);
+            background: linear-gradient(135deg, rgba(var(--color-accent-rgb), 0.3), rgba(var(--color-accent-rgb), 0.15));
+            border: 2px solid var(--color-accent);
+            color: var(--color-accent);
+            box-shadow: 0 0 0 3px rgba(var(--color-accent-rgb), 0.2);
             transform: scale(1.05);
         }
-        .panel-btn span { font-size: 0.8em; font-weight: normal; color: #666; }
+
+        .panel-btn span {
+            font-size: 0.8em;
+            font-weight: normal;
+            color: var(--color-text-muted);
+        }
 
         .btn-add-panel {
-            background: #28a745; color: white; border: 2px solid #28a745;
-            padding: 8px 20px; border-radius: 4px; font-weight: bold; font-size: 0.95em;
-            margin-left: 10px; cursor: pointer; transition: 0.2s;
+            background: linear-gradient(135deg, var(--color-success), rgba(34, 197, 94, 0.7));
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: var(--radius-base);
+            font-weight: 600;
+            font-size: 0.95em;
+            margin-left: var(--spacing-md);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
         }
-        .btn-add-panel:hover { background: #218838; border-color: #1e7e34; transform: translateY(-1px); }
-        .btn-add-panel:disabled { background: #ccc; border-color: #ccc; cursor: not-allowed; opacity: 0.6; }
+
+        .btn-add-panel:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 6px 20px rgba(34, 197, 94, 0.5);
+        }
+
+        .btn-add-panel:disabled {
+            background: rgba(100, 116, 139, 0.3);
+            cursor: not-allowed;
+            opacity: 0.5;
+            box-shadow: none;
+            transform: none;
+        }
 
         .mode-toggle {
-            background: var(--primary); color: white; border: 2px solid var(--primary);
-            padding: 8px 15px; border-radius: 4px; font-weight: bold; font-size: 0.9em;
+            background: linear-gradient(135deg, var(--color-accent), rgba(var(--color-accent-rgb), 0.7));
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: var(--radius-base);
+            font-weight: 600;
+            font-size: 0.9em;
             margin-left: auto;
+            box-shadow: 0 4px 15px rgba(var(--color-accent-rgb), 0.3);
+            transition: all var(--transition-base);
         }
-        .mode-toggle:hover { background: #4a2e5e; border-color: #4a2e5e; }
 
-        /* WORKSPACE */
+        .mode-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(var(--color-accent-rgb), 0.5);
+        }
+
+        /* ===== WORKSPACE ===== */
         .workspace {
             display: flex;
             flex-grow: 1;
@@ -146,199 +708,405 @@
             position: relative;
         }
 
-        /* LEFT VERTICAL BAR (TOOLS) */
+        /* ===== TOOLS BAR (LEFT VERTICAL) ===== */
         .tools-bar {
-            width: 60px;
-            background: #fcfcfc;
-            border-right: 1px solid #eee;
+            width: 70px;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(var(--blur-sm));
+            border-right: 1px solid var(--color-surface-border);
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 15px 5px;
-            gap: 10px;
+            padding: var(--spacing-lg) var(--spacing-sm);
+            gap: var(--spacing-md);
             overflow-y: auto;
             z-index: 2;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(168, 85, 247, 0.3) transparent;
+        }
+
+        .tools-bar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .tools-bar::-webkit-scrollbar-thumb {
+            background: rgba(168, 85, 247, 0.3);
+            border-radius: 2px;
         }
 
         .tool-btn {
-            width: 40px; height: 40px; border-radius: 50%;
-            border: 2px solid #ddd; cursor: pointer; position: relative; flex-shrink: 0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: transform 0.1s;
-            background-size: cover; background-position: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 2px solid var(--color-surface-border);
+            cursor: pointer;
+            position: relative;
+            flex-shrink: 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: all var(--transition-base);
+            background-size: cover;
+            background-position: center;
+            background-color: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(var(--blur-sm));
         }
-        .tool-btn:hover { transform: scale(1.1); z-index: 3; }
-        .tool-btn.active { border-color: var(--active-border); transform: scale(1.1); box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.2); }
+
+        .tool-btn:hover {
+            transform: scale(1.15);
+            z-index: 3;
+            border-color: var(--color-accent);
+            box-shadow: 0 6px 15px rgba(var(--color-accent-rgb), 0.4);
+        }
+
+        .tool-btn.active {
+            border-color: var(--color-accent);
+            transform: scale(1.15);
+            box-shadow: 0 0 0 3px rgba(var(--color-accent-rgb), 0.3);
+            background-color: rgba(var(--color-accent-rgb), 0.2);
+        }
+
         .tool-btn.eraser {
-            background: #fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23d32f2f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>') no-repeat center;
-            border-color: #f5c6cb;
+            background: rgba(30, 41, 59, 0.6) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>') no-repeat center;
+            border-color: rgba(239, 68, 68, 0.5);
         }
-        .tool-btn.eraser.active { background-color: #ffecec; border-color: #dc3545; box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2); }
 
-        .tool-sep { width: 60%; height: 1px; background: #ddd; margin: 5px 0; }
+        .tool-btn.eraser.active {
+            background-color: rgba(239, 68, 68, 0.2);
+            border-color: var(--color-danger);
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.3);
+        }
 
-        /* CANVAS */
-        .canvas-wrapper {
+        .tool-sep {
+            width: 60%;
+            height: 2px;
+            background: linear-gradient(to right, transparent, var(--color-surface-border), transparent);
+            margin: var(--spacing-sm) 0;
+        }
+
+        /* ===== CANVAS CONTAINER ===== */
+        .canvas-container {
             flex-grow: 1;
-            background: #eef1f5;
+            background: rgba(15, 23, 42, 0.3);
             overflow: auto;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xl);
+            padding: var(--spacing-xl);
+            scrollbar-width: thin;
+            scrollbar-color: rgba(168, 85, 247, 0.3) rgba(30, 41, 59, 0.3);
+        }
+
+        .canvas-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .canvas-container::-webkit-scrollbar-track {
+            background: rgba(30, 41, 59, 0.3);
+            border-radius: 4px;
+        }
+
+        .canvas-container::-webkit-scrollbar-thumb {
+            background: rgba(168, 85, 247, 0.3);
+            border-radius: 4px;
+        }
+
+        .view-section {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(var(--blur-base));
+            border: 1px solid var(--color-surface-border);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            box-shadow: var(--shadow-card);
+            transition: all var(--transition-base);
+        }
+
+        .view-section:hover {
+            border-color: rgba(var(--color-accent-rgb), 0.3);
+            box-shadow: var(--shadow-card-hover);
+        }
+
+        .view-header {
+            font-size: 1.15em;
+            font-weight: 600;
+            background: var(--gradient-text);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-md);
+            border-bottom: 2px solid rgba(148, 163, 184, 0.2);
+        }
+
+        .canvas-wrapper {
             position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
-        }
-        svg { display: block; background: #f8f9fa; box-shadow: 0 5px 25px rgba(0,0,0,0.05); }
-
-        .wall-bg { fill: #e0e0e0; stroke: #777; stroke-width: 2; }
-        .panel-rect { stroke: rgba(255,255,255,0.3); stroke-width: 2; cursor: crosshair; transition: fill-opacity 0.1s; }
-        .panel-rect.delete-mode { cursor: not-allowed; }
-        .panel-rect:hover { stroke: #666; stroke-width: 3px; filter: brightness(1.1); }
-        .dim-text-panel { font-size: 11px; font-family: Arial, sans-serif; font-weight: bold; pointer-events: none; }
-        .dim-text-external { font-size: 11px; font-family: Arial, sans-serif; fill: #444; font-weight: normal; }
-        .dim-line { stroke: #444; stroke-width: 1; stroke-dasharray: 2,2; }
-
-        .canvas-zoom {
-            position: absolute; bottom: 20px; right: 20px;
-            background: rgba(255,255,255,0.9); padding: 5px 10px; border-radius: 20px;
-            display: flex; gap: 5px; border: 1px solid #ccc; align-items: center;
-            font-size: 0.85em; font-weight: bold; color: #555;
+            min-height: 300px;
+            border-radius: var(--radius-base);
+            overflow: hidden;
         }
 
-        /* Zapis */
-        .save-slot { background: #f8f9fa; border: 1px solid #eee; padding: 8px; margin-bottom: 5px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85em; }
+        svg {
+            display: block;
+            background: rgba(15, 23, 42, 0.5);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+            border-radius: var(--radius-sm);
+        }
 
-        /* Komunikaty projektu */
+        .wall-bg {
+            fill: rgba(100, 116, 139, 0.3);
+            stroke: rgba(148, 163, 184, 0.5);
+            stroke-width: 2;
+        }
+
+        .panel-rect {
+            stroke: rgba(255, 255, 255, 0.3);
+            stroke-width: 2;
+            cursor: crosshair;
+            transition: all var(--transition-fast);
+        }
+
+        .panel-rect.delete-mode {
+            cursor: not-allowed;
+        }
+
+        .panel-rect:hover {
+            stroke: var(--color-accent);
+            stroke-width: 3px;
+            filter: brightness(1.2);
+        }
+
+        .dim-text-panel {
+            font-size: 11px;
+            font-family: var(--font-primary);
+            font-weight: bold;
+            pointer-events: none;
+            fill: var(--color-text-primary);
+        }
+
+        .dim-text-external {
+            font-size: 11px;
+            font-family: var(--font-primary);
+            fill: var(--color-text-secondary);
+            font-weight: normal;
+        }
+
+        .dim-line {
+            stroke: var(--color-text-muted);
+            stroke-width: 1;
+            stroke-dasharray: 2,2;
+        }
+
+        .toolbar-between {
+            background: rgba(30, 41, 59, 0.9);
+            backdrop-filter: blur(var(--blur-base));
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            display: flex;
+            gap: var(--spacing-md);
+            border: 1px solid var(--color-surface-border);
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9em;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            box-shadow: var(--shadow-card);
+        }
+
+        /* ===== SAVE SLOTS ===== */
+        .save-slot {
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid var(--color-surface-border);
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-sm);
+            border-radius: var(--radius-base);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85em;
+            color: var(--color-text-primary);
+            transition: all var(--transition-base);
+        }
+
+        .save-slot:hover {
+            background: rgba(15, 23, 42, 0.6);
+            border-color: rgba(var(--color-accent-rgb), 0.3);
+        }
+
+        /* ===== PROJECT MESSAGES ===== */
         .project-messages {
             position: relative;
             min-height: 0;
-            transition: all 0.3s ease;
+            transition: all var(--transition-base);
         }
+
         .project-message {
-            padding: 12px 20px;
-            margin: 10px 20px;
-            border-radius: 6px;
+            padding: var(--spacing-lg);
+            margin: var(--spacing-md) var(--spacing-xl);
+            border-radius: var(--radius-base);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 10px;
+            gap: var(--spacing-md);
             font-size: 0.9em;
-            animation: slideDown 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            animation: fadeInUp 0.4s ease;
+            box-shadow: var(--shadow-card);
+            backdrop-filter: blur(var(--blur-sm));
         }
+
         .project-message-content {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: var(--spacing-md);
             flex: 1;
         }
+
         .project-message-icon {
-            font-size: 1.2em;
+            font-size: 1.3em;
             font-weight: bold;
         }
+
         .project-message-actions {
             display: flex;
-            gap: 8px;
+            gap: var(--spacing-sm);
         }
+
         .project-message-success {
-            background: #d4edda;
-            color: #155724;
-            border-left: 4px solid #28a745;
+            background: rgba(34, 197, 94, 0.15);
+            color: #86efac;
+            border-left: 4px solid var(--color-success);
         }
+
         .project-message-error {
-            background: #f8d7da;
-            color: #721c24;
-            border-left: 4px solid #dc3545;
+            background: rgba(239, 68, 68, 0.15);
+            color: #fca5a5;
+            border-left: 4px solid var(--color-danger);
         }
+
         .project-message-warning {
-            background: #fff3cd;
-            color: #856404;
-            border-left: 4px solid #ffc107;
+            background: rgba(245, 158, 11, 0.15);
+            color: #fcd34d;
+            border-left: 4px solid var(--color-warning);
         }
+
         .project-message-info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border-left: 4px solid #17a2b8;
+            background: rgba(6, 182, 212, 0.15);
+            color: #67e8f9;
+            border-left: 4px solid #06b6d4;
         }
+
         .project-message-close {
             background: none;
             border: none;
-            font-size: 1.2em;
+            font-size: 1.3em;
             cursor: pointer;
             opacity: 0.6;
-            padding: 0 5px;
+            padding: 0 var(--spacing-sm);
             line-height: 1;
+            color: currentColor;
+            transition: opacity var(--transition-fast);
         }
+
         .project-message-close:hover {
             opacity: 1;
         }
+
         .project-message-btn {
-            padding: 4px 12px;
+            padding: 6px 16px;
             border: none;
-            border-radius: 4px;
+            border-radius: var(--radius-sm);
             cursor: pointer;
             font-size: 0.9em;
-            font-weight: 500;
-            transition: all 0.2s;
+            font-weight: 600;
+            transition: all var(--transition-base);
         }
+
         .project-message-btn-primary {
-            background: #28a745;
+            background: var(--color-success);
             color: white;
         }
+
         .project-message-btn-primary:hover {
-            background: #218838;
+            background: #16a34a;
+            transform: translateY(-1px);
         }
+
         .project-message-btn-secondary {
-            background: #6c757d;
+            background: rgba(100, 116, 139, 0.6);
             color: white;
         }
+
         .project-message-btn-secondary:hover {
-            background: #5a6268;
+            background: rgba(100, 116, 139, 0.8);
+            transform: translateY(-1px);
         }
-        @keyframes slideDown {
-            from {
-                transform: translateY(-20px);
-                opacity: 0;
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            .layout {
+                grid-template-columns: 1fr;
+                height: auto;
+                display: block;
             }
-            to {
-                transform: translateY(0);
-                opacity: 1;
+
+            .controls {
+                height: auto;
+                margin-bottom: var(--spacing-xl);
+                overflow: visible;
+            }
+
+            .project-area {
+                height: 600px;
             }
         }
 
-        @media (max-width: 900px) {
-            .layout { grid-template-columns: 1fr; height: auto; display: block; }
-            .controls { height: auto; margin-bottom: 20px; overflow: visible; }
-            .project-area { height: 600px; }
+        /* ===== REDUCED MOTION ===== */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
         }
     </style>
 </head>
 <body>
 
+<!-- Animated Background -->
+<div class="animated-bg">
+    <div class="animated-bg__blob"></div>
+    <div class="animated-bg__blob"></div>
+    <div class="animated-bg__blob"></div>
+</div>
+
 <div class="layout">
 
     <!-- 1. LEWA KOLUMNA (KONFIGURACJA) -->
-    <div class="controls">
+    <div class="controls fade-in-up">
 
         <!-- Kształt obszaru roboczego -->
-        <div class="card">
+        <div class="card delay-100">
             <h3>1. Kształt obszaru roboczego</h3>
             <div id="segmentsContainer"></div>
 
-            <div style="background:#fdfdfd; padding:10px; border:1px dashed #ccc; margin-top:10px; border-radius:4px;">
-                <div class="row-inputs" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:5px;">
+            <div style="background: rgba(15, 23, 42, 0.3); padding: 12px; border: 1px dashed rgba(148, 163, 184, 0.3); margin-top: 12px; border-radius: var(--radius-base);">
+                <div class="row-inputs" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
                     <input type="number" id="segWidth" placeholder="Szer.">
                     <input type="number" id="segStartHeight" placeholder="np. 140">
                     <input type="number" id="segEndHeight" placeholder="Wys. końc.">
                 </div>
                 <button class="btn-add-segment" onclick="addSegment()">+ Dodaj Segment</button>
             </div>
-            <button class="btn-secondary" style="width:100%; margin-top:10px; background:#e8f5e9; border-color:#81c784; color:#2e7d32;" onclick="loadPresetWorkspace()">📋 Wczytaj przykład</button>
+            <button class="btn-secondary" style="width:100%; margin-top:12px; background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.1)); border-color: rgba(34, 197, 94, 0.5); color: #86efac;" onclick="loadPresetWorkspace()">📋 Wczytaj przykład U-shaped</button>
             <button class="btn-danger" onclick="resetWall()">Resetuj Obszar</button>
         </div>
 
         <!-- Konfiguracja Paneli -->
-        <div class="card">
+        <div class="card delay-200">
             <h3>2. Konfiguracja Paneli</h3>
-            <p style="font-size:0.8em; color:#666; margin-bottom:5px;">Zdefiniuj wymiary paneli (szer × wys) dostępne do układania.</p>
+            <p style="font-size:0.8em; color: var(--color-text-secondary); margin-bottom:8px;">Zdefiniuj wymiary paneli (szer × wys) dostępne do układania.</p>
             <div class="row-inputs" style="display:grid; grid-template-columns:1fr 1fr auto; gap:5px;">
                 <input type="number" id="newVariantWidth" placeholder="Szer.">
                 <input type="number" id="newVariantHeight" placeholder="Wys.">
@@ -348,13 +1116,13 @@
         </div>
 
         <!-- Wycena i Mapowanie -->
-        <div class="card" style="border-left: 5px solid #28a745;">
+        <div class="card delay-300" style="border-left: 4px solid var(--color-success);">
             <h3>3. Wycena i Materiały</h3>
 
             <div id="mappingContainer" style="margin-bottom:15px;"></div>
 
             <div style="font-size:0.9em; margin-bottom:10px; display:grid; grid-template-columns: 1fr 1fr; gap:5px;">
-                <label style="font-weight:normal;"><input type="checkbox" id="optFoam" onchange="recalculatePrice()"> Podwójna pianka</label>
+                <label style="font-weight:normal;"><input type="checkbox" id="optFoam" onchange="updatePanelDepth(); recalculatePrice()"> Podwójna pianka (5cm)</label>
                 <label style="font-weight:normal;"><input type="checkbox" id="optVelcro" onchange="recalculatePrice()"> Rzep montażowy</label>
                 <label style="font-weight:normal;"><input type="checkbox" id="optShipping" checked onchange="recalculatePrice()"> Wysyłka</label>
             </div>
@@ -371,25 +1139,25 @@
 
             <div class="price-summary">
                 <div class="total-price" id="totalPriceDisplay">0.00 zł</div>
-                <div style="font-size:0.8em; color:#555; margin-top:5px;" id="priceDetails"></div>
+                <div style="font-size:0.8em; color: var(--color-text-secondary); margin-top:8px;" id="priceDetails"></div>
             </div>
         </div>
 
         <!-- Zapis -->
-        <div class="card">
+        <div class="card delay-400">
             <h3>Zapisane Projekty</h3>
-            <button class="btn-secondary" style="width:100%; margin-bottom:10px; background:#e3f2fd; border-color:#90caf9; color:#1565c0;" onclick="saveCurrentLayout()">💾 Zapisz obecny układ</button>
+            <button class="btn-secondary" style="width:100%; margin-bottom:10px; background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(6, 182, 212, 0.1)); border-color: rgba(6, 182, 212, 0.5); color: #67e8f9;" onclick="saveCurrentLayout()">💾 Zapisz obecny układ</button>
             <div id="savesContainer"></div>
         </div>
 
     </div>
 
     <!-- 2. PRAWA STRONA (PROJEKT) -->
-    <div class="project-area">
+    <div class="project-area fade-in-up delay-100">
 
         <!-- NAGŁÓWEK PROJEKTU -->
-        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 20px; border-radius: 8px 8px 0 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-            <h2 style="margin: 0; font-size: 1.3em; font-weight: 600;">Projekt</h2>
+        <div style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.3), rgba(118, 75, 162, 0.3)); backdrop-filter: blur(8px); padding: 20px; border-bottom: 1px solid rgba(148, 163, 184, 0.2);">
+            <h2 style="margin: 0; font-size: 1.4em; font-weight: 700; background: linear-gradient(to right, #06b6d4, #a78bfa, #f472b6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">✨ Kreator Paneli Tapicerowanych</h2>
         </div>
 
         <!-- TOP BAR: SZYBKIE DODAWANIE -->
@@ -409,17 +1177,32 @@
                 <!-- Generowane JS (Kolory + Gumka) -->
             </div>
 
-            <!-- CANVAS -->
-            <div class="canvas-wrapper">
-                <div id="svgWrapper"></div>
+            <!-- CANVAS CONTAINER - dwa widoki -->
+            <div class="canvas-container">
+                <!-- WIDOK FRONTALNY -->
+                <div class="view-section">
+                    <div class="view-header">📐 Widok Frontalny (rozwinięcie)</div>
+                    <div class="canvas-wrapper">
+                        <div id="svgWrapperFront"></div>
+                    </div>
+                </div>
 
-                <div class="canvas-zoom">
+                <!-- PRZYBORNIK (zsynchronizowany dla obu widoków) -->
+                <div class="toolbar-between">
                     <button onclick="changeZoom(-0.1)" class="btn-secondary" style="padding:2px 6px;">-</button>
                     <span id="zoomLabel">100%</span>
                     <button onclick="changeZoom(0.1)" class="btn-secondary" style="padding:2px 6px;">+</button>
                     <span style="color:#ccc">|</span>
                     <button onclick="undoPanel()" class="btn-secondary" title="Cofnij ostatni panel" style="padding:2px 6px;">↩</button>
                     <button onclick="clearWorkspace()" class="btn-secondary" title="Wyczyść obszar roboczy" style="padding:2px 6px;">🗑️</button>
+                </div>
+
+                <!-- WIDOK Z GÓRY -->
+                <div class="view-section">
+                    <div class="view-header">🔍 Widok z Góry (rzut poziomy)</div>
+                    <div class="canvas-wrapper">
+                        <div id="svgWrapperTop"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -506,7 +1289,7 @@
     const visualTextures = [{ file: floralTex, name: 'Dekor' }];
 
     // --- STAN ---
-    let wallData = { segments: [] };
+    let wallData = { segments: [], masterSegmentIndex: 0 }; // segments: [{width, startHeight, endHeight, angle}]
     let variants = [
         {width: 30, height: 100},
         {width: 20, height: 140},
@@ -522,7 +1305,8 @@
     let previewPosition = null; // {x, y} - pozycja preview (z myszki lub smart snap)
     let previewLocked = false; // Czy preview jest "zamrożony" po snapie
     let selectedVariant = null; // {width, height} - aktywnie wybrany rozmiar (dla podświetlenia)
-    const STORAGE_KEY = 'panelConfig_V6_Saves';
+    let panelDepth = 2.5; // Grubość panelu w cm (default 2.5cm)
+    const STORAGE_KEY = 'panelConfig_V7_Saves';
 
     // --- SYSTEM KOMUNIKATÓW PROJEKTU ---
     function showProjectMessage(text, type = 'info', duration = 4000) {
@@ -602,6 +1386,13 @@
         delete window._projectConfirmCallback;
     }
 
+    // --- GRUBOŚĆ PANELU ---
+    function updatePanelDepth() {
+        const foamChecked = document.getElementById('optFoam').checked;
+        panelDepth = foamChecked ? 5.0 : 2.5;
+        draw(); // Odśwież widok z góry
+    }
+
     // --- INIT ---
     document.addEventListener('DOMContentLoaded', () => {
         renderSegmentsList();
@@ -613,7 +1404,7 @@
         updateMappingUI();
 
         // Obsługa kliknięć w obszar roboczy
-        const svgWrapper = document.getElementById('svgWrapper');
+        const svgWrapper = document.getElementById('svgWrapperFront');
         svgWrapper.addEventListener('click', onCanvasClick);
         svgWrapper.addEventListener('mousemove', onCanvasMouseMove);
     });
@@ -1108,7 +1899,7 @@
     }
 
     function getSVGCoordinates(event) {
-        const svg = document.querySelector('#svgWrapper svg');
+        const svg = document.querySelector('#svgWrapperFront svg');
         if (!svg) return null;
 
         const pt = svg.createSVGPoint();
@@ -1216,7 +2007,8 @@
             panels: panels,
             variants: variants,
             mapping: styleMapping,
-            mode: layoutMode
+            mode: layoutMode,
+            depth: panelDepth
         });
         if(saves.length > 5) saves.pop();
         localStorage.setItem(STORAGE_KEY, JSON.stringify(saves));
@@ -1245,6 +2037,10 @@
             variants = s.variants || variants;
             styleMapping = s.mapping || {};
             layoutMode = s.mode || 'horizontal';
+            panelDepth = s.depth || 2.5;
+
+            // Synchronizuj checkbox pianki
+            document.getElementById('optFoam').checked = (panelDepth === 5.0);
 
             draw();
             renderSegmentsList();
@@ -1256,11 +2052,12 @@
 
     // --- 5. LOGIKA OBSZARU ROBOCZEGO ---
     function loadPresetWorkspace() {
+        // Preset U-shaped: seg1→seg2 (90°), seg2→seg3 (180°), seg3→seg4 (90°)
         wallData.segments = [
-            {width: 60, startHeight: 140, endHeight: 140},
-            {width: 200, startHeight: 140, endHeight: 140},
-            {width: 60, startHeight: 140, endHeight: 140},
-            {width: 100, startHeight: 140, endHeight: 80}
+            {width: 100, startHeight: 140, endHeight: 140, angle: 180}, // Pierwszy segment (angle nie ma znaczenia)
+            {width: 200, startHeight: 140, endHeight: 140, angle: 90},  // Skręt 90° w prawo
+            {width: 100, startHeight: 140, endHeight: 140, angle: 180}, // Kontynuacja prosto
+            {width: 200, startHeight: 140, endHeight: 140, angle: 90}   // Skręt 90° w prawo
         ];
         renderSegmentsList();
         draw();
@@ -1278,7 +2075,7 @@
             return;
         }
 
-        wallData.segments.push({width: w, startHeight: sh, endHeight: eh});
+        wallData.segments.push({width: w, startHeight: sh, endHeight: eh, angle: 180}); // Default 180° (linia prosta)
         document.getElementById('segWidth').value = '';
         document.getElementById('segEndHeight').value = '';
 
@@ -1292,20 +2089,67 @@
 
     function removeSegment(i) {
         wallData.segments.splice(i, 1);
+
+        // Zaktualizuj masterSegmentIndex jeśli potrzeba
+        if (wallData.masterSegmentIndex >= wallData.segments.length) {
+            wallData.masterSegmentIndex = Math.max(0, wallData.segments.length - 1);
+        }
+
         renderSegmentsList();
         draw();
         updateMappingUI();
     }
 
+    function updateSegmentAngle(index, newAngle) {
+        const angle = parseFloat(newAngle);
+        if (angle >= 45 && angle <= 270) {
+            wallData.segments[index].angle = angle;
+            renderSegmentsList();
+            draw();
+        }
+    }
+
+    function cycleAngle(index, direction) {
+        const angles = [90, 180, 270];
+        const currentAngle = wallData.segments[index].angle || 180;
+        const currentIndex = angles.indexOf(currentAngle);
+
+        let newIndex;
+        if (currentIndex === -1) {
+            // Jeśli kąt nie jest w dozwolonych wartościach, ustaw 180°
+            newIndex = 1; // 180°
+        } else {
+            newIndex = (currentIndex + direction + angles.length) % angles.length;
+        }
+
+        wallData.segments[index].angle = angles[newIndex];
+        renderSegmentsList();
+        draw();
+    }
+
+    function setMasterSegment(index) {
+        wallData.masterSegmentIndex = index;
+        renderSegmentsList();
+        draw();
+    }
+
     function resetWall() {
         if(confirm("Resetować obszar roboczy?")) {
             wallData.segments = [];
+            wallData.masterSegmentIndex = 0;
             document.getElementById('segStartHeight').value = '';
             document.getElementById('segEndHeight').value = '';
             renderSegmentsList();
             draw();
             updateMappingUI();
         }
+    }
+
+    function getAngleIcon(angle) {
+        if (angle < 100) return '↱'; // Skręt w prawo (90° itp.)
+        if (angle > 170 && angle < 190) return '─'; // Linia prosta (180°)
+        if (angle > 260) return '↰'; // Skręt w lewo (270°)
+        return '↷'; // Inne kąty
     }
 
     function renderSegmentsList() {
@@ -1315,11 +2159,44 @@
         wallData.segments.forEach((s, i) => {
             // Określ ikonę kształtu: prostokąt (▭) lub trapez (⏢)
             const shapeIcon = s.startHeight === s.endHeight ? '▭' : '⏢';
+            const angleIcon = getAngleIcon(s.angle || 180);
+            const isMaster = (wallData.masterSegmentIndex === i);
 
-            c.innerHTML += `<div class="segment-row">
-                <span><span class="segment-icon" title="${s.startHeight === s.endHeight ? 'Prostokąt' : 'Trapez'}">${shapeIcon}</span>${i+1}. <b>${s.width}</b>cm | ${s.startHeight}cm → ${s.endHeight}cm</span>
-                <button class="btn-x" onclick="removeSegment(${i})">X</button>
-            </div>`;
+            const row = document.createElement('div');
+            row.className = 'segment-row';
+
+            const iconSpan = document.createElement('span');
+            iconSpan.className = 'segment-icon';
+            iconSpan.title = s.startHeight === s.endHeight ? 'Prostokąt' : 'Trapez';
+            iconSpan.textContent = shapeIcon;
+
+            const infoDiv = document.createElement('div');
+            infoDiv.className = 'segment-info';
+            infoDiv.innerHTML = `
+                <input type="radio" name="masterSegment" class="master-radio"
+                       ${isMaster ? 'checked' : ''}
+                       onchange="setMasterSegment(${i})"
+                       title="Ustaw jako master (bazowy) segment">
+                ${i+1}. <b>${s.width}</b>cm | ${s.startHeight}→${s.endHeight}cm<br>
+                <span style="font-size:0.8em; color:#666; margin-left:20px;">
+                    ${angleIcon} Kąt:
+                    ${i === 0 ?
+                        `<input type="text" class="segment-angle-input" value="--" readonly disabled title="Pierwszy segment nie ma kąta łączenia">°` :
+                        `<button class="angle-btn" onclick="cycleAngle(${i}, -1)">-</button>
+                         <input type="text" class="segment-angle-input" value="${s.angle || 180}" readonly>°
+                         <button class="angle-btn" onclick="cycleAngle(${i}, 1)">+</button>`
+                    }
+                </span>`;
+
+            const btnX = document.createElement('button');
+            btnX.className = 'btn-x';
+            btnX.textContent = 'X';
+            btnX.onclick = () => removeSegment(i);
+
+            row.appendChild(iconSpan);
+            row.appendChild(infoDiv);
+            row.appendChild(btnX);
+            c.appendChild(row);
         });
     }
 
@@ -1433,10 +2310,9 @@
         html += '<div style="font-weight:bold; margin:12px 0 8px 0; padding-bottom:4px; border-bottom:2px solid #ff9800; color:#ff9800;">═══ DODATKI ═══</div>';
         let extrasTotal = 0;
 
-        // Pianka
+        // Pianka (obecna logika jest prawidłowa)
         if (opts.foam) {
             let foamCost = 0;
-            let foamDetails = [];
             panels.forEach(p => {
                 const m2 = (p.width * p.height) / 10000;
                 let cost = 0;
@@ -1449,7 +2325,7 @@
             });
             extrasTotal += foamCost;
             html += `<div style="margin-bottom:4px; padding-left:8px;">
-                ☑ Podwójna pianka - ${panels.length} paneli (6-100 zł) =
+                ☑ Podwójna pianka (5cm) - ${panels.length} paneli (6-100 zł) =
                 <span style="font-weight:bold;">${foamCost.toFixed(2)} zł</span>
             </div>`;
         }
@@ -1533,7 +2409,12 @@
 
     // --- 7. WIZUALIZACJA ---
     function draw() {
-        const svg = document.getElementById('svgWrapper');
+        drawFrontView();
+        drawTopView();
+    }
+
+    function drawFrontView() {
+        const svg = document.getElementById('svgWrapperFront');
 
         if (wallData.segments.length === 0) {
             // Brak segmentów - pokaż pustą przestrzeń
@@ -1657,7 +2538,6 @@
             // Strzałka ↙ w lewym dolnym rogu (wewnątrz preview)
             const arrowX = prevX + 15; // 15px od lewej krawędzi
             const arrowY = prevY + previewSize.height - 15; // 15px od dolnej krawędzi
-            const arrowSize = 12;
 
             previewSVG += `<text x="${arrowX}" y="${arrowY}" font-size="20" fill="${strokeColor}" font-weight="bold" pointer-events="none">↙</text>`;
         }
@@ -1697,6 +2577,151 @@
             ${previewSVG}
             <path d="${d}" fill="none" stroke="#555" stroke-width="2"/>
             ${dimensionsSVG}
+        </svg>`;
+    }
+
+    function drawTopView() {
+        const svg = document.getElementById('svgWrapperTop');
+
+        if (wallData.segments.length === 0) {
+            svg.innerHTML = `<svg width="300px" viewBox="0 0 300 200">
+                <text x="150" y="100" text-anchor="middle" fill="#999" font-size="14">
+                    Dodaj segmenty aby zobaczyć widok z góry
+                </text>
+            </svg>`;
+            return;
+        }
+
+        const wallDepth = 2.5; // Stała grubość obszaru roboczego (nie zależy od pianki)
+
+        // Oblicz pozycje 2D segmentów na podstawie kątów (trigonometria)
+        let positions = [];
+        let currentX = 0;
+        let currentY = 0;
+        let currentAngle = 0; // Kąt w radianach (0 = w prawo)
+
+        wallData.segments.forEach((seg, idx) => {
+            // Zapisz pozycję STARTOWĄ tego segmentu z jego OBECNYM kątem
+            positions.push({ x: currentX, y: currentY, angle: currentAngle, width: seg.width });
+
+            // Oblicz przemieszczenie według obecnego kąta
+            const dx = seg.width * Math.cos(currentAngle);
+            const dy = seg.width * Math.sin(currentAngle);
+            currentX += dx;
+            currentY += dy;
+
+            // Zaktualizuj kąt dla NASTĘPNEGO segmentu (jeśli nie ostatni)
+            if (idx < wallData.segments.length - 1) {
+                const nextSeg = wallData.segments[idx + 1];
+                // angle: 180° = kontynuacja, 90° = skręt w prawo, 270° = skręt w lewo
+                const turnAngle = nextSeg.angle - 180; // -90° (w prawo), 0° (prosto), +90° (w lewo)
+                currentAngle += (turnAngle * Math.PI / 180); // Konwersja na radiany
+            }
+        });
+
+        // Przesuń i obróć wszystkie pozycje względem master segmentu
+        const masterIdx = wallData.masterSegmentIndex || 0;
+        const masterPos = positions[masterIdx];
+        const masterAngle = masterPos.angle;
+
+        // Przetwórz wszystkie pozycje: przesuń i obróć względem mastera
+        positions = positions.map(pos => {
+            // Przesuń pozycję względem mastera
+            let relX = pos.x - masterPos.x;
+            let relY = pos.y - masterPos.y;
+
+            // Obróć o -masterAngle (aby master miał kąt 0)
+            const cosA = Math.cos(-masterAngle);
+            const sinA = Math.sin(-masterAngle);
+            const rotatedX = relX * cosA - relY * sinA;
+            const rotatedY = relX * sinA + relY * cosA;
+
+            return {
+                x: rotatedX,
+                y: rotatedY,
+                angle: pos.angle - masterAngle,
+                width: pos.width
+            };
+        });
+
+        // Oblicz pozycję X mastera w widoku frontalnym (wyrównanie lewo-prawo)
+        const frontViewStartX = 50; // padX z widoku frontalnego
+        let masterFrontX = frontViewStartX;
+        for (let i = 0; i < masterIdx; i++) {
+            masterFrontX += wallData.segments[i].width;
+        }
+
+        // Oblicz totalW - suma szerokości wszystkich segmentów (TAK SAMO jak w widoku frontalnym!)
+        let totalW = 0;
+        wallData.segments.forEach(s => totalW += s.width);
+
+        // Znajdź granice dla centrowania (tylko w pionie - Y)
+        let minY = Math.min(...positions.map(p => p.y));
+        let maxY = Math.max(...positions.map(p => p.y));
+
+        // Dodaj padding dla grubości ściany
+        minY -= wallDepth;
+        maxY += wallDepth;
+
+        const rangeY = maxY - minY;
+        const padX = 50, padY = 50;
+        const W = totalW + padX * 2; // TAK SAMO jak w widoku frontalnym - ważne dla wyrównania!
+        const H = rangeY + padY * 2;
+
+        // Przesunięcie: master segment ma być w pozycji masterFrontX (wyrównanie z widokiem frontalnym)
+        const offsetX = masterFrontX;
+        const offsetY = -minY + padY;
+
+        // Rysowanie segmentów jako prostokątów (szerokość × głębokość)
+        let segmentsSVG = '';
+        for (let i = 0; i < wallData.segments.length; i++) {
+            const seg = wallData.segments[i];
+            const pos = positions[i];
+            const angle = pos.angle * 180 / Math.PI; // Konwersja na stopnie
+
+            const x = pos.x + offsetX;
+            const y = pos.y + offsetY;
+
+            // Prostokąt: szerokość segmentu × grubość ściany
+            segmentsSVG += `<rect x="0" y="${-wallDepth/2}" width="${seg.width}" height="${wallDepth}"
+                fill="#7fa8d1" stroke="#4a7ba7" stroke-width="2"
+                transform="translate(${x}, ${y}) rotate(${angle})" />`;
+
+            // Etykieta szerokości (w środku segmentu)
+            const midX = x + (seg.width / 2) * Math.cos(pos.angle);
+            const midY = y + (seg.width / 2) * Math.sin(pos.angle);
+            segmentsSVG += `<text x="${midX}" y="${midY}" text-anchor="middle" font-size="11" fill="#fff" font-weight="bold"
+                style="text-shadow: 0 0 3px rgba(0,0,0,0.8)">${seg.width}</text>`;
+
+            // Etykieta kąta (przy punkcie łączenia segmentów, jeśli nie 180°)
+            if (i > 0 && wallData.segments[i].angle !== 180) {
+                const labelText = `${wallData.segments[i].angle}°`;
+                const labelFontSize = 10;
+                const labelPadding = 3;
+
+                // Offset od punktu łączenia (na zewnątrz kąta)
+                const labelOffsetDist = 15;
+                const labelX = x + labelOffsetDist * Math.cos(pos.angle - Math.PI/4);
+                const labelY = y + labelOffsetDist * Math.sin(pos.angle - Math.PI/4);
+
+                // Wymiary tła (przybliżone)
+                const textWidth = labelText.length * 6;
+                const textHeight = 14;
+
+                // Tło pod tekstem (prostokąt z ramką)
+                segmentsSVG += `<rect x="${labelX - textWidth/2 - labelPadding}" y="${labelY - textHeight/2 - labelPadding}"
+                    width="${textWidth + labelPadding*2}" height="${textHeight + labelPadding*2}"
+                    fill="#fff" stroke="#ff6b35" stroke-width="1.5" rx="3" opacity="0.95" />`;
+
+                // Tekst kąta
+                segmentsSVG += `<text x="${labelX}" y="${labelY + 3}" text-anchor="middle"
+                    font-size="${labelFontSize}" fill="#ff6b35" font-weight="bold">${labelText}</text>`;
+            }
+        }
+
+        svg.innerHTML = `<svg width="${W*zoomLevel}px" viewBox="0 0 ${W} ${H}">
+            <rect width="${W}" height="${H}" fill="#f8f9fa"/>
+            ${segmentsSVG}
         </svg>`;
     }
 
