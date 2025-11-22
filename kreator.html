@@ -1,4 +1,4 @@
-<!-- kreator.html v0.038 FAZA 3: Collapse buttons in headers, removed [F][T][FT] -->
+<!-- kreator.html v0.039 🐛 FIX: Collapse functionality - null-safety in toggleViewSection() -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -3027,16 +3027,28 @@
     function toggleViewSection(viewType) {
         const sectionId = viewType === 'frontal' ? 'viewSectionFrontal' : 'viewSectionTop';
         const section = document.getElementById(sectionId);
-        const header = section.previousElementSibling; // Get the header
 
-        if (section) {
-            section.classList.toggle('collapsed');
-            header.classList.toggle('view-collapsed');
+        // Null-safety: Check section exists BEFORE accessing properties
+        if (!section) {
+            console.error('toggleViewSection: section not found:', sectionId);
+            return;
+        }
 
-            // Haptic feedback
-            if (navigator.vibrate) {
-                navigator.vibrate(15);
-            }
+        const header = section.previousElementSibling;
+
+        // Null-safety: Check header exists
+        if (!header) {
+            console.error('toggleViewSection: header not found for', sectionId);
+            return;
+        }
+
+        // Toggle classes
+        section.classList.toggle('collapsed');
+        header.classList.toggle('view-collapsed');
+
+        // Haptic feedback
+        if (navigator.vibrate) {
+            navigator.vibrate(15);
         }
     }
 
