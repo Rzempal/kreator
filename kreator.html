@@ -1,4 +1,4 @@
-<!-- kreator.html v0.037 FAZA 3: View headers as top-bar style (better mobile layout) -->
+<!-- kreator.html v0.038 FAZA 3: Collapse buttons in headers, removed [F][T][FT] -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -1091,6 +1091,50 @@
             border: 1px solid var(--color-surface-border);
             border-radius: var(--radius-base) var(--radius-base) 0 0;
             margin-bottom: 0;
+            /* FAZA 3: Flexbox for collapse button */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* FAZA 3: View collapse button */
+        .view-collapse-btn {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid var(--color-surface-border);
+            border-radius: var(--radius-sm);
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            color: var(--color-text-secondary);
+            font-size: 0.8em;
+        }
+
+        .view-collapse-btn:hover {
+            background: rgba(30, 41, 59, 1);
+            border-color: rgba(var(--color-accent-rgb), 0.5);
+            color: var(--color-accent);
+            transform: scale(1.05);
+        }
+
+        .view-collapse-btn:active {
+            transform: scale(0.95);
+        }
+
+        .collapse-icon {
+            transition: transform 0.3s ease;
+            display: block;
+        }
+
+        .view-collapsed .collapse-icon {
+            transform: rotate(-90deg);
+        }
+
+        .view-section.collapsed {
+            display: none;
         }
 
         .canvas-wrapper {
@@ -1895,13 +1939,6 @@
                 <span class="burger-icon">🎨</span>
             </button>
 
-            <!-- View Toggle (F/T/FT) -->
-            <div class="view-toggle" id="viewToggle">
-                <button class="view-btn" data-view="frontal" onclick="changeView('frontal')" title="Widok frontalny">F</button>
-                <button class="view-btn" data-view="top" onclick="changeView('top')" title="Widok z góry">T</button>
-                <button class="view-btn active" data-view="dual" onclick="changeView('dual')" title="Oba widoki">FT</button>
-            </div>
-
             <!-- Panel variants shown on desktop, hidden on mobile -->
             <div class="top-bar-title panel-title-desktop">Wybierz panel:</div>
             <div id="topVariantsButtons" class="panel-buttons-desktop" style="display:flex; gap:8px; overflow-x:auto;"></div>
@@ -1925,8 +1962,13 @@
             <!-- CANVAS CONTAINER - dwa widoki -->
             <div class="canvas-container">
                 <!-- WIDOK FRONTALNY -->
-                <div class="view-header">📐 Widok Frontalny (rozwinięcie)</div>
-                <div class="view-section">
+                <div class="view-header">
+                    <span>Widok Frontalny (rozwinięcie)</span>
+                    <button class="view-collapse-btn" onclick="toggleViewSection('frontal')" title="Zwiń/rozwiń">
+                        <span class="collapse-icon">▼</span>
+                    </button>
+                </div>
+                <div class="view-section" id="viewSectionFrontal">
                     <div class="canvas-wrapper">
                         <div id="svgWrapperFront"></div>
                     </div>
@@ -1946,8 +1988,13 @@
                 </div>
 
                 <!-- WIDOK Z GÓRY -->
-                <div class="view-header">🔍 Widok z Góry (rzut poziomy)</div>
-                <div class="view-section">
+                <div class="view-header">
+                    <span>Widok z Góry (rzut poziomy)</span>
+                    <button class="view-collapse-btn" onclick="toggleViewSection('top')" title="Zwiń/rozwiń">
+                        <span class="collapse-icon">▼</span>
+                    </button>
+                </div>
+                <div class="view-section" id="viewSectionTop">
                     <div class="canvas-wrapper">
                         <div id="svgWrapperTop"></div>
                     </div>
@@ -2973,6 +3020,23 @@
         // Haptic feedback
         if (navigator.vibrate) {
             navigator.vibrate(20);
+        }
+    }
+
+    // FAZA 3: Toggle view section collapse/expand
+    function toggleViewSection(viewType) {
+        const sectionId = viewType === 'frontal' ? 'viewSectionFrontal' : 'viewSectionTop';
+        const section = document.getElementById(sectionId);
+        const header = section.previousElementSibling; // Get the header
+
+        if (section) {
+            section.classList.toggle('collapsed');
+            header.classList.toggle('view-collapsed');
+
+            // Haptic feedback
+            if (navigator.vibrate) {
+                navigator.vibrate(15);
+            }
         }
     }
 
