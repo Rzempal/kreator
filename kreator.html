@@ -1,4 +1,4 @@
-<!-- kreator.html v0.028 Opisy kątów przy punktach łączenia z ramką -->
+<!-- kreator.html v0.029 Usunięcie paneli z widoku z góry + toolbar między widokami -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -270,6 +270,21 @@
             font-size: 0.85em; font-weight: bold; color: #555;
         }
 
+        .toolbar-between {
+            background: rgba(255,255,255,0.95);
+            padding: 10px 15px;
+            border-radius: 8px;
+            display: flex;
+            gap: 8px;
+            border: 1px solid #ddd;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9em;
+            font-weight: bold;
+            color: #555;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
         /* Zapis */
         .save-slot { background: #f8f9fa; border: 1px solid #eee; padding: 8px; margin-bottom: 5px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85em; }
 
@@ -483,15 +498,17 @@
                     <div class="view-header">📐 Widok Frontalny (rozwinięcie)</div>
                     <div class="canvas-wrapper">
                         <div id="svgWrapperFront"></div>
-                        <div class="canvas-zoom">
-                            <button onclick="changeZoom(-0.1)" class="btn-secondary" style="padding:2px 6px;">-</button>
-                            <span id="zoomLabel">100%</span>
-                            <button onclick="changeZoom(0.1)" class="btn-secondary" style="padding:2px 6px;">+</button>
-                            <span style="color:#ccc">|</span>
-                            <button onclick="undoPanel()" class="btn-secondary" title="Cofnij ostatni panel" style="padding:2px 6px;">↩</button>
-                            <button onclick="clearWorkspace()" class="btn-secondary" title="Wyczyść obszar roboczy" style="padding:2px 6px;">🗑️</button>
-                        </div>
                     </div>
+                </div>
+
+                <!-- PRZYBORNIK (zsynchronizowany dla obu widoków) -->
+                <div class="toolbar-between">
+                    <button onclick="changeZoom(-0.1)" class="btn-secondary" style="padding:2px 6px;">-</button>
+                    <span id="zoomLabel">100%</span>
+                    <button onclick="changeZoom(0.1)" class="btn-secondary" style="padding:2px 6px;">+</button>
+                    <span style="color:#ccc">|</span>
+                    <button onclick="undoPanel()" class="btn-secondary" title="Cofnij ostatni panel" style="padding:2px 6px;">↩</button>
+                    <button onclick="clearWorkspace()" class="btn-secondary" title="Wyczyść obszar roboczy" style="padding:2px 6px;">🗑️</button>
                 </div>
 
                 <!-- WIDOK Z GÓRY -->
@@ -2016,51 +2033,9 @@
             }
         }
 
-        // Rysowanie paneli jako zaokrąglonych prostokątów
-        let panelsSVG = '';
-        panels.forEach((panel, idx) => {
-            // Znajdź segment(y) w którym znajduje się panel
-            let panelSegmentIdx = -1;
-            let panelOffsetInSegment = 0;
-            let accumulatedWidth = 0;
-
-            for (let i = 0; i < wallData.segments.length; i++) {
-                const seg = wallData.segments[i];
-                if (panel.x >= accumulatedWidth && panel.x < accumulatedWidth + seg.width) {
-                    panelSegmentIdx = i;
-                    panelOffsetInSegment = panel.x - accumulatedWidth;
-                    break;
-                }
-                accumulatedWidth += seg.width;
-            }
-
-            if (panelSegmentIdx === -1) return; // Panel poza obszarem
-
-            // Pozycja panelu w układzie współrzędnych widoku z góry
-            const segPos = positions[panelSegmentIdx];
-            const segAngle = segPos.angle;
-
-            // Pozycja początku panelu wzdłuż segmentu
-            const panelStartX = segPos.x + offsetX + panelOffsetInSegment * Math.cos(segAngle);
-            const panelStartY = segPos.y + offsetY + panelOffsetInSegment * Math.sin(segAngle);
-
-            // Kolor panelu
-            const fill = panel.style.type === 'color' ? panel.style.value : '#8e8e93';
-
-            // Prostokąt w widoku z góry: panel.height (wzdłuż ściany) × panelDepth (głębokość)
-            // Zaokrąglenie po bokach (początek i koniec wzdłuż ściany)
-            const cornerRadius = Math.min(panelDepth / 2, 2.5);
-
-            panelsSVG += `<rect x="0" y="${-panelDepth/2}" width="${panel.height}" height="${panelDepth}"
-                fill="${fill}" stroke="#555" stroke-width="1" opacity="0.8"
-                rx="${cornerRadius}" ry="${cornerRadius}"
-                transform="translate(${panelStartX}, ${panelStartY}) rotate(${segAngle * 180 / Math.PI})" />`;
-        });
-
         svg.innerHTML = `<svg width="${W*zoomLevel}px" viewBox="0 0 ${W} ${H}">
             <rect width="${W}" height="${H}" fill="#f8f9fa"/>
             ${segmentsSVG}
-            ${panelsSVG}
         </svg>`;
     }
 
