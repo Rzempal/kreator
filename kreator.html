@@ -862,6 +862,11 @@
             overflow: hidden;
         }
 
+        #svgWrapperFront {
+            transition: transform 0.05s ease-out;
+            will-change: transform;
+        }
+
         svg {
             display: block;
             background: rgba(15, 23, 42, 0.5);
@@ -1728,7 +1733,14 @@
         initialDistance: 0,
         initialZoom: 1.0,
         touches: [],
-        lastRedraw: 0
+        lastRedraw: 0,
+        rafPending: false,
+        // Pan/scroll state
+        isPanning: false,
+        panX: 0,
+        panY: 0,
+        initialPanX: 0,
+        initialPanY: 0
     };
 
     // --- SYSTEM KOMUNIKATÓW PROJEKTU ---
@@ -2362,6 +2374,7 @@
         if (touches.length === 2) {
             event.preventDefault();
             touchState.isPinching = true;
+            touchState.isPanning = false;
             touchState.initialDistance = getTouchDistance(touches[0], touches[1]);
             touchState.initialZoom = zoomLevel;
             touchState.touches = Array.from(touches);
@@ -2384,16 +2397,30 @@
             touchState.lastY = touch.clientY;
             touchState.startTime = Date.now();
             touchState.isPinching = false;
+            touchState.isPanning = false;
 
-            // Start long press timer (600ms)
-            touchState.longPressTimer = setTimeout(() => {
-                handleLongPress(event);
-            }, 600);
+            // Store initial pan position
+            touchState.initialPanX = touchState.panX;
+            touchState.initialPanY = touchState.panY;
 
-            // Handle touch move for preview (same as mouse move)
-            if (lastUsedPanelSize && !previewLocked) {
+            // Start long press timer (600ms) - only if not zoomed
+            if (zoomLevel <= 1.0) {
+                touchState.longPressTimer = setTimeout(() => {
+                    handleLongPress(event);
+                }, 600);
+            }
+
+            // Handle touch move for preview (only if not zoomed)
+            if (lastUsedPanelSize && !previewLocked && zoomLevel <= 1.0) {
                 onCanvasMouseMove(event);
             }
+        }
+    }
+
+    function applyPanTransform() {
+        const svgWrapper = document.getElementById('svgWrapperFront');
+        if (svgWrapper) {
+            svgWrapper.style.transform = `translate(${touchState.panX}px, ${touchState.panY}px)`;
         }
     }
 
@@ -2410,16 +2437,18 @@
             // Apply zoom with limits (0.5x to 3x)
             const newZoom = Math.max(0.5, Math.min(3.0, touchState.initialZoom * scale));
 
-            // Update zoom immediately (no debouncing for smooth pinch)
+            // Update zoom immediately for smooth pinch
             zoomLevel = newZoom;
             document.getElementById('zoomLabel').textContent = Math.round(zoomLevel * 100) + '%';
 
-            // Throttle redraw for performance (but zoom value updates always)
-            const now = Date.now();
-            if (!touchState.lastRedraw || now - touchState.lastRedraw > 16) { // ~60fps
-                draw();
-                drawTopView();
-                touchState.lastRedraw = now;
+            // Use requestAnimationFrame for smooth rendering
+            if (!touchState.rafPending) {
+                touchState.rafPending = true;
+                requestAnimationFrame(() => {
+                    draw();
+                    drawTopView();
+                    touchState.rafPending = false;
+                });
             }
             return;
         }
@@ -2427,24 +2456,39 @@
         // Single finger move
         if (touches.length === 1 && touchState.active) {
             const touch = touches[0];
-            const deltaX = Math.abs(touch.clientX - touchState.startX);
-            const deltaY = Math.abs(touch.clientY - touchState.startY);
+            const deltaX = touch.clientX - touchState.startX;
+            const deltaY = touch.clientY - touchState.startY;
+            const absDeltaX = Math.abs(deltaX);
+            const absDeltaY = Math.abs(deltaY);
 
             // If moved more than 10px, cancel long press
-            if (deltaX > 10 || deltaY > 10) {
+            if (absDeltaX > 10 || absDeltaY > 10) {
                 if (touchState.longPressTimer) {
                     clearTimeout(touchState.longPressTimer);
                     touchState.longPressTimer = null;
                 }
+
+                // Enable panning if zoomed
+                if (zoomLevel > 1.0 && !touchState.isPanning) {
+                    touchState.isPanning = true;
+                    event.preventDefault();
+                }
+            }
+
+            // Pan mode (when zoomed)
+            if (touchState.isPanning && zoomLevel > 1.0) {
+                event.preventDefault();
+                touchState.panX = touchState.initialPanX + deltaX;
+                touchState.panY = touchState.initialPanY + deltaY;
+                applyPanTransform();
+            }
+            // Preview mode (when not zoomed)
+            else if (lastUsedPanelSize && !previewLocked && zoomLevel <= 1.0) {
+                onCanvasMouseMove(event);
             }
 
             touchState.lastX = touch.clientX;
             touchState.lastY = touch.clientY;
-
-            // Update preview position
-            if (lastUsedPanelSize && !previewLocked) {
-                onCanvasMouseMove(event);
-            }
         }
     }
 
@@ -2467,8 +2511,16 @@
             return;
         }
 
-        // Tap detection (quick touch with minimal movement)
-        if (touchState.active && duration < 300 && deltaX < 10 && deltaY < 10) {
+        // Panning ended
+        if (touchState.isPanning) {
+            event.preventDefault();
+            touchState.isPanning = false;
+            touchState.active = false;
+            return;
+        }
+
+        // Tap detection (quick touch with minimal movement, not panning)
+        if (touchState.active && !touchState.isPanning && duration < 300 && deltaX < 10 && deltaY < 10) {
             // Check if tap was on a panel
             const panelGroup = event.target.closest('g[onclick]');
 
@@ -3361,6 +3413,14 @@
     function changeZoom(d) {
         zoomLevel = Math.max(0.2, Math.min(3.0, zoomLevel + d));
         document.getElementById('zoomLabel').innerText = Math.round(zoomLevel*100)+'%';
+
+        // Reset pan when zooming out to 100% or less
+        if (zoomLevel <= 1.0) {
+            touchState.panX = 0;
+            touchState.panY = 0;
+            applyPanTransform();
+        }
+
         draw();
     }
 </script>
