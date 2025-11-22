@@ -1,7 +1,8 @@
 # Kreator Paneli Tapicerowanych
 
-**Wersja:** v0.023
+**Wersja:** v0.030
 **Status:** Aktywny rozwój
+**Design:** Modern Dark Theme + Glassmorphism ✨
 
 ---
 
@@ -13,7 +14,71 @@ Stworzenie zaawansowanego, przeglądarkowego narzędzia umożliwiającego użytk
 
 ## 2. Co zostało zrobione
 
-### A. Interfejs Użytkownika (UI)
+### A. Design Wizualny (v0.030 - Major Redesign)
+
+#### Modern Dark Theme
+- **Background**: Gradient dark navy (#0f172a → #7c3aed → #1e293b)
+- **Glassmorphism**: Przezroczyste karty z `backdrop-filter: blur(12px)`
+- **Gradient Accents**: Cyan (#06b6d4) → Purple (#a855f7) → Pink (#ec4899)
+- **Typography**: Font **Readex Pro** (Google Fonts) - elegancki, nowoczesny krój pisma
+
+#### Animated Background
+- **Floating Blobs**: 3 kolorowe kule unoszące się w tle (purple, cyan, pink)
+- **Animacja**: 20-sekundowa pętla z blur 40px
+- **Efekt**: Subtelna, dynamiczna warstwa wizualna
+
+#### Animacje i Przejścia
+- **Fade-in-up**: Wszystkie sekcje wlatują od dołu przy załadowaniu
+- **Staggered Delays**: 0.1s, 0.2s, 0.3s, 0.4s dla kolejnych sekcji
+- **Hover Effects**: Scale + glow shadows na przyciskach i kartach
+- **Smooth Transitions**: 0.3s ease-out na wszystkich interakcjach
+
+#### Glassmorphism Components
+- **Cards**: Przezroczyste szkło z gradient glow borders na hover
+- **Buttons**: Gradienty + shimmer effect (przesuwający się blask)
+- **Inputs**: Dark glass z accent glow przy focus
+- **Toolbar**: Glassmorphism między widokami
+
+#### Gradient Text
+- **Główny Header**: "✨ Kreator Paneli Tapicerowanych" (cyan → purple → pink)
+- **View Headers**: "📐 Widok Frontalny" i "🔍 Widok z Góry" z gradientem
+- **Cena**: Zielony gradient dla lepszej czytelności
+
+#### Custom Styling
+- **Scrollbars**: Fioletowe z smooth hover
+- **Segment Rows**: Dark rows z purple accents
+- **Messages**: Dark themed z color-coded alerts
+- **Canvas**: Dark theme z cieniami i efektami świetlnymi
+
+#### Accessibility
+- **Reduced Motion**: Support dla `prefers-reduced-motion`
+- **Color Contrast**: Ulepszone kontrasty dla lepszej czytelności
+- **Focus States**: Wyraźne stany focus z accent colors
+
+### B. Widok z Góry + Kąty (v0.027-0.029)
+
+#### Dual View System
+- **Widok Frontalny**: Klasyczne rozwinięcie ściany (2D)
+- **Widok z Góry**: Rzut poziomy (top-down) pokazujący geometrię kątów
+- **Synchronizacja**: Oba widoki zsynchronizowane - zmiany w jednym odzwierciedlają się w drugim
+
+#### Kąty Segmentów
+- **Definicja Kątów**: Każdy segment ma kąt połączenia (90°, 180°, 270°)
+- **UI**: Przyciski +/- do cyklicznego przełączania kątów
+- **Wizualizacja**: Etykiety kątów przy punktach łączenia z białym tłem i pomarańczową ramką
+- **Geometria**: Precyzyjna trigonometria (sin/cos) dla pozycji 2D
+
+#### Master Segment
+- **Selekcja**: Radio buttons do wyboru segmentu referencyjnego
+- **Alignment**: Master segment wyrównany lewo-prawo między widokami
+- **Transformacja**: Względna rotacja i translacja wszystkich segmentów
+
+#### Toolbar Między Widokami
+- **Centralne Pozycjonowanie**: Toolbar zsynchronizowany dla obu widoków
+- **Kontrolki**: Zoom (+/-), Cofnij (↩), Resetuj (🗑️)
+- **Glass Effect**: Przezroczyste tło z blur
+
+### C. Interfejs Użytkownika (UI)
 
 #### Layout i Struktura
 - **Nowy Layout "Wokół-ekranowy"**: Podział na wąski panel konfiguracyjny (lewa strona) i duży obszar roboczy (prawa strona)
@@ -27,7 +92,7 @@ Stworzenie zaawansowanego, przeglądarkowego narzędzia umożliwiającego użytk
 - **Panele**: Definiowanie wymiarów paneli do układania
 - **Wycena i Materiały**: Szczegółowa lista kosztów z rozbiciem na kategorie
 
-### B. Logika Wizualizacji (SVG)
+### D. Logika Wizualizacji (SVG)
 
 #### Renderowanie
 - **Renderowanie Wektorowe**: SVG zapewnia idealną ostrość przy każdym powiększeniu
@@ -44,7 +109,7 @@ Stworzenie zaawansowanego, przeglądarkowego narzędzia umożliwiającego użytk
 - **ClipPath**: Część w obszarze pełna, część poza przezroczysta
 - **Wizualne oznaczenie**: Użytkownik widzi dokładnie co zostanie ucięte
 
-### C. System Interakcji
+### E. System Interakcji
 
 #### Dodawanie Paneli
 - **Auto-preview**: Pokazuje ostatnio użyty panel (działa na desktop i mobile)
@@ -76,7 +141,7 @@ Stworzenie zaawansowanego, przeglądarkowego narzędzia umożliwiającego użytk
 - **Cofnij**: Przycisk ↩ do usunięcia ostatniego panelu
 - **Zoom**: Przyciski +/- do powiększania/pomniejszania widoku
 
-### D. Silnik Wyceny i Mapowanie
+### F. Silnik Wyceny i Mapowanie
 
 #### Szczegółowa Lista Materiałów
 Zamiast prostego podsumowania, pełna lista z rozbiciem:
@@ -108,7 +173,7 @@ Zamiast prostego podsumowania, pełna lista z rozbiciem:
 - **Fallback**: Cena za m² (300 zł/m²) dla nietypowych wymiarów
 - **Dopłaty**: Pianka i rzep zależne od powierzchni (przedziały: <0.4, 0.4-0.9, 0.9-1.5, 1.5-2.0, ≥2.0 m²)
 
-### E. Zapis Danych
+### G. Zapis Danych
 
 - **System FIFO**: 5 ostatnich projektów w localStorage
 - **Zapisywane dane**: kształt ściany, panele, warianty, mapowanie, tryb
@@ -158,11 +223,13 @@ W sekcji "Wycena i Materiały":
 
 ## 4. Stack Technologiczny
 
-- **HTML5 / CSS3** (CSS Grid, Flexbox, Zmienne CSS, Animacje)
+- **HTML5 / CSS3** (CSS Grid, Flexbox, CSS Variables, Keyframe Animations, Backdrop Filter, Gradients)
 - **Vanilla JavaScript** (ES6+)
 - **SVG** (Skalowalna grafika wektorowa do wizualizacji)
+- **Google Fonts** (Readex Pro - typography)
 - **LocalStorage** (Zapis stanu po stronie klienta)
 - **ClipPath** (Przycinanie paneli do obszaru roboczego)
+- **Glassmorphism** (Backdrop blur + transparency dla modern UI)
 
 ---
 
@@ -190,9 +257,73 @@ W sekcji "Wycena i Materiały":
 - Luminance > 0.5 → czarny tekst
 - Luminance ≤ 0.5 → biały tekst
 
+### Top View Positioning Algorithm (v0.027+)
+1. **2D Position Calculation**: Trigonometryczne obliczanie pozycji segmentów
+   ```javascript
+   // Dla każdego segmentu:
+   positions.push({ x: currentX, y: currentY, angle: currentAngle, width: seg.width });
+   const dx = seg.width * Math.cos(currentAngle);
+   const dy = seg.width * Math.sin(currentAngle);
+   currentX += dx; currentY += dy;
+   ```
+2. **Angle Update**: `turnAngle = nextSeg.angle - 180°` (konwersja z UI do kierunku ruchu)
+3. **Master Segment Transform**: Translacja + rotacja względem segmentu referencyjnego
+   ```javascript
+   // Rotacja o -masterAngle aby master miał kąt 0°
+   rotatedX = relX * cos(-masterAngle) - relY * sin(-masterAngle);
+   rotatedY = relX * sin(-masterAngle) + relY * cos(-masterAngle);
+   ```
+4. **ViewBox Alignment**: Oba widoki używają tej samej szerokości `W = totalW + padX * 2`
+
 ---
 
 ## 6. Historia Wersji (Ostatnie Zmiany)
+
+### v0.030 - Design: Full Redesign (MAJOR UPDATE)
+- **Dark Theme**: Gradient background (#0f172a → #7c3aed → #1e293b)
+- **Glassmorphism**: Backdrop-filter blur na wszystkich kartach
+- **Animated Background**: 3 floating blobs (purple, cyan, pink)
+- **Font**: Import Readex Pro z Google Fonts
+- **Gradient Accents**: Cyan → Purple → Pink
+- **Animations**: Fade-in-up dla sekcji z staggered delays
+- **Hover Effects**: Scale + glow shadows
+- **Buttons**: Gradient backgrounds ze shimmer effect
+- **Inputs**: Dark glass z accent focus states
+- **Gradient Text**: Headers z cyan-purple-pink gradientem
+- **Custom Scrollbars**: Purple styling
+- **Messages**: Dark themed z color-coded alerts
+- **Accessibility**: Reduced motion support
+
+### v0.029 - UX: Uproszczenie widoku z góry
+- Usunięcie renderingu paneli z widoku z góry (za dużo szczegółów)
+- Przeniesienie toolbara (zoom, cofnij, resetuj) między dwa widoki
+- Centralne pozycjonowanie przybornika
+
+### v0.028 - UX: Opisy kątów z ramką
+- Etykiety kątów przy punktach łączenia
+- Białe tło z pomarańczową ramką dla lepszej czytelności
+- Offset 15px od punktu połączenia
+
+### v0.027 - Feature: Master segment + alignment
+- Radio buttons do wyboru master segmentu
+- Wyrównanie master segment lewo-prawo między widokami
+- Fix: ViewBox width alignment (oba widoki używają tej samej szerokości)
+- Stała grubość ściany (wallDepth = 2.5cm)
+
+### v0.026 - Feature: Widok z góry (Top View)
+- Dodanie drugiego widoku (rzut poziomy)
+- Kąty połączeń segmentów (90°, 180°, 270°)
+- Trigonometria dla pozycji 2D
+- Przyciski +/- do zmiany kątów
+- Layout: frontal view na górze, top view na dole
+
+### v0.025 - Feature: Panel depth
+- Dodanie głębokości panelu (2.5cm default, 5cm dla "Podwójna pianka")
+- Checkbox "Podwójna pianka" wpływa na grubość panelu
+
+### v0.024 - Feature: Kąty segmentów (Initial)
+- Dodanie pola `angle` do segmentów (45-270°, default 180°)
+- Podstawowa implementacja kątów
 
 ### v0.023 - Fix: Bugi z dodawaniem paneli
 - Naprawa false positive warning dla paneli które pasują
@@ -258,16 +389,21 @@ kreator/
 - [ ] Walidacja formularzy z lepszymi komunikatami
 - [ ] Obsługa touch events dla mobile (testowanie)
 - [ ] Export projektu do PDF/obrazka
+- [ ] Rendering paneli w widoku z góry (opcjonalnie toggle on/off)
 
 ### Priorytet: Średni
 - [ ] Undo/Redo stack (historia zmian)
 - [ ] Kopiowanie/wklejanie paneli
 - [ ] Tryb "fill" - automatyczne wypełnienie obszaru
+- [ ] Więcej presetów kątów (45°, 135°, 225°, 315°)
+- [ ] 3D preview (isometric view)
 
 ### Priorytet: Niski
 - [ ] Szablony projektów (gotowe układy)
 - [ ] Import kształtu ściany z pliku
 - [ ] Eksport listy materiałów do Excel
+- [ ] Light theme toggle (dla użytkowników preferujących jasny motyw)
+- [ ] Customizable color schemes
 
 ---
 
@@ -298,12 +434,16 @@ python -m http.server 8000
 - Linie 521-1500: JavaScript (logika aplikacji)
 
 ### Główne Funkcje
-- `draw()` - Renderowanie SVG
+- `draw()` - Renderowanie SVG (widok frontalny)
+- `drawTopView()` - Renderowanie widoku z góry z geometrią kątów
 - `addPanel()` - Dodawanie panelu
 - `findBestSnapPosition()` - Inteligentny snap
 - `checkPanelFits()` - Sprawdzanie czy panel mieści się
 - `recalculatePrice()` - Przeliczanie wyceny
 - `showProjectMessage()` - Komunikaty osadzone
+- `cycleAngle()` - Cykliczne przełączanie kątów (90° → 180° → 270°)
+- `setMasterSegment()` - Ustawianie segmentu referencyjnego
+- `updatePanelDepth()` - Aktualizacja głębokości panelu
 
 ---
 
@@ -313,5 +453,6 @@ Projekt prywatny - brak publicznej licencji.
 
 ---
 
-**Ostatnia aktualizacja:** 2025-11-21
+**Ostatnia aktualizacja:** 2025-11-22
 **Autor:** Rzempal
+**Design Version:** v0.030 - Modern Dark Theme ✨
