@@ -1,10 +1,10 @@
-<!-- kreator2.html v0.023 Fix: bugi z dodawaniem paneli (pozycja + false positive warning) -->
+<!-- kreator.html v0.024 Dodanie widoku z góry + kąty między segmentami + grubość panelu -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kreator Paneli (Final Layout)</title>
+    <title>Kreator Paneli (Widok 2D + Top)</title>
     <style>
         :root {
             --primary: #5d3a75;
@@ -64,8 +64,26 @@
         .btn-add-segment { width: 100%; background: #e9ecef; border: 1px solid #ced4da; color: #333; padding: 8px; border-radius: 4px; margin-top: 5px; font-weight: bold;}
 
         /* Lista Odcinków */
-        .segment-row { display: flex; justify-content: space-between; align-items: center; padding: 8px; background: #fafafa; border-bottom: 1px solid #eee; font-size: 0.9em; }
-        .segment-icon { font-size: 1.2em; margin-right: 8px; color: #999; }
+        .segment-row {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 8px;
+            align-items: center;
+            padding: 8px;
+            background: #fafafa;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9em;
+        }
+        .segment-icon { font-size: 1.2em; color: #999; }
+        .segment-info { flex: 1; }
+        .segment-angle-input {
+            width: 60px;
+            padding: 4px;
+            font-size: 0.85em;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            margin-left: 5px;
+        }
         .btn-x { padding: 2px 8px; font-size: 0.8em; color: var(--danger); border: 1px solid var(--danger); background: #fff; border-radius: 4px; }
 
         /* Lista Wariantów (Config) */
@@ -176,16 +194,41 @@
 
         .tool-sep { width: 60%; height: 1px; background: #ddd; margin: 5px 0; }
 
-        /* CANVAS */
-        .canvas-wrapper {
+        /* CANVAS CONTAINER - dwa widoki */
+        .canvas-container {
             flex-grow: 1;
             background: #eef1f5;
             overflow: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .view-section {
+            background: #fff;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .view-header {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .canvas-wrapper {
             position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
+            min-height: 300px;
         }
+
         svg { display: block; background: #f8f9fa; box-shadow: 0 5px 25px rgba(0,0,0,0.05); }
 
         .wall-bg { fill: #e0e0e0; stroke: #777; stroke-width: 2; }
@@ -331,7 +374,7 @@
                 </div>
                 <button class="btn-add-segment" onclick="addSegment()">+ Dodaj Segment</button>
             </div>
-            <button class="btn-secondary" style="width:100%; margin-top:10px; background:#e8f5e9; border-color:#81c784; color:#2e7d32;" onclick="loadPresetWorkspace()">📋 Wczytaj przykład</button>
+            <button class="btn-secondary" style="width:100%; margin-top:10px; background:#e8f5e9; border-color:#81c784; color:#2e7d32;" onclick="loadPresetWorkspace()">📋 Wczytaj przykład U-shaped</button>
             <button class="btn-danger" onclick="resetWall()">Resetuj Obszar</button>
         </div>
 
@@ -354,7 +397,7 @@
             <div id="mappingContainer" style="margin-bottom:15px;"></div>
 
             <div style="font-size:0.9em; margin-bottom:10px; display:grid; grid-template-columns: 1fr 1fr; gap:5px;">
-                <label style="font-weight:normal;"><input type="checkbox" id="optFoam" onchange="recalculatePrice()"> Podwójna pianka</label>
+                <label style="font-weight:normal;"><input type="checkbox" id="optFoam" onchange="updatePanelDepth(); recalculatePrice()"> Podwójna pianka (5cm)</label>
                 <label style="font-weight:normal;"><input type="checkbox" id="optVelcro" onchange="recalculatePrice()"> Rzep montażowy</label>
                 <label style="font-weight:normal;"><input type="checkbox" id="optShipping" checked onchange="recalculatePrice()"> Wysyłka</label>
             </div>
@@ -409,17 +452,30 @@
                 <!-- Generowane JS (Kolory + Gumka) -->
             </div>
 
-            <!-- CANVAS -->
-            <div class="canvas-wrapper">
-                <div id="svgWrapper"></div>
+            <!-- CANVAS CONTAINER - dwa widoki -->
+            <div class="canvas-container">
+                <!-- WIDOK FRONTALNY -->
+                <div class="view-section">
+                    <div class="view-header">📐 Widok Frontalny (rozwinięcie)</div>
+                    <div class="canvas-wrapper">
+                        <div id="svgWrapperFront"></div>
+                        <div class="canvas-zoom">
+                            <button onclick="changeZoom(-0.1)" class="btn-secondary" style="padding:2px 6px;">-</button>
+                            <span id="zoomLabel">100%</span>
+                            <button onclick="changeZoom(0.1)" class="btn-secondary" style="padding:2px 6px;">+</button>
+                            <span style="color:#ccc">|</span>
+                            <button onclick="undoPanel()" class="btn-secondary" title="Cofnij ostatni panel" style="padding:2px 6px;">↩</button>
+                            <button onclick="clearWorkspace()" class="btn-secondary" title="Wyczyść obszar roboczy" style="padding:2px 6px;">🗑️</button>
+                        </div>
+                    </div>
+                </div>
 
-                <div class="canvas-zoom">
-                    <button onclick="changeZoom(-0.1)" class="btn-secondary" style="padding:2px 6px;">-</button>
-                    <span id="zoomLabel">100%</span>
-                    <button onclick="changeZoom(0.1)" class="btn-secondary" style="padding:2px 6px;">+</button>
-                    <span style="color:#ccc">|</span>
-                    <button onclick="undoPanel()" class="btn-secondary" title="Cofnij ostatni panel" style="padding:2px 6px;">↩</button>
-                    <button onclick="clearWorkspace()" class="btn-secondary" title="Wyczyść obszar roboczy" style="padding:2px 6px;">🗑️</button>
+                <!-- WIDOK Z GÓRY -->
+                <div class="view-section">
+                    <div class="view-header">🔍 Widok z Góry (rzut poziomy)</div>
+                    <div class="canvas-wrapper">
+                        <div id="svgWrapperTop"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -506,7 +562,7 @@
     const visualTextures = [{ file: floralTex, name: 'Dekor' }];
 
     // --- STAN ---
-    let wallData = { segments: [] };
+    let wallData = { segments: [] }; // segments: [{width, startHeight, endHeight, angle}]
     let variants = [
         {width: 30, height: 100},
         {width: 20, height: 140},
@@ -522,7 +578,8 @@
     let previewPosition = null; // {x, y} - pozycja preview (z myszki lub smart snap)
     let previewLocked = false; // Czy preview jest "zamrożony" po snapie
     let selectedVariant = null; // {width, height} - aktywnie wybrany rozmiar (dla podświetlenia)
-    const STORAGE_KEY = 'panelConfig_V6_Saves';
+    let panelDepth = 2.5; // Grubość panelu w cm (default 2.5cm)
+    const STORAGE_KEY = 'panelConfig_V7_Saves';
 
     // --- SYSTEM KOMUNIKATÓW PROJEKTU ---
     function showProjectMessage(text, type = 'info', duration = 4000) {
@@ -602,6 +659,13 @@
         delete window._projectConfirmCallback;
     }
 
+    // --- GRUBOŚĆ PANELU ---
+    function updatePanelDepth() {
+        const foamChecked = document.getElementById('optFoam').checked;
+        panelDepth = foamChecked ? 5.0 : 2.5;
+        draw(); // Odśwież widok z góry
+    }
+
     // --- INIT ---
     document.addEventListener('DOMContentLoaded', () => {
         renderSegmentsList();
@@ -613,7 +677,7 @@
         updateMappingUI();
 
         // Obsługa kliknięć w obszar roboczy
-        const svgWrapper = document.getElementById('svgWrapper');
+        const svgWrapper = document.getElementById('svgWrapperFront');
         svgWrapper.addEventListener('click', onCanvasClick);
         svgWrapper.addEventListener('mousemove', onCanvasMouseMove);
     });
@@ -1108,7 +1172,7 @@
     }
 
     function getSVGCoordinates(event) {
-        const svg = document.querySelector('#svgWrapper svg');
+        const svg = document.querySelector('#svgWrapperFront svg');
         if (!svg) return null;
 
         const pt = svg.createSVGPoint();
@@ -1216,7 +1280,8 @@
             panels: panels,
             variants: variants,
             mapping: styleMapping,
-            mode: layoutMode
+            mode: layoutMode,
+            depth: panelDepth
         });
         if(saves.length > 5) saves.pop();
         localStorage.setItem(STORAGE_KEY, JSON.stringify(saves));
@@ -1245,6 +1310,10 @@
             variants = s.variants || variants;
             styleMapping = s.mapping || {};
             layoutMode = s.mode || 'horizontal';
+            panelDepth = s.depth || 2.5;
+
+            // Synchronizuj checkbox pianki
+            document.getElementById('optFoam').checked = (panelDepth === 5.0);
 
             draw();
             renderSegmentsList();
@@ -1256,11 +1325,12 @@
 
     // --- 5. LOGIKA OBSZARU ROBOCZEGO ---
     function loadPresetWorkspace() {
+        // Preset U-shaped: seg1→seg2 (90°), seg2→seg3 (180°), seg3→seg4 (90°)
         wallData.segments = [
-            {width: 60, startHeight: 140, endHeight: 140},
-            {width: 200, startHeight: 140, endHeight: 140},
-            {width: 60, startHeight: 140, endHeight: 140},
-            {width: 100, startHeight: 140, endHeight: 80}
+            {width: 100, startHeight: 140, endHeight: 140, angle: 180}, // Pierwszy segment (angle nie ma znaczenia)
+            {width: 200, startHeight: 140, endHeight: 140, angle: 90},  // Skręt 90° w prawo
+            {width: 100, startHeight: 140, endHeight: 140, angle: 180}, // Kontynuacja prosto
+            {width: 200, startHeight: 140, endHeight: 140, angle: 90}   // Skręt 90° w prawo
         ];
         renderSegmentsList();
         draw();
@@ -1278,7 +1348,7 @@
             return;
         }
 
-        wallData.segments.push({width: w, startHeight: sh, endHeight: eh});
+        wallData.segments.push({width: w, startHeight: sh, endHeight: eh, angle: 180}); // Default 180° (linia prosta)
         document.getElementById('segWidth').value = '';
         document.getElementById('segEndHeight').value = '';
 
@@ -1297,6 +1367,15 @@
         updateMappingUI();
     }
 
+    function updateSegmentAngle(index, newAngle) {
+        const angle = parseFloat(newAngle);
+        if (angle >= 45 && angle <= 270) {
+            wallData.segments[index].angle = angle;
+            renderSegmentsList();
+            draw();
+        }
+    }
+
     function resetWall() {
         if(confirm("Resetować obszar roboczy?")) {
             wallData.segments = [];
@@ -1308,6 +1387,13 @@
         }
     }
 
+    function getAngleIcon(angle) {
+        if (angle < 100) return '↱'; // Skręt w prawo (90° itp.)
+        if (angle > 170 && angle < 190) return '─'; // Linia prosta (180°)
+        if (angle > 260) return '↰'; // Skręt w lewo (270°)
+        return '↷'; // Inne kąty
+    }
+
     function renderSegmentsList() {
         const c = document.getElementById('segmentsContainer');
         c.innerHTML = '';
@@ -1315,11 +1401,37 @@
         wallData.segments.forEach((s, i) => {
             // Określ ikonę kształtu: prostokąt (▭) lub trapez (⏢)
             const shapeIcon = s.startHeight === s.endHeight ? '▭' : '⏢';
+            const angleIcon = getAngleIcon(s.angle || 180);
 
-            c.innerHTML += `<div class="segment-row">
-                <span><span class="segment-icon" title="${s.startHeight === s.endHeight ? 'Prostokąt' : 'Trapez'}">${shapeIcon}</span>${i+1}. <b>${s.width}</b>cm | ${s.startHeight}cm → ${s.endHeight}cm</span>
-                <button class="btn-x" onclick="removeSegment(${i})">X</button>
-            </div>`;
+            const row = document.createElement('div');
+            row.className = 'segment-row';
+
+            const iconSpan = document.createElement('span');
+            iconSpan.className = 'segment-icon';
+            iconSpan.title = s.startHeight === s.endHeight ? 'Prostokąt' : 'Trapez';
+            iconSpan.textContent = shapeIcon;
+
+            const infoDiv = document.createElement('div');
+            infoDiv.className = 'segment-info';
+            infoDiv.innerHTML = `${i+1}. <b>${s.width}</b>cm | ${s.startHeight}→${s.endHeight}cm<br>
+                <span style="font-size:0.8em; color:#666;">
+                    ${angleIcon} Kąt:
+                    <input type="number" class="segment-angle-input"
+                           value="${s.angle || 180}"
+                           min="45" max="270"
+                           onchange="updateSegmentAngle(${i}, this.value)"
+                           ${i === 0 ? 'disabled title="Pierwszy segment nie ma kąta łączenia"' : ''}>°
+                </span>`;
+
+            const btnX = document.createElement('button');
+            btnX.className = 'btn-x';
+            btnX.textContent = 'X';
+            btnX.onclick = () => removeSegment(i);
+
+            row.appendChild(iconSpan);
+            row.appendChild(infoDiv);
+            row.appendChild(btnX);
+            c.appendChild(row);
         });
     }
 
@@ -1433,10 +1545,9 @@
         html += '<div style="font-weight:bold; margin:12px 0 8px 0; padding-bottom:4px; border-bottom:2px solid #ff9800; color:#ff9800;">═══ DODATKI ═══</div>';
         let extrasTotal = 0;
 
-        // Pianka
+        // Pianka (obecna logika jest prawidłowa)
         if (opts.foam) {
             let foamCost = 0;
-            let foamDetails = [];
             panels.forEach(p => {
                 const m2 = (p.width * p.height) / 10000;
                 let cost = 0;
@@ -1449,7 +1560,7 @@
             });
             extrasTotal += foamCost;
             html += `<div style="margin-bottom:4px; padding-left:8px;">
-                ☑ Podwójna pianka - ${panels.length} paneli (6-100 zł) =
+                ☑ Podwójna pianka (5cm) - ${panels.length} paneli (6-100 zł) =
                 <span style="font-weight:bold;">${foamCost.toFixed(2)} zł</span>
             </div>`;
         }
@@ -1533,7 +1644,12 @@
 
     // --- 7. WIZUALIZACJA ---
     function draw() {
-        const svg = document.getElementById('svgWrapper');
+        drawFrontView();
+        drawTopView();
+    }
+
+    function drawFrontView() {
+        const svg = document.getElementById('svgWrapperFront');
 
         if (wallData.segments.length === 0) {
             // Brak segmentów - pokaż pustą przestrzeń
@@ -1657,7 +1773,6 @@
             // Strzałka ↙ w lewym dolnym rogu (wewnątrz preview)
             const arrowX = prevX + 15; // 15px od lewej krawędzi
             const arrowY = prevY + previewSize.height - 15; // 15px od dolnej krawędzi
-            const arrowSize = 12;
 
             previewSVG += `<text x="${arrowX}" y="${arrowY}" font-size="20" fill="${strokeColor}" font-weight="bold" pointer-events="none">↙</text>`;
         }
@@ -1697,6 +1812,98 @@
             ${previewSVG}
             <path d="${d}" fill="none" stroke="#555" stroke-width="2"/>
             ${dimensionsSVG}
+        </svg>`;
+    }
+
+    function drawTopView() {
+        const svg = document.getElementById('svgWrapperTop');
+
+        if (wallData.segments.length === 0) {
+            svg.innerHTML = `<svg width="300px" viewBox="0 0 300 200">
+                <text x="150" y="100" text-anchor="middle" fill="#999" font-size="14">
+                    Dodaj segmenty aby zobaczyć widok z góry
+                </text>
+            </svg>`;
+            return;
+        }
+
+        // Oblicz pozycje 2D segmentów na podstawie kątów (trigonometria)
+        let positions = [{ x: 0, y: 0, angle: 0 }]; // Startowa pozycja i kierunek
+        let currentX = 0;
+        let currentY = 0;
+        let currentAngle = 0; // Kąt w radianach (0 = w prawo)
+
+        wallData.segments.forEach((seg, idx) => {
+            if (idx > 0) {
+                // Oblicz nowy kąt na podstawie angle segmentu
+                // angle: 180° = kontynuacja, 90° = skręt w prawo, 270° = skręt w lewo
+                const turnAngle = seg.angle - 180; // -90° (w prawo), 0° (prosto), +90° (w lewo)
+                currentAngle += (turnAngle * Math.PI / 180); // Konwersja na radiany
+            }
+
+            // Oblicz nową pozycję
+            const dx = seg.width * Math.cos(currentAngle);
+            const dy = seg.width * Math.sin(currentAngle);
+            currentX += dx;
+            currentY += dy;
+
+            positions.push({ x: currentX, y: currentY, angle: currentAngle, width: seg.width });
+        });
+
+        // Znajdź granice dla centrowania
+        let minX = Math.min(...positions.map(p => p.x));
+        let maxX = Math.max(...positions.map(p => p.x));
+        let minY = Math.min(...positions.map(p => p.y));
+        let maxY = Math.max(...positions.map(p => p.y));
+
+        // Dodaj padding dla grubości panelu
+        minX -= panelDepth;
+        maxX += panelDepth;
+        minY -= panelDepth;
+        maxY += panelDepth;
+
+        const rangeX = maxX - minX;
+        const rangeY = maxY - minY;
+        const padX = 50, padY = 50;
+        const W = rangeX + padX * 2;
+        const H = rangeY + padY * 2;
+
+        // Przesunięcie do centrum
+        const offsetX = -minX + padX;
+        const offsetY = -minY + padY;
+
+        // Rysowanie segmentów jako prostokątów (szerokość × głębokość)
+        let segmentsSVG = '';
+        for (let i = 0; i < wallData.segments.length; i++) {
+            const seg = wallData.segments[i];
+            const pos = positions[i];
+            const angle = pos.angle * 180 / Math.PI; // Konwersja na stopnie
+
+            const x = pos.x + offsetX;
+            const y = pos.y + offsetY;
+
+            // Prostokąt: szerokość segmentu × grubość panelu
+            segmentsSVG += `<rect x="0" y="${-panelDepth/2}" width="${seg.width}" height="${panelDepth}"
+                fill="#7fa8d1" stroke="#4a7ba7" stroke-width="2"
+                transform="translate(${x}, ${y}) rotate(${angle})" />`;
+
+            // Etykieta szerokości (w środku segmentu)
+            const midX = x + (seg.width / 2) * Math.cos(pos.angle);
+            const midY = y + (seg.width / 2) * Math.sin(pos.angle);
+            segmentsSVG += `<text x="${midX}" y="${midY}" text-anchor="middle" font-size="11" fill="#fff" font-weight="bold"
+                style="text-shadow: 0 0 3px rgba(0,0,0,0.8)">${seg.width}</text>`;
+
+            // Etykieta kąta (na końcu segmentu, jeśli nie 180°)
+            if (i > 0 && seg.angle !== 180) {
+                const endX = x + seg.width * Math.cos(pos.angle);
+                const endY = y + seg.width * Math.sin(pos.angle);
+                segmentsSVG += `<text x="${endX + 10}" y="${endY - 10}" text-anchor="start" font-size="10" fill="#666" font-weight="bold">${seg.angle}°</text>`;
+            }
+        }
+
+        svg.innerHTML = `<svg width="${W*zoomLevel}px" viewBox="0 0 ${W} ${H}">
+            <rect width="${W}" height="${H}" fill="#f8f9fa"/>
+            ${segmentsSVG}
         </svg>`;
     }
 
