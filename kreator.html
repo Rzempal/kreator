@@ -2449,8 +2449,6 @@
     }
 
     function handleTouchEnd(event) {
-        event.preventDefault();
-
         const duration = Date.now() - touchState.startTime;
         const deltaX = Math.abs(touchState.lastX - touchState.startX);
         const deltaY = Math.abs(touchState.lastY - touchState.startY);
@@ -2463,6 +2461,7 @@
 
         // Pinch ended
         if (touchState.isPinching) {
+            event.preventDefault();
             touchState.isPinching = false;
             touchState.active = false;
             return;
@@ -2470,8 +2469,26 @@
 
         // Tap detection (quick touch with minimal movement)
         if (touchState.active && duration < 300 && deltaX < 10 && deltaY < 10) {
-            // Simulate click
-            onCanvasClick(event);
+            // Check if tap was on a panel
+            const panelGroup = event.target.closest('g[onclick]');
+
+            if (panelGroup) {
+                // TAP ON PANEL - manually trigger the onclick
+                event.preventDefault();
+                const onclickAttr = panelGroup.getAttribute('onclick');
+                if (onclickAttr) {
+                    // Extract index from "onPanelClick(N)"
+                    const match = onclickAttr.match(/onPanelClick\((\d+)\)/);
+                    if (match) {
+                        const index = parseInt(match[1]);
+                        onPanelClick(index);
+                    }
+                }
+            } else {
+                // TAP ON CANVAS - add panel
+                event.preventDefault();
+                onCanvasClick(event);
+            }
         }
 
         // Swipe detection (for future use - sidebar toggle)
@@ -2479,6 +2496,7 @@
             const swipeThreshold = 50;
 
             if (deltaX > swipeThreshold && deltaX > deltaY * 2) {
+                event.preventDefault();
                 // Horizontal swipe detected
                 if (touchState.lastX > touchState.startX) {
                     // Swipe right (future: open sidebar)
