@@ -1,4 +1,4 @@
-<!-- kreator.html v0.024 Dodanie widoku z góry + kąty między segmentami + grubość panelu -->
+<!-- kreator.html v0.025 Przyciski +/- dla kątów (90/180/270) + master segment -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -77,12 +77,36 @@
         .segment-icon { font-size: 1.2em; color: #999; }
         .segment-info { flex: 1; }
         .segment-angle-input {
-            width: 60px;
+            width: 45px;
             padding: 4px;
             font-size: 0.85em;
             border: 1px solid #ddd;
             border-radius: 3px;
             margin-left: 5px;
+            text-align: center;
+            background: #f8f9fa;
+        }
+        .angle-btn {
+            padding: 2px 8px;
+            font-size: 0.8em;
+            border: 1px solid #6c757d;
+            background: #fff;
+            border-radius: 3px;
+            cursor: pointer;
+            color: #495057;
+            font-weight: bold;
+            margin-left: 2px;
+        }
+        .angle-btn:hover {
+            background: #e9ecef;
+            border-color: #495057;
+        }
+        .angle-btn:active {
+            background: #dee2e6;
+        }
+        .master-radio {
+            margin-right: 5px;
+            cursor: pointer;
         }
         .btn-x { padding: 2px 8px; font-size: 0.8em; color: var(--danger); border: 1px solid var(--danger); background: #fff; border-radius: 4px; }
 
@@ -562,7 +586,7 @@
     const visualTextures = [{ file: floralTex, name: 'Dekor' }];
 
     // --- STAN ---
-    let wallData = { segments: [] }; // segments: [{width, startHeight, endHeight, angle}]
+    let wallData = { segments: [], masterSegmentIndex: 0 }; // segments: [{width, startHeight, endHeight, angle}]
     let variants = [
         {width: 30, height: 100},
         {width: 20, height: 140},
@@ -1362,6 +1386,12 @@
 
     function removeSegment(i) {
         wallData.segments.splice(i, 1);
+
+        // Zaktualizuj masterSegmentIndex jeśli potrzeba
+        if (wallData.masterSegmentIndex >= wallData.segments.length) {
+            wallData.masterSegmentIndex = Math.max(0, wallData.segments.length - 1);
+        }
+
         renderSegmentsList();
         draw();
         updateMappingUI();
@@ -1376,9 +1406,34 @@
         }
     }
 
+    function cycleAngle(index, direction) {
+        const angles = [90, 180, 270];
+        const currentAngle = wallData.segments[index].angle || 180;
+        const currentIndex = angles.indexOf(currentAngle);
+
+        let newIndex;
+        if (currentIndex === -1) {
+            // Jeśli kąt nie jest w dozwolonych wartościach, ustaw 180°
+            newIndex = 1; // 180°
+        } else {
+            newIndex = (currentIndex + direction + angles.length) % angles.length;
+        }
+
+        wallData.segments[index].angle = angles[newIndex];
+        renderSegmentsList();
+        draw();
+    }
+
+    function setMasterSegment(index) {
+        wallData.masterSegmentIndex = index;
+        renderSegmentsList();
+        draw();
+    }
+
     function resetWall() {
         if(confirm("Resetować obszar roboczy?")) {
             wallData.segments = [];
+            wallData.masterSegmentIndex = 0;
             document.getElementById('segStartHeight').value = '';
             document.getElementById('segEndHeight').value = '';
             renderSegmentsList();
@@ -1402,6 +1457,7 @@
             // Określ ikonę kształtu: prostokąt (▭) lub trapez (⏢)
             const shapeIcon = s.startHeight === s.endHeight ? '▭' : '⏢';
             const angleIcon = getAngleIcon(s.angle || 180);
+            const isMaster = (wallData.masterSegmentIndex === i);
 
             const row = document.createElement('div');
             row.className = 'segment-row';
@@ -1413,14 +1469,20 @@
 
             const infoDiv = document.createElement('div');
             infoDiv.className = 'segment-info';
-            infoDiv.innerHTML = `${i+1}. <b>${s.width}</b>cm | ${s.startHeight}→${s.endHeight}cm<br>
-                <span style="font-size:0.8em; color:#666;">
+            infoDiv.innerHTML = `
+                <input type="radio" name="masterSegment" class="master-radio"
+                       ${isMaster ? 'checked' : ''}
+                       onchange="setMasterSegment(${i})"
+                       title="Ustaw jako master (bazowy) segment">
+                ${i+1}. <b>${s.width}</b>cm | ${s.startHeight}→${s.endHeight}cm<br>
+                <span style="font-size:0.8em; color:#666; margin-left:20px;">
                     ${angleIcon} Kąt:
-                    <input type="number" class="segment-angle-input"
-                           value="${s.angle || 180}"
-                           min="45" max="270"
-                           onchange="updateSegmentAngle(${i}, this.value)"
-                           ${i === 0 ? 'disabled title="Pierwszy segment nie ma kąta łączenia"' : ''}>°
+                    ${i === 0 ?
+                        `<input type="text" class="segment-angle-input" value="--" readonly disabled title="Pierwszy segment nie ma kąta łączenia">°` :
+                        `<button class="angle-btn" onclick="cycleAngle(${i}, -1)">-</button>
+                         <input type="text" class="segment-angle-input" value="${s.angle || 180}" readonly>°
+                         <button class="angle-btn" onclick="cycleAngle(${i}, 1)">+</button>`
+                    }
                 </span>`;
 
             const btnX = document.createElement('button');
@@ -1850,6 +1912,31 @@
                 const turnAngle = nextSeg.angle - 180; // -90° (w prawo), 0° (prosto), +90° (w lewo)
                 currentAngle += (turnAngle * Math.PI / 180); // Konwersja na radiany
             }
+        });
+
+        // Przesuń i obróć wszystkie pozycje względem master segmentu
+        const masterIdx = wallData.masterSegmentIndex || 0;
+        const masterPos = positions[masterIdx];
+        const masterAngle = masterPos.angle;
+
+        // Przetwórz wszystkie pozycje: przesuń i obróć względem mastera
+        positions = positions.map(pos => {
+            // Przesuń pozycję względem mastera
+            let relX = pos.x - masterPos.x;
+            let relY = pos.y - masterPos.y;
+
+            // Obróć o -masterAngle (aby master miał kąt 0)
+            const cosA = Math.cos(-masterAngle);
+            const sinA = Math.sin(-masterAngle);
+            const rotatedX = relX * cosA - relY * sinA;
+            const rotatedY = relX * sinA + relY * cosA;
+
+            return {
+                x: rotatedX,
+                y: rotatedY,
+                angle: pos.angle - masterAngle,
+                width: pos.width
+            };
         });
 
         // Znajdź granice dla centrowania
