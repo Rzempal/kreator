@@ -1,4 +1,4 @@
-<!-- kreator.html v0.039 🐛 FIX: Collapse functionality - null-safety in toggleViewSection() -->
+<!-- kreator.html v0.040 🐛 DEBUG: Alert for toggleViewSection() -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -3025,26 +3025,34 @@
 
     // FAZA 3: Toggle view section collapse/expand
     function toggleViewSection(viewType) {
+        alert('toggleViewSection WYWOŁANA: ' + viewType); // TEMP DEBUG
+        console.log('🔧 toggleViewSection called with:', viewType); // DEBUG
+
         const sectionId = viewType === 'frontal' ? 'viewSectionFrontal' : 'viewSectionTop';
         const section = document.getElementById(sectionId);
 
+        console.log('🔍 Section element:', section); // DEBUG
+
         // Null-safety: Check section exists BEFORE accessing properties
         if (!section) {
-            console.error('toggleViewSection: section not found:', sectionId);
+            console.error('❌ toggleViewSection: section not found:', sectionId);
             return;
         }
 
         const header = section.previousElementSibling;
+        console.log('🔍 Header element:', header); // DEBUG
 
         // Null-safety: Check header exists
         if (!header) {
-            console.error('toggleViewSection: header not found for', sectionId);
+            console.error('❌ toggleViewSection: header not found for', sectionId);
             return;
         }
 
         // Toggle classes
         section.classList.toggle('collapsed');
         header.classList.toggle('view-collapsed');
+
+        console.log('✅ Classes toggled. Section collapsed:', section.classList.contains('collapsed')); // DEBUG
 
         // Haptic feedback
         if (navigator.vibrate) {
