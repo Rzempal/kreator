@@ -1,4 +1,4 @@
-<!-- kreator.html v0.032 FAZA 2: Touch Events & Gestures (Full touch support) -->
+<!-- kreator.html v0.033 FAZA 2: Simplified Touch Gestures (DRAG=PAN, zoom tylko przyciski) -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -1729,12 +1729,6 @@
         lastY: 0,
         startTime: 0,
         longPressTimer: null,
-        isPinching: false,
-        initialDistance: 0,
-        initialZoom: 1.0,
-        touches: [],
-        lastRedraw: 0,
-        rafPending: false,
         // Pan/scroll state
         isPanning: false,
         panX: 0,
@@ -2361,33 +2355,10 @@
 
     // --- TOUCH EVENT HANDLERS (FAZA 2) ---
 
-    function getTouchDistance(touch1, touch2) {
-        const dx = touch2.clientX - touch1.clientX;
-        const dy = touch2.clientY - touch1.clientY;
-        return Math.sqrt(dx * dx + dy * dy);
-    }
-
     function handleTouchStart(event) {
         const touches = event.touches;
 
-        // Two finger touch = pinch-to-zoom
-        if (touches.length === 2) {
-            event.preventDefault();
-            touchState.isPinching = true;
-            touchState.isPanning = false;
-            touchState.initialDistance = getTouchDistance(touches[0], touches[1]);
-            touchState.initialZoom = zoomLevel;
-            touchState.touches = Array.from(touches);
-
-            // Clear long press timer if active
-            if (touchState.longPressTimer) {
-                clearTimeout(touchState.longPressTimer);
-                touchState.longPressTimer = null;
-            }
-            return;
-        }
-
-        // Single finger touch
+        // Single finger touch only (no multi-touch gestures)
         if (touches.length === 1) {
             const touch = touches[0];
             touchState.active = true;
@@ -2396,24 +2367,16 @@
             touchState.lastX = touch.clientX;
             touchState.lastY = touch.clientY;
             touchState.startTime = Date.now();
-            touchState.isPinching = false;
             touchState.isPanning = false;
 
             // Store initial pan position
             touchState.initialPanX = touchState.panX;
             touchState.initialPanY = touchState.panY;
 
-            // Start long press timer (600ms) - only if not zoomed
-            if (zoomLevel <= 1.0) {
-                touchState.longPressTimer = setTimeout(() => {
-                    handleLongPress(event);
-                }, 600);
-            }
-
-            // Handle touch move for preview (only if not zoomed)
-            if (lastUsedPanelSize && !previewLocked && zoomLevel <= 1.0) {
-                onCanvasMouseMove(event);
-            }
+            // Start long press timer (600ms)
+            touchState.longPressTimer = setTimeout(() => {
+                handleLongPress(event);
+            }, 600);
         }
     }
 
@@ -2427,33 +2390,7 @@
     function handleTouchMove(event) {
         const touches = event.touches;
 
-        // Pinch-to-zoom with two fingers
-        if (touches.length === 2 && touchState.isPinching) {
-            event.preventDefault();
-
-            const currentDistance = getTouchDistance(touches[0], touches[1]);
-            const scale = currentDistance / touchState.initialDistance;
-
-            // Apply zoom with limits (0.5x to 3x)
-            const newZoom = Math.max(0.5, Math.min(3.0, touchState.initialZoom * scale));
-
-            // Update zoom immediately for smooth pinch
-            zoomLevel = newZoom;
-            document.getElementById('zoomLabel').textContent = Math.round(zoomLevel * 100) + '%';
-
-            // Use requestAnimationFrame for smooth rendering
-            if (!touchState.rafPending) {
-                touchState.rafPending = true;
-                requestAnimationFrame(() => {
-                    draw();
-                    drawTopView();
-                    touchState.rafPending = false;
-                });
-            }
-            return;
-        }
-
-        // Single finger move
+        // Single finger move (DRAG = PAN)
         if (touches.length === 1 && touchState.active) {
             const touch = touches[0];
             const deltaX = touch.clientX - touchState.startX;
@@ -2461,30 +2398,26 @@
             const absDeltaX = Math.abs(deltaX);
             const absDeltaY = Math.abs(deltaY);
 
-            // If moved more than 10px, cancel long press
+            // If moved more than 10px, cancel long press and enable pan
             if (absDeltaX > 10 || absDeltaY > 10) {
                 if (touchState.longPressTimer) {
                     clearTimeout(touchState.longPressTimer);
                     touchState.longPressTimer = null;
                 }
 
-                // Enable panning if zoomed
-                if (zoomLevel > 1.0 && !touchState.isPanning) {
+                // Enable panning (always, not just when zoomed)
+                if (!touchState.isPanning) {
                     touchState.isPanning = true;
                     event.preventDefault();
                 }
             }
 
-            // Pan mode (when zoomed)
-            if (touchState.isPanning && zoomLevel > 1.0) {
+            // Pan mode (ALWAYS when dragging)
+            if (touchState.isPanning) {
                 event.preventDefault();
                 touchState.panX = touchState.initialPanX + deltaX;
                 touchState.panY = touchState.initialPanY + deltaY;
                 applyPanTransform();
-            }
-            // Preview mode (when not zoomed)
-            else if (lastUsedPanelSize && !previewLocked && zoomLevel <= 1.0) {
-                onCanvasMouseMove(event);
             }
 
             touchState.lastX = touch.clientX;
@@ -2501,14 +2434,6 @@
         if (touchState.longPressTimer) {
             clearTimeout(touchState.longPressTimer);
             touchState.longPressTimer = null;
-        }
-
-        // Pinch ended
-        if (touchState.isPinching) {
-            event.preventDefault();
-            touchState.isPinching = false;
-            touchState.active = false;
-            return;
         }
 
         // Panning ended
@@ -2562,7 +2487,6 @@
 
         // Reset touch state
         touchState.active = false;
-        touchState.touches = [];
     }
 
     function handleTouchCancel(event) {
@@ -2573,8 +2497,6 @@
         }
 
         touchState.active = false;
-        touchState.isPinching = false;
-        touchState.touches = [];
     }
 
     function handleLongPress(event) {
