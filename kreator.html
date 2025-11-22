@@ -1828,26 +1828,28 @@
         }
 
         // Oblicz pozycje 2D segmentów na podstawie kątów (trigonometria)
-        let positions = [{ x: 0, y: 0, angle: 0 }]; // Startowa pozycja i kierunek
+        let positions = [];
         let currentX = 0;
         let currentY = 0;
         let currentAngle = 0; // Kąt w radianach (0 = w prawo)
 
         wallData.segments.forEach((seg, idx) => {
-            if (idx > 0) {
-                // Oblicz nowy kąt na podstawie angle segmentu
-                // angle: 180° = kontynuacja, 90° = skręt w prawo, 270° = skręt w lewo
-                const turnAngle = seg.angle - 180; // -90° (w prawo), 0° (prosto), +90° (w lewo)
-                currentAngle += (turnAngle * Math.PI / 180); // Konwersja na radiany
-            }
+            // Zapisz pozycję STARTOWĄ tego segmentu z jego OBECNYM kątem
+            positions.push({ x: currentX, y: currentY, angle: currentAngle, width: seg.width });
 
-            // Oblicz nową pozycję
+            // Oblicz przemieszczenie według obecnego kąta
             const dx = seg.width * Math.cos(currentAngle);
             const dy = seg.width * Math.sin(currentAngle);
             currentX += dx;
             currentY += dy;
 
-            positions.push({ x: currentX, y: currentY, angle: currentAngle, width: seg.width });
+            // Zaktualizuj kąt dla NASTĘPNEGO segmentu (jeśli nie ostatni)
+            if (idx < wallData.segments.length - 1) {
+                const nextSeg = wallData.segments[idx + 1];
+                // angle: 180° = kontynuacja, 90° = skręt w prawo, 270° = skręt w lewo
+                const turnAngle = nextSeg.angle - 180; // -90° (w prawo), 0° (prosto), +90° (w lewo)
+                currentAngle += (turnAngle * Math.PI / 180); // Konwersja na radiany
+            }
         });
 
         // Znajdź granice dla centrowania
