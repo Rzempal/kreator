@@ -1,4 +1,4 @@
-<!-- kreator.html v0.026 Master segment aligned + panele w widoku z góry -->
+<!-- kreator.html v0.027 Fix: viewBox width alignment dla master segment -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -1948,22 +1948,21 @@
             masterFrontX += wallData.segments[i].width;
         }
 
-        // Znajdź granice dla centrowania
-        let minX = Math.min(...positions.map(p => p.x));
-        let maxX = Math.max(...positions.map(p => p.x));
+        // Oblicz totalW - suma szerokości wszystkich segmentów (TAK SAMO jak w widoku frontalnym!)
+        let totalW = 0;
+        wallData.segments.forEach(s => totalW += s.width);
+
+        // Znajdź granice dla centrowania (tylko w pionie - Y)
         let minY = Math.min(...positions.map(p => p.y));
         let maxY = Math.max(...positions.map(p => p.y));
 
         // Dodaj padding dla grubości ściany
-        minX -= wallDepth;
-        maxX += wallDepth;
         minY -= wallDepth;
         maxY += wallDepth;
 
-        const rangeX = maxX - minX;
         const rangeY = maxY - minY;
         const padX = 50, padY = 50;
-        const W = rangeX + padX * 2;
+        const W = totalW + padX * 2; // TAK SAMO jak w widoku frontalnym - ważne dla wyrównania!
         const H = rangeY + padY * 2;
 
         // Przesunięcie: master segment ma być w pozycji masterFrontX (wyrównanie z widokiem frontalnym)
