@@ -1,4 +1,4 @@
-<!-- kreator.html v0.034 FAZA 3: Mobile-Specific UX (Adaptive sidebar, View toggle, Gestures) -->
+<!-- kreator.html v0.035 FAZA 3: UX Fixes (No backdrop, Color icon, Panel burger right, View fix) -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -714,6 +714,89 @@
             cursor: not-allowed;
         }
 
+        /* PANEL SIDEBAR (FAZA 3) - Right side slide-in for mobile */
+        .panel-sidebar {
+            display: none; /* Hidden on desktop >900px */
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            max-width: 320px;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(var(--blur-lg));
+            border-left: 1px solid var(--color-surface-border);
+            z-index: 999;
+            transform: translateX(100%);
+            transition: transform 0.3s ease-out;
+            padding: var(--spacing-lg);
+            padding-top: 80px;
+            overflow-y: auto;
+        }
+
+        .panel-sidebar-open .panel-sidebar {
+            transform: translateX(0);
+        }
+
+        .panel-sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-md);
+            border-bottom: 1px solid var(--color-surface-border);
+        }
+
+        .panel-sidebar-header h3 {
+            font-size: 1.1em;
+            color: var(--color-text-primary);
+            margin: 0;
+        }
+
+        .panel-sidebar-header .close-btn {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid var(--color-surface-border);
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--color-text-secondary);
+            font-size: 1.2em;
+            transition: all var(--transition-base);
+        }
+
+        .panel-sidebar-header .close-btn:hover {
+            background: rgba(239, 68, 68, 0.3);
+            border-color: rgba(239, 68, 68, 0.5);
+            color: #ef4444;
+            transform: scale(1.1);
+        }
+
+        .panel-sidebar-content {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+
+        .panel-sidebar-content .panel-btn {
+            width: 100%;
+            justify-content: center;
+            min-height: 50px;
+        }
+
+        /* Hide panel selection on desktop, show burger on mobile */
+        .panel-title-desktop,
+        .panel-buttons-desktop {
+            display: block;
+        }
+
+        .burger-btn-right {
+            display: none; /* Hidden on desktop */
+        }
+
         .panel-btn {
             background: rgba(30, 41, 59, 0.6);
             backdrop-filter: blur(var(--blur-sm));
@@ -821,25 +904,6 @@
             scrollbar-color: rgba(168, 85, 247, 0.3) transparent;
             /* FAZA 3: Sidebar transitions */
             transition: transform 0.3s ease-out;
-        }
-
-        /* FAZA 3: Sidebar backdrop for overlay mode (<600px) */
-        .sidebar-backdrop {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 998;
-            opacity: 0;
-            transition: opacity 0.3s ease-out;
-        }
-
-        .sidebar-backdrop.active {
-            display: block;
-            opacity: 1;
         }
 
         .tools-bar::-webkit-scrollbar {
@@ -1308,9 +1372,20 @@
                 transform: translateX(0);
             }
 
-            /* Show burger menu on mobile */
-            .burger-btn {
+            /* Show burger menus on mobile */
+            .burger-btn,
+            .burger-btn-right {
                 display: flex !important;
+            }
+
+            /* Hide desktop panel selection, show mobile panel sidebar */
+            .panel-title-desktop,
+            .panel-buttons-desktop {
+                display: none !important;
+            }
+
+            .panel-sidebar {
+                display: block;
             }
 
             .tool-btn {
@@ -1528,9 +1603,20 @@
                 transform: translateX(0);
             }
 
-            /* Show burger menu */
-            .burger-btn {
+            /* Show burger menus */
+            .burger-btn,
+            .burger-btn-right {
                 display: flex !important;
+            }
+
+            /* Hide desktop panel selection, show mobile panel sidebar */
+            .panel-title-desktop,
+            .panel-buttons-desktop {
+                display: none !important;
+            }
+
+            .panel-sidebar {
+                display: block;
             }
 
             .tool-btn {
@@ -1633,9 +1719,6 @@
     <div class="animated-bg__blob"></div>
 </div>
 
-<!-- FAZA 3: Sidebar backdrop (overlay mode <600px) -->
-<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
-
 <div class="layout">
 
     <!-- 1. LEWA KOLUMNA (KONFIGURACJA) -->
@@ -1718,8 +1801,8 @@
         <!-- TOP BAR: SZYBKIE DODAWANIE -->
         <div class="top-bar" id="topBar">
             <!-- Burger Menu (visible only <900px) -->
-            <button id="burgerMenu" class="burger-btn" onclick="toggleSidebar()" aria-label="Toggle sidebar">
-                <span class="burger-icon">☰</span>
+            <button id="burgerMenu" class="burger-btn" onclick="toggleSidebar()" aria-label="Toggle colors sidebar" title="Kolory">
+                <span class="burger-icon">🎨</span>
             </button>
 
             <!-- View Toggle (F/T/FT) -->
@@ -1729,9 +1812,16 @@
                 <button class="view-btn active" data-view="dual" onclick="changeView('dual')" title="Oba widoki">FT</button>
             </div>
 
-            <div class="top-bar-title">Wybierz panel:</div>
-            <div id="topVariantsButtons" style="display:flex; gap:8px; overflow-x:auto;"></div>
+            <!-- Panel variants shown on desktop, hidden on mobile -->
+            <div class="top-bar-title panel-title-desktop">Wybierz panel:</div>
+            <div id="topVariantsButtons" class="panel-buttons-desktop" style="display:flex; gap:8px; overflow-x:auto;"></div>
+
             <div class="top-bar-title" style="margin-left:auto; font-size:0.75em; color:#999;">Kliknij w obszar aby ustawić pozycję preview</div>
+
+            <!-- Second Burger Menu for panels (visible only <900px) -->
+            <button id="panelBurgerMenu" class="burger-btn burger-btn-right" onclick="togglePanelSidebar()" aria-label="Toggle panels sidebar" title="Panele" style="margin-left:auto;">
+                <span class="burger-icon">📐</span>
+            </button>
         </div>
 
         <!-- KOMUNIKATY PROJEKTU -->
@@ -1772,6 +1862,17 @@
                     <div class="canvas-wrapper">
                         <div id="svgWrapperTop"></div>
                     </div>
+                </div>
+            </div>
+
+            <!-- FAZA 3: RIGHT SIDEBAR - Panel selection (mobile only) -->
+            <div class="panel-sidebar" id="panelSidebar">
+                <div class="panel-sidebar-header">
+                    <h3>Wybierz panel:</h3>
+                    <button class="close-btn" onclick="togglePanelSidebar()">✕</button>
+                </div>
+                <div id="panelSidebarButtons" class="panel-sidebar-content">
+                    <!-- Generowane JS - kopia topVariantsButtons -->
                 </div>
             </div>
         </div>
@@ -2093,6 +2194,34 @@
             };
             c.appendChild(btn);
         });
+
+        // FAZA 3: Also populate panel sidebar (mobile)
+        const panelSidebarButtons = document.getElementById('panelSidebarButtons');
+        if (panelSidebarButtons) {
+            panelSidebarButtons.innerHTML = '';
+            variants.forEach(v => {
+                const btn = document.createElement('button');
+                const isActive = selectedVariant && selectedVariant.width === v.width && selectedVariant.height === v.height;
+                btn.className = `panel-btn ${isActive ? 'active' : ''}`;
+                btn.innerHTML = `${v.width}×${v.height}`;
+                btn.onclick = () => {
+                    selectedPanelSize = null;
+                    if (isActive) {
+                        selectedVariant = null;
+                        lastUsedPanelSize = null;
+                        previewPosition = null;
+                        previewLocked = false;
+                    } else {
+                        selectVariant(v.width, v.height);
+                    }
+                    renderTopBar();
+                    draw();
+                    // Close panel sidebar after selection
+                    togglePanelSidebar();
+                };
+                panelSidebarButtons.appendChild(btn);
+            });
+        }
 
         // Aktualizuj stan przycisku "Dodaj" w toolbar
         const addBtn = document.getElementById('addPanelBtn');
@@ -2683,22 +2812,40 @@
     // --- MOBILE UX FUNCTIONS (FAZA 3) ---
 
     let sidebarOpen = false;
+    let panelSidebarOpen = false;
     let currentView = 'dual'; // 'frontal' | 'top' | 'dual'
 
     function toggleSidebar() {
         const body = document.body;
-        const backdrop = document.getElementById('sidebarBackdrop');
         const burgerBtn = document.getElementById('burgerMenu');
 
         sidebarOpen = !sidebarOpen;
 
         if (sidebarOpen) {
             body.classList.add('sidebar-open');
-            backdrop.classList.add('active');
             burgerBtn.classList.add('active');
         } else {
             body.classList.remove('sidebar-open');
-            backdrop.classList.remove('active');
+            burgerBtn.classList.remove('active');
+        }
+
+        // Haptic feedback
+        if (navigator.vibrate) {
+            navigator.vibrate(20);
+        }
+    }
+
+    function togglePanelSidebar() {
+        const body = document.body;
+        const burgerBtn = document.getElementById('panelBurgerMenu');
+
+        panelSidebarOpen = !panelSidebarOpen;
+
+        if (panelSidebarOpen) {
+            body.classList.add('panel-sidebar-open');
+            burgerBtn.classList.add('active');
+        } else {
+            body.classList.remove('panel-sidebar-open');
             burgerBtn.classList.remove('active');
         }
 
@@ -2736,23 +2883,24 @@
         });
 
         // Update view visibility
-        const frontalView = document.querySelector('.view-section:nth-of-type(1)');
-        const topView = document.querySelector('.view-section:nth-of-type(2)');
+        const viewSections = document.querySelectorAll('.view-section');
+        const frontalView = viewSections[0]; // First .view-section
+        const topView = viewSections[1]; // Second .view-section
         const canvasContainer = document.querySelector('.canvas-container');
 
         if (mode === 'frontal') {
-            frontalView.style.display = 'flex';
-            topView.style.display = 'none';
-            canvasContainer.style.flexDirection = 'column';
+            if (frontalView) frontalView.style.display = 'flex';
+            if (topView) topView.style.display = 'none';
+            if (canvasContainer) canvasContainer.style.flexDirection = 'column';
         } else if (mode === 'top') {
-            frontalView.style.display = 'none';
-            topView.style.display = 'flex';
-            canvasContainer.style.flexDirection = 'column';
+            if (frontalView) frontalView.style.display = 'none';
+            if (topView) topView.style.display = 'flex';
+            if (canvasContainer) canvasContainer.style.flexDirection = 'column';
         } else if (mode === 'dual') {
-            frontalView.style.display = 'flex';
-            topView.style.display = 'flex';
+            if (frontalView) frontalView.style.display = 'flex';
+            if (topView) topView.style.display = 'flex';
             // Keep current flex direction (responsive via CSS)
-            canvasContainer.style.flexDirection = '';
+            if (canvasContainer) canvasContainer.style.flexDirection = '';
         }
 
         // Save preference to localStorage
