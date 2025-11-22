@@ -1,4 +1,4 @@
-<!-- kreator.html v0.043 ✨ REFACTOR: Top bar cleanup + toolbar rearrange -->
+<!-- kreator.html v0.044 ✨ UX: Mobile layout - project area priority -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -203,12 +203,38 @@
 
         /* ===== LAYOUT ===== */
         .layout {
-            display: grid;
-            grid-template-columns: 380px 1fr;
+            display: flex;
+            flex-direction: row; /* Desktop: side by side */
             gap: var(--spacing-xl);
             height: 95vh;
             position: relative;
             z-index: 1;
+        }
+
+        .controls {
+            flex: 0 0 380px; /* Desktop: fixed width */
+        }
+
+        .project-area {
+            flex: 1; /* Desktop: take remaining space */
+        }
+
+        /* MOBILE: Project area FIRST (priority) */
+        @media (max-width: 900px) {
+            .layout {
+                flex-direction: column; /* Stack vertically */
+                height: auto; /* Allow natural height */
+            }
+
+            .controls {
+                order: 2; /* DOŁEM - konfiguracja */
+                flex: 0 0 auto; /* Auto height */
+            }
+
+            .project-area {
+                order: 1; /* GÓRĄ - główna funkcja (priorytet!) */
+                flex: 0 0 auto;
+            }
         }
 
         /* ===== CONTROLS (LEFT COLUMN) ===== */
