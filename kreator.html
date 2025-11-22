@@ -1,9 +1,12 @@
-<!-- kreator.html v0.030 Full redesign - Dark theme + glassmorphism + animations -->
+<!-- kreator.html v0.031 FAZA 1: Core Responsive Foundation (Samsung Fold optimized) -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Kreator Paneli (Widok 2D + Top)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -45,6 +48,13 @@
             --spacing-lg: 1.5rem;
             --spacing-xl: 2rem;
             --spacing-2xl: 3rem;
+
+            /* Mobile Spacing (overridden in media queries) */
+            --spacing-mobile-xs: 0.25rem;
+            --spacing-mobile-sm: 0.375rem;
+            --spacing-mobile-md: 0.75rem;
+            --spacing-mobile-lg: 1rem;
+            --spacing-mobile-xl: 1.25rem;
 
             /* Border Radius */
             --radius-sm: 8px;
@@ -101,6 +111,12 @@
             margin: 0 auto;
             position: relative;
             overflow-x: hidden;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
         }
 
         /* ===== ANIMATIONS ===== */
@@ -1041,23 +1057,372 @@
             transform: translateY(-1px);
         }
 
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 900px) {
+        /* ===== RESPONSIVE - 3-LEVEL SYSTEM ===== */
+
+        /* LEVEL 1: Outer Fold Vertical (< 600px) - Compact Mobile */
+        @media (max-width: 600px) {
+            :root {
+                /* Reduced spacing for compact screens */
+                --spacing-xs: var(--spacing-mobile-xs);
+                --spacing-sm: var(--spacing-mobile-sm);
+                --spacing-md: var(--spacing-mobile-md);
+                --spacing-lg: var(--spacing-mobile-lg);
+                --spacing-xl: var(--spacing-mobile-xl);
+
+                /* Reduced blur for performance */
+                --blur-base: 6px;
+                --blur-lg: 12px;
+            }
+
+            html {
+                font-size: 14px; /* 87.5% of base */
+            }
+
+            /* Disable animated blobs for performance on compact screens */
+            .animated-bg__blob {
+                opacity: 0.2;
+                animation: none;
+                filter: blur(20px); /* Reduced blur */
+            }
+
             .layout {
-                grid-template-columns: 1fr;
-                height: auto;
                 display: block;
+                height: auto;
+                gap: var(--spacing-md);
             }
 
             .controls {
                 height: auto;
+                max-height: none;
+                margin-bottom: var(--spacing-lg);
+                overflow: visible;
+                padding-right: 0;
+            }
+
+            .card {
+                padding: var(--spacing-lg);
+                border-radius: var(--radius-lg);
+            }
+
+            h3 {
+                font-size: 1em;
+                margin-bottom: var(--spacing-md);
+            }
+
+            .project-area {
+                min-height: 500px;
+                height: auto;
+            }
+
+            .top-bar {
+                padding: var(--spacing-md);
+                min-height: auto;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .top-bar-title {
+                font-size: 0.65em;
+                margin-right: var(--spacing-xs);
+                white-space: nowrap;
+            }
+
+            .panel-btn {
+                padding: 8px 14px;
+                font-size: 0.85em;
+                min-width: 80px;
+                min-height: 44px; /* Touch target */
+                flex-shrink: 0;
+            }
+
+            .btn-add-panel {
+                padding: 8px 18px;
+                font-size: 0.9em;
+                min-height: 44px;
+                margin-left: var(--spacing-sm);
+            }
+
+            .workspace {
+                flex-direction: column;
+            }
+
+            .tools-bar {
+                width: 100%;
+                height: auto;
+                flex-direction: row;
+                border-right: none;
+                border-bottom: 1px solid var(--color-surface-border);
+                padding: var(--spacing-md);
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .tool-btn {
+                width: 52px;
+                height: 52px; /* Touch target */
+                flex-shrink: 0;
+            }
+
+            .canvas-container {
+                padding: var(--spacing-md);
+                gap: var(--spacing-md);
+            }
+
+            .view-section {
+                padding: var(--spacing-md);
+            }
+
+            .view-header {
+                font-size: 1em;
+                margin-bottom: var(--spacing-md);
+                padding-bottom: var(--spacing-sm);
+            }
+
+            .canvas-wrapper {
+                min-height: 250px;
+            }
+
+            .toolbar-between {
+                padding: var(--spacing-md);
+                gap: var(--spacing-sm);
+                flex-wrap: wrap;
+            }
+
+            .toolbar-between button {
+                min-width: 44px;
+                min-height: 44px;
+                padding: 8px 12px !important;
+                font-size: 1em;
+            }
+
+            .toolbar-between span {
+                min-width: 50px;
+                text-align: center;
+            }
+
+            .total-price {
+                font-size: 1.3em;
+            }
+
+            .project-message {
+                margin: var(--spacing-sm) var(--spacing-md);
+                padding: var(--spacing-md);
+                font-size: 0.85em;
+            }
+
+            .segment-row {
+                padding: var(--spacing-sm);
+                font-size: 0.85em;
+            }
+
+            .mapping-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--spacing-sm);
+            }
+
+            .map-swatch {
+                width: 36px;
+                height: 36px;
+            }
+
+            /* Form inputs - larger touch targets */
+            input[type="number"],
+            input[type="text"],
+            select {
+                min-height: 44px;
+                font-size: 1em;
+            }
+
+            .segment-angle-input {
+                min-width: 50px;
+                min-height: 36px;
+            }
+
+            .angle-btn,
+            .btn-x {
+                min-height: 36px;
+                min-width: 36px;
+                padding: 6px 12px;
+            }
+
+            .btn-secondary,
+            .btn-danger,
+            .btn-add-segment {
+                min-height: 44px;
+                font-size: 0.95em;
+            }
+
+            /* Checkboxes and radio - larger for touch */
+            input[type="checkbox"],
+            input[type="radio"] {
+                width: 20px;
+                height: 20px;
+                margin-right: 8px;
+            }
+
+            /* Variant tags - larger touch area */
+            .variant-tag {
+                padding: 8px 14px;
+                min-height: 40px;
+            }
+
+            /* Save slots - larger touch area */
+            .save-slot {
+                padding: var(--spacing-md);
+                min-height: 50px;
+            }
+
+            /* Disable hover effects on touch (not reliable on mobile) */
+            .card:hover {
+                transform: none;
+            }
+
+            .panel-btn:hover {
+                transform: none;
+            }
+
+            .tool-btn:hover {
+                transform: none;
+            }
+
+            .btn-add-panel:hover {
+                transform: none;
+            }
+
+            .mode-toggle:hover {
+                transform: none;
+            }
+        }
+
+        /* LEVEL 2: Outer Fold Horizontal / Small Tablets (601px - 900px) */
+        @media (min-width: 601px) and (max-width: 900px) {
+            html {
+                font-size: 15px; /* 93.75% of base */
+            }
+
+            .layout {
+                display: block;
+                height: auto;
+                gap: var(--spacing-lg);
+            }
+
+            .controls {
+                height: auto;
+                max-height: none;
                 margin-bottom: var(--spacing-xl);
                 overflow: visible;
             }
 
             .project-area {
-                height: 600px;
+                min-height: 600px;
+                height: auto;
             }
+
+            .top-bar {
+                padding: var(--spacing-lg);
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .panel-btn {
+                min-height: 44px; /* Touch target */
+            }
+
+            .btn-add-panel {
+                min-height: 44px;
+            }
+
+            .tools-bar {
+                width: 100%;
+                height: auto;
+                flex-direction: row;
+                border-right: none;
+                border-bottom: 1px solid var(--color-surface-border);
+                padding: var(--spacing-md) var(--spacing-lg);
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                gap: var(--spacing-sm);
+            }
+
+            .tool-btn {
+                width: 50px;
+                height: 50px;
+                flex-shrink: 0;
+            }
+
+            .workspace {
+                flex-direction: column;
+            }
+
+            .toolbar-between button {
+                min-width: 44px;
+                min-height: 44px;
+            }
+
+            .canvas-container {
+                gap: var(--spacing-lg);
+            }
+        }
+
+        /* LEVEL 3: Inner Fold Open / Tablets (901px - 1200px) */
+        @media (min-width: 901px) and (max-width: 1200px) {
+            html {
+                font-size: 15px; /* 93.75% of base */
+            }
+
+            .layout {
+                grid-template-columns: 280px 1fr; /* Narrower sidebar */
+                gap: var(--spacing-lg);
+            }
+
+            .controls {
+                gap: var(--spacing-md);
+            }
+
+            .card {
+                padding: var(--spacing-lg);
+            }
+
+            h3 {
+                font-size: 1.05em;
+            }
+
+            .panel-btn {
+                min-height: 44px; /* Touch target maintained */
+            }
+
+            .tool-btn {
+                width: 46px;
+                height: 46px;
+            }
+        }
+
+        /* ===== TOUCH OPTIMIZATION ===== */
+        .canvas-wrapper,
+        svg {
+            touch-action: pan-x pan-y pinch-zoom;
+        }
+
+        .top-bar,
+        .tools-bar {
+            touch-action: pan-x;
+        }
+
+        button,
+        .panel-btn,
+        .tool-btn {
+            touch-action: manipulation; /* Disable double-tap zoom */
+        }
+
+        /* Prevent text selection during interaction */
+        .workspace,
+        .canvas-container,
+        svg {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
         }
 
         /* ===== REDUCED MOTION ===== */
