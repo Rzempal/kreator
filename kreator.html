@@ -1,4 +1,4 @@
-<!-- kreator.html v0.040 🐛 DEBUG: Alert for toggleViewSection() -->
+<!-- kreator.html v0.041 🐛 FIX: Collapse - inline style override fix -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -3025,13 +3025,8 @@
 
     // FAZA 3: Toggle view section collapse/expand
     function toggleViewSection(viewType) {
-        alert('toggleViewSection WYWOŁANA: ' + viewType); // TEMP DEBUG
-        console.log('🔧 toggleViewSection called with:', viewType); // DEBUG
-
         const sectionId = viewType === 'frontal' ? 'viewSectionFrontal' : 'viewSectionTop';
         const section = document.getElementById(sectionId);
-
-        console.log('🔍 Section element:', section); // DEBUG
 
         // Null-safety: Check section exists BEFORE accessing properties
         if (!section) {
@@ -3040,7 +3035,6 @@
         }
 
         const header = section.previousElementSibling;
-        console.log('🔍 Header element:', header); // DEBUG
 
         // Null-safety: Check header exists
         if (!header) {
@@ -3052,7 +3046,15 @@
         section.classList.toggle('collapsed');
         header.classList.toggle('view-collapsed');
 
-        console.log('✅ Classes toggled. Section collapsed:', section.classList.contains('collapsed')); // DEBUG
+        // CRITICAL FIX: Remove inline style to let CSS classes work!
+        // changeView() sets inline display which overrides CSS .collapsed
+        if (section.classList.contains('collapsed')) {
+            section.style.display = 'none';  // Force none when collapsed
+        } else {
+            section.style.display = '';      // Clear inline style when expanded
+        }
+
+        console.log('✅ Toggled. Collapsed:', section.classList.contains('collapsed'), 'Display:', section.style.display);
 
         // Haptic feedback
         if (navigator.vibrate) {
