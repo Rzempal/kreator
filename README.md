@@ -1,8 +1,9 @@
 # Kreator Paneli Tapicerowanych
 
-**Wersja:** v0.030
+**Wersja:** v0.039
 **Status:** Aktywny rozwój
 **Design:** Modern Dark Theme + Glassmorphism ✨
+**Mobile:** Samsung Galaxy Fold 7 Optimized 📱
 
 ---
 
@@ -179,6 +180,47 @@ Zamiast prostego podsumowania, pełna lista z rozbiciem:
 - **Zapisywane dane**: kształt ściany, panele, warianty, mapowanie, tryb
 - **Wczytywanie**: Przywrócenie pełnego stanu projektu
 
+### H. Mobile Optimization (v0.031-v0.039) 📱
+
+#### FAZA 1: Responsive Foundation (v0.031-0.032)
+- **3-Level Breakpoints**: Dedykowane dla Samsung Galaxy Fold 7
+  - `<600px`: Outer Fold vertical → Overlay sidebar
+  - `601-900px`: Outer Fold horizontal → Slide-in sidebar
+  - `901-1200px`: Inner Fold open → Static sidebar
+- **Adaptive Layout**: Dynamiczny układ dostosowany do rozmiaru ekranu
+- **Touch-friendly Sizing**: Większe przyciski i obszary interakcji
+- **Responsive Typography**: Skalowanie czcionek dla czytelności
+
+#### FAZA 2: Touch Gestures (v0.033)
+- **Touch Events**: touchstart, touchmove, touchend, touchcancel (passive: false)
+- **Gesture Recognition**:
+  - **TAP**: Standardowe kliknięcie (canvas interaction)
+  - **LONG PRESS**: 500ms threshold → aktywacja trybu gumki
+  - **DRAG = PAN**: Przesuwanie canvas bez dodatkowego przycisku
+  - **SWIPE**: Quick gestures dla sidebar toggle
+- **Haptic Feedback**: navigator.vibrate() (15-50ms) dla wszystkich interakcji
+- **Touch-to-Mouse Integration**: Bezproblemowa współpraca z kodem desktop
+
+#### FAZA 3: Mobile-Specific UX (v0.034-0.039)
+- **Dual Burger Menu System**:
+  - **Left Burger (🎨)**: Toggle sidebar kolorów/narzędzi
+  - **Right Burger (📐)**: Toggle sidebar wyboru paneli
+- **Adaptive Sidebars**:
+  - Overlay na małych ekranach (<600px)
+  - Slide-in na średnich (601-900px)
+  - Static na dużych (901-1200px)
+- **Collapsible Views**: Przyciski ▼ w nagłówkach do collapse/expand widoków
+- **Space Optimization**: Top-bar style headers, eraser w toolbar
+- **Auto-close**: Panel sidebar zamyka się automatycznie po wyborze
+- **Swipe Gestures**: Left/right swipe dla szybkiego toggle sidebars
+
+**Mobile Bugfixy:**
+- v0.035: Backdrop removal, icon improvements, view display fix
+- v0.036: Sidebar collapse button, eraser relocation
+- v0.037: View headers restructure (top-bar style)
+- v0.038: Per-header collapse buttons, removed [F][T][FT]
+- v0.039: Null-safety fix w toggleViewSection()
+
 ---
 
 ## 3. Jak działa aplikacja (User Flow)
@@ -223,13 +265,16 @@ W sekcji "Wycena i Materiały":
 
 ## 4. Stack Technologiczny
 
-- **HTML5 / CSS3** (CSS Grid, Flexbox, CSS Variables, Keyframe Animations, Backdrop Filter, Gradients)
+- **HTML5 / CSS3** (CSS Grid, Flexbox, CSS Variables, Keyframe Animations, Backdrop Filter, Gradients, Media Queries)
 - **Vanilla JavaScript** (ES6+)
 - **SVG** (Skalowalna grafika wektorowa do wizualizacji)
 - **Google Fonts** (Readex Pro - typography)
 - **LocalStorage** (Zapis stanu po stronie klienta)
 - **ClipPath** (Przycinanie paneli do obszaru roboczego)
 - **Glassmorphism** (Backdrop blur + transparency dla modern UI)
+- **Touch Events API** (touchstart, touchmove, touchend, touchcancel)
+- **Vibration API** (Haptic feedback dla mobile)
+- **Responsive Design** (Mobile-first, 3-level breakpoints dla Samsung Fold 7)
 
 ---
 
@@ -278,6 +323,55 @@ W sekcji "Wycena i Materiały":
 ---
 
 ## 6. Historia Wersji (Ostatnie Zmiany)
+
+### v0.039 - Fix: Collapse functionality null-safety
+- Naprawiono toggleViewSection() - sprawdzanie section/header przed użyciem
+- Dodano console.error dla debugowania
+- Early return jeśli element nie istnieje
+
+### v0.038 - UX: Collapse buttons w headerach
+- Usunięto [F][T][FT] buttons (cryptic UX)
+- Dodano przyciski ▼ obok każdego nagłówka widoku
+- Usunięto emoji 📐🔍 z nagłówków (niezgodność tematyczna)
+
+### v0.037 - UX: View headers jako top-bar
+- Przeniesiono nagłówki widoków poza view-section
+- Space optimization - headers nie zabierają miejsca jako kolumna
+
+### v0.036 - UX: FAZA 3 improvements
+- Dodano collapse button (✕) w left sidebar
+- Przeniesiono eraser z sidebar do toolbar
+- Relokacja hint text z top-bar na dół canvas
+
+### v0.035 - Fix: FAZA 3 UX fixes
+- Usunięto backdrop dim effect
+- Zmieniono burger icon na 🎨 (sugeruje kolory)
+- Dodano drugi burger 📐 dla paneli (right side)
+- Naprawiono querySelector bug w changeView()
+
+### v0.034 - Feature: FAZA 3 Mobile-Specific UX
+- Burger menu dla sidebars (🎨 kolory, 📐 panele)
+- Adaptive sidebars (3 breakpointy)
+- View toggle [F][T][FT]
+- Swipe gestures dla sidebar
+- Auto-close panel sidebar po wyborze
+
+### v0.033 - Feature: FAZA 2 Touch Gestures
+- Touch events (touchstart/move/end/cancel)
+- Gesture recognition (TAP, LONG PRESS, DRAG=PAN, SWIPE)
+- Haptic feedback (navigator.vibrate)
+- Touch-to-mouse integration
+
+### v0.032 - Feature: FAZA 1 Responsive Foundation
+- 3-level breakpoints dla Samsung Fold 7
+- Adaptive layout (overlay/slide-in/static)
+- Touch-friendly sizing
+- Responsive typography
+
+### v0.031 - Feature: Mobile optimization start
+- Viewport meta configuration
+- Initial responsive CSS
+- Mobile-first considerations
 
 ### v0.030 - Design: Full Redesign (MAJOR UPDATE)
 - **Dark Theme**: Gradient background (#0f172a → #7c3aed → #1e293b)
@@ -378,6 +472,7 @@ kreator/
 │   ├── rozmiary.js         # Tabele cenowe (referencyjna kopia)
 │   └── Kalkulator wyceny.html  # Oryginalny kalkulator (referencja)
 ├── README.md               # Ten plik
+├── TASKS.md                # Fazy projektu i postęp (roadmap)
 └── CLAUDE.md              # Instrukcje dla AI asystenta
 ```
 
@@ -385,25 +480,33 @@ kreator/
 
 ## 8. Roadmap / TODO
 
-### Priorytet: Wysoki
-- [ ] Walidacja formularzy z lepszymi komunikatami
-- [ ] Obsługa touch events dla mobile (testowanie)
-- [ ] Export projektu do PDF/obrazka
-- [ ] Rendering paneli w widoku z góry (opcjonalnie toggle on/off)
+**Uwaga:** Szczegółowy roadmap w pliku `TASKS.md`
 
-### Priorytet: Średni
+### FAZA 4: Performance & Polish (Następna)
+- [ ] Performance optimization (throttle, GPU acceleration)
+- [ ] Real device testing (Samsung Fold 7)
+- [ ] Accessibility improvements (ARIA, screen readers)
+- [ ] Smooth animations (60fps)
+- [ ] User onboarding (first-time hints)
+
+### FAZA 5: Advanced Mobile Features (Opcjonalna)
+- [ ] Pinch-to-zoom gesture
+- [ ] PWA support (install as app, offline mode)
+- [ ] Share API integration
+- [ ] Camera integration (AR preview)
+- [ ] Multi-finger gestures
+
+### Desktop Features (Backlog)
+- [ ] Walidacja formularzy z lepszymi komunikatami
+- [ ] Export projektu do PDF/obrazka
 - [ ] Undo/Redo stack (historia zmian)
 - [ ] Kopiowanie/wklejanie paneli
 - [ ] Tryb "fill" - automatyczne wypełnienie obszaru
-- [ ] Więcej presetów kątów (45°, 135°, 225°, 315°)
 - [ ] 3D preview (isometric view)
-
-### Priorytet: Niski
 - [ ] Szablony projektów (gotowe układy)
 - [ ] Import kształtu ściany z pliku
 - [ ] Eksport listy materiałów do Excel
-- [ ] Light theme toggle (dla użytkowników preferujących jasny motyw)
-- [ ] Customizable color schemes
+- [ ] Light theme toggle
 
 ---
 
@@ -413,6 +516,8 @@ kreator/
 - **Brak multi-user**: Jeden użytkownik na przeglądarkę
 - **Brak walidacji wymiarów**: Użytkownik może wprowadzić dowolne wartości
 - **Uproszczona logistyka**: Stała cena wysyłki (39 zł), bez kalkulacji gabarytu
+- **Mobile testing**: Samsung Fold 7 jako główne urządzenie - inne modele mogą wymagać dostosowań
+- **Single-finger only**: Multi-touch nie jest obsługiwany (z wyboru - dla precyzji)
 
 ---
 
@@ -434,6 +539,8 @@ python -m http.server 8000
 - Linie 521-1500: JavaScript (logika aplikacji)
 
 ### Główne Funkcje
+
+**Desktop:**
 - `draw()` - Renderowanie SVG (widok frontalny)
 - `drawTopView()` - Renderowanie widoku z góry z geometrią kątów
 - `addPanel()` - Dodawanie panelu
@@ -444,6 +551,16 @@ python -m http.server 8000
 - `cycleAngle()` - Cykliczne przełączanie kątów (90° → 180° → 270°)
 - `setMasterSegment()` - Ustawianie segmentu referencyjnego
 - `updatePanelDepth()` - Aktualizacja głębokości panelu
+
+**Mobile (FAZA 2-3):**
+- `handleTouchStart()` - Początek touch gesture
+- `handleTouchMove()` - Śledzenie ruchu palca
+- `handleTouchEnd()` - Koniec touch gesture (dispatch action)
+- `handleLongPress()` - Long press → eraser mode
+- `toggleSidebar()` - Toggle left sidebar (kolory)
+- `togglePanelSidebar()` - Toggle right sidebar (panele)
+- `toggleViewSection()` - Collapse/expand widoku (frontal/top)
+- `applyPanTransform()` - Canvas pan transformation
 
 ---
 
@@ -456,3 +573,5 @@ Projekt prywatny - brak publicznej licencji.
 **Ostatnia aktualizacja:** 2025-11-22
 **Autor:** Rzempal
 **Design Version:** v0.030 - Modern Dark Theme ✨
+**Mobile Version:** v0.039 - Samsung Fold 7 Optimized 📱
+**Roadmap:** Zobacz `TASKS.md` dla szczegółów faz i postępu
