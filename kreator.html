@@ -1,4 +1,4 @@
-<!-- kreator.html v0.031 FAZA 1: Core Responsive Foundation (Samsung Fold optimized) -->
+<!-- kreator.html v0.032 FAZA 2: Touch Events & Gestures (Full touch support) -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -1715,6 +1715,21 @@
     let panelDepth = 2.5; // Grubość panelu w cm (default 2.5cm)
     const STORAGE_KEY = 'panelConfig_V7_Saves';
 
+    // --- TOUCH STATE (FAZA 2) ---
+    let touchState = {
+        active: false,
+        startX: 0,
+        startY: 0,
+        lastX: 0,
+        lastY: 0,
+        startTime: 0,
+        longPressTimer: null,
+        isPinching: false,
+        initialDistance: 0,
+        initialZoom: 1.0,
+        touches: []
+    };
+
     // --- SYSTEM KOMUNIKATÓW PROJEKTU ---
     function showProjectMessage(text, type = 'info', duration = 4000) {
         const container = document.getElementById('projectMessages');
@@ -1810,10 +1825,16 @@
         draw();
         updateMappingUI();
 
-        // Obsługa kliknięć w obszar roboczy
+        // Obsługa kliknięć w obszar roboczy (mouse)
         const svgWrapper = document.getElementById('svgWrapperFront');
         svgWrapper.addEventListener('click', onCanvasClick);
         svgWrapper.addEventListener('mousemove', onCanvasMouseMove);
+
+        // Obsługa touch events (FAZA 2)
+        svgWrapper.addEventListener('touchstart', handleTouchStart, { passive: false });
+        svgWrapper.addEventListener('touchmove', handleTouchMove, { passive: false });
+        svgWrapper.addEventListener('touchend', handleTouchEnd, { passive: false });
+        svgWrapper.addEventListener('touchcancel', handleTouchCancel, { passive: false });
     });
 
     // --- 1. ZARZĄDZANIE WARIANTAMI (SEKCJA 2 + TOP BAR) ---
@@ -2308,11 +2329,190 @@
         if (!svg) return null;
 
         const pt = svg.createSVGPoint();
-        pt.x = event.clientX;
-        pt.y = event.clientY;
+
+        // Support both mouse and touch events
+        if (event.touches && event.touches.length > 0) {
+            pt.x = event.touches[0].clientX;
+            pt.y = event.touches[0].clientY;
+        } else if (event.changedTouches && event.changedTouches.length > 0) {
+            pt.x = event.changedTouches[0].clientX;
+            pt.y = event.changedTouches[0].clientY;
+        } else {
+            pt.x = event.clientX;
+            pt.y = event.clientY;
+        }
 
         const svgP = pt.matrixTransform(svg.getScreenCTM().inverse());
         return { x: svgP.x, y: svgP.y };
+    }
+
+    // --- TOUCH EVENT HANDLERS (FAZA 2) ---
+
+    function getTouchDistance(touch1, touch2) {
+        const dx = touch2.clientX - touch1.clientX;
+        const dy = touch2.clientY - touch1.clientY;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    function handleTouchStart(event) {
+        const touches = event.touches;
+
+        // Two finger touch = pinch-to-zoom
+        if (touches.length === 2) {
+            event.preventDefault();
+            touchState.isPinching = true;
+            touchState.initialDistance = getTouchDistance(touches[0], touches[1]);
+            touchState.initialZoom = zoomLevel;
+            touchState.touches = Array.from(touches);
+
+            // Clear long press timer if active
+            if (touchState.longPressTimer) {
+                clearTimeout(touchState.longPressTimer);
+                touchState.longPressTimer = null;
+            }
+            return;
+        }
+
+        // Single finger touch
+        if (touches.length === 1) {
+            const touch = touches[0];
+            touchState.active = true;
+            touchState.startX = touch.clientX;
+            touchState.startY = touch.clientY;
+            touchState.lastX = touch.clientX;
+            touchState.lastY = touch.clientY;
+            touchState.startTime = Date.now();
+            touchState.isPinching = false;
+
+            // Start long press timer (600ms)
+            touchState.longPressTimer = setTimeout(() => {
+                handleLongPress(event);
+            }, 600);
+
+            // Handle touch move for preview (same as mouse move)
+            if (lastUsedPanelSize && !previewLocked) {
+                onCanvasMouseMove(event);
+            }
+        }
+    }
+
+    function handleTouchMove(event) {
+        const touches = event.touches;
+
+        // Pinch-to-zoom with two fingers
+        if (touches.length === 2 && touchState.isPinching) {
+            event.preventDefault();
+
+            const currentDistance = getTouchDistance(touches[0], touches[1]);
+            const scale = currentDistance / touchState.initialDistance;
+
+            // Apply zoom with limits (0.5x to 3x)
+            const newZoom = Math.max(0.5, Math.min(3.0, touchState.initialZoom * scale));
+
+            // Smooth zoom update (debounced)
+            if (Math.abs(newZoom - zoomLevel) > 0.01) {
+                zoomLevel = newZoom;
+                document.getElementById('zoomLabel').textContent = Math.round(zoomLevel * 100) + '%';
+                draw();
+                drawTopView();
+            }
+            return;
+        }
+
+        // Single finger move
+        if (touches.length === 1 && touchState.active) {
+            const touch = touches[0];
+            const deltaX = Math.abs(touch.clientX - touchState.startX);
+            const deltaY = Math.abs(touch.clientY - touchState.startY);
+
+            // If moved more than 10px, cancel long press
+            if (deltaX > 10 || deltaY > 10) {
+                if (touchState.longPressTimer) {
+                    clearTimeout(touchState.longPressTimer);
+                    touchState.longPressTimer = null;
+                }
+            }
+
+            touchState.lastX = touch.clientX;
+            touchState.lastY = touch.clientY;
+
+            // Update preview position
+            if (lastUsedPanelSize && !previewLocked) {
+                onCanvasMouseMove(event);
+            }
+        }
+    }
+
+    function handleTouchEnd(event) {
+        event.preventDefault();
+
+        const duration = Date.now() - touchState.startTime;
+        const deltaX = Math.abs(touchState.lastX - touchState.startX);
+        const deltaY = Math.abs(touchState.lastY - touchState.startY);
+
+        // Clear long press timer
+        if (touchState.longPressTimer) {
+            clearTimeout(touchState.longPressTimer);
+            touchState.longPressTimer = null;
+        }
+
+        // Pinch ended
+        if (touchState.isPinching) {
+            touchState.isPinching = false;
+            touchState.active = false;
+            return;
+        }
+
+        // Tap detection (quick touch with minimal movement)
+        if (touchState.active && duration < 300 && deltaX < 10 && deltaY < 10) {
+            // Simulate click
+            onCanvasClick(event);
+        }
+
+        // Swipe detection (for future use - sidebar toggle)
+        if (touchState.active && duration < 500) {
+            const swipeThreshold = 50;
+
+            if (deltaX > swipeThreshold && deltaX > deltaY * 2) {
+                // Horizontal swipe detected
+                if (touchState.lastX > touchState.startX) {
+                    // Swipe right (future: open sidebar)
+                    console.log('Swipe right detected');
+                } else {
+                    // Swipe left (future: close sidebar)
+                    console.log('Swipe left detected');
+                }
+            }
+        }
+
+        // Reset touch state
+        touchState.active = false;
+        touchState.touches = [];
+    }
+
+    function handleTouchCancel(event) {
+        // Clear all touch state
+        if (touchState.longPressTimer) {
+            clearTimeout(touchState.longPressTimer);
+            touchState.longPressTimer = null;
+        }
+
+        touchState.active = false;
+        touchState.isPinching = false;
+        touchState.touches = [];
+    }
+
+    function handleLongPress(event) {
+        // Long press activates eraser mode
+        if (activeTool.type !== 'eraser') {
+            setActiveTool('eraser');
+            showProjectMessage('🗑️ Tryb usuwania aktywny (długie naciśnięcie)', 'info', 2000);
+
+            // Haptic feedback if available
+            if (navigator.vibrate) {
+                navigator.vibrate(50);
+            }
+        }
     }
 
     function onCanvasMouseMove(event) {
