@@ -1,4 +1,4 @@
-<!-- kreator.html v0.027 Fix: viewBox width alignment dla master segment -->
+<!-- kreator.html v0.028 Opisy kątów przy punktach łączenia z ramką -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -1990,11 +1990,29 @@
             segmentsSVG += `<text x="${midX}" y="${midY}" text-anchor="middle" font-size="11" fill="#fff" font-weight="bold"
                 style="text-shadow: 0 0 3px rgba(0,0,0,0.8)">${seg.width}</text>`;
 
-            // Etykieta kąta (na końcu segmentu, jeśli nie 180°)
+            // Etykieta kąta (przy punkcie łączenia segmentów, jeśli nie 180°)
             if (i > 0 && wallData.segments[i].angle !== 180) {
-                const endX = x + seg.width * Math.cos(pos.angle);
-                const endY = y + seg.width * Math.sin(pos.angle);
-                segmentsSVG += `<text x="${endX + 10}" y="${endY - 10}" text-anchor="start" font-size="10" fill="#666" font-weight="bold">${wallData.segments[i].angle}°</text>`;
+                const labelText = `${wallData.segments[i].angle}°`;
+                const labelFontSize = 10;
+                const labelPadding = 3;
+
+                // Offset od punktu łączenia (na zewnątrz kąta)
+                const labelOffsetDist = 15;
+                const labelX = x + labelOffsetDist * Math.cos(pos.angle - Math.PI/4);
+                const labelY = y + labelOffsetDist * Math.sin(pos.angle - Math.PI/4);
+
+                // Wymiary tła (przybliżone)
+                const textWidth = labelText.length * 6;
+                const textHeight = 14;
+
+                // Tło pod tekstem (prostokąt z ramką)
+                segmentsSVG += `<rect x="${labelX - textWidth/2 - labelPadding}" y="${labelY - textHeight/2 - labelPadding}"
+                    width="${textWidth + labelPadding*2}" height="${textHeight + labelPadding*2}"
+                    fill="#fff" stroke="#ff6b35" stroke-width="1.5" rx="3" opacity="0.95" />`;
+
+                // Tekst kąta
+                segmentsSVG += `<text x="${labelX}" y="${labelY + 3}" text-anchor="middle"
+                    font-size="${labelFontSize}" fill="#ff6b35" font-weight="bold">${labelText}</text>`;
             }
         }
 
