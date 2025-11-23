@@ -1,4 +1,4 @@
-<!-- kreator.html v0.045 🐛 FIX: Mobile layout order (!important) -->
+<!-- kreator.html v0.046 🐛 FIX: Mobile layout - display:flex on <600px (v0.046) -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -1419,7 +1419,9 @@
             }
 
             .layout {
-                display: block;
+                /* Keep flex to allow 'order' property to work */
+                display: flex !important;
+                flex-direction: column !important;
                 height: auto;
                 gap: var(--spacing-md);
             }
