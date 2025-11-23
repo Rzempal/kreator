@@ -1,4 +1,4 @@
-<!-- kreator.html v0.044 ✨ UX: Mobile layout - project area priority -->
+<!-- kreator.html v0.045 🐛 FIX: Mobile layout order (!important) -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -222,18 +222,18 @@
         /* MOBILE: Project area FIRST (priority) */
         @media (max-width: 900px) {
             .layout {
-                flex-direction: column; /* Stack vertically */
-                height: auto; /* Allow natural height */
+                flex-direction: column !important; /* Stack vertically */
+                height: auto !important; /* Allow natural height */
             }
 
             .controls {
-                order: 2; /* DOŁEM - konfiguracja */
-                flex: 0 0 auto; /* Auto height */
+                order: 2 !important; /* DOŁEM - konfiguracja */
+                flex: 0 0 auto !important; /* Auto height */
             }
 
             .project-area {
-                order: 1; /* GÓRĄ - główna funkcja (priorytet!) */
-                flex: 0 0 auto;
+                order: 1 !important; /* GÓRĄ - główna funkcja (priorytet!) */
+                flex: 0 0 auto !important;
             }
         }
 
