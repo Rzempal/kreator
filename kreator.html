@@ -1,4 +1,4 @@
-<!-- kreator.html v0.046 🐛 FIX: Mobile layout - display:flex on <600px (v0.046) -->
+<!-- kreator.html v0.047 ✨ NEW: Custom preset + 📱 MOBILE UX: Touch targets, grid, spacing -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -1637,14 +1637,14 @@
             }
 
             .segment-angle-input {
-                min-width: 50px;
-                min-height: 36px;
+                min-width: 60px; /* UX: Czytelność dla 3-cyfrowych wartości (270°) */
+                min-height: 44px; /* UX: Touch target */
             }
 
             .angle-btn,
             .btn-x {
-                min-height: 36px;
-                min-width: 36px;
+                min-height: 44px; /* UX: Touch target standard (Apple/Google) */
+                min-width: 44px;  /* UX: Touch target standard (Apple/Google) */
                 padding: 6px 12px;
             }
 
@@ -1694,6 +1694,25 @@
 
             .mode-toggle:hover {
                 transform: none;
+            }
+        }
+
+        /* === EXTRA SMALL SCREENS (<400px) - UX improvements === */
+        @media (max-width: 400px) {
+            /* UX: Grid inputs - zmiana na 2 kolumny dla małych ekranów (iPhone SE, małe Android) */
+            .row-inputs {
+                grid-template-columns: 1fr 1fr !important; /* 2 kolumny: Szer + Wys pocz */
+                grid-template-rows: auto auto;
+                gap: 8px !important;
+            }
+
+            .row-inputs input:nth-child(3) {
+                grid-column: 1 / -1; /* Wys końcowa na całą szerokość (pełny wiersz) */
+            }
+
+            /* UX: Zwiększony spacing między segmentami dla lepszej czytelności */
+            .segment-row {
+                margin-bottom: var(--spacing-sm); /* Zwiększony z --spacing-xs */
             }
         }
 
@@ -3369,12 +3388,12 @@
 
     // --- 5. LOGIKA OBSZARU ROBOCZEGO ---
     function loadPresetWorkspace() {
-        // Preset U-shaped: seg1→seg2 (90°), seg2→seg3 (180°), seg3→seg4 (90°)
+        // Preset U-shaped: 4 segmenty z niestandardowymi wymiarami
         wallData.segments = [
-            {width: 100, startHeight: 140, endHeight: 140, angle: 180}, // Pierwszy segment (angle nie ma znaczenia)
-            {width: 200, startHeight: 140, endHeight: 140, angle: 90},  // Skręt 90° w prawo
-            {width: 100, startHeight: 140, endHeight: 140, angle: 180}, // Kontynuacja prosto
-            {width: 200, startHeight: 140, endHeight: 140, angle: 90}   // Skręt 90° w prawo
+            {width: 60,  startHeight: 140, endHeight: 140, angle: 180}, // Seg 1: 60cm, 140→140cm (bazowy)
+            {width: 200, startHeight: 140, endHeight: 140, angle: 270}, // Seg 2: 200cm, 140→140cm, skręt 270° (lewo)
+            {width: 60,  startHeight: 140, endHeight: 140, angle: 270}, // Seg 3: 60cm, 140→140cm, skręt 270° (lewo)
+            {width: 100, startHeight: 140, endHeight: 80,  angle: 180}  // Seg 4: 100cm, 140→80cm, prosto
         ];
         renderSegmentsList();
         draw();
