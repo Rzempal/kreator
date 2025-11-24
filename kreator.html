@@ -1,4 +1,4 @@
-<!-- kreator.html v0.048 🐛 FIX: Segment angle input - max-width constraint -->
+<!-- kreator.html v0.049 ♻️ REFACTOR: Title moved to project section (not sticky) -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -636,6 +636,26 @@
 
         .project-area:hover::before {
             opacity: 0.2;
+        }
+
+        /* ===== PROJECT HEADER ===== */
+        .project-header {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.3), rgba(118, 75, 162, 0.3));
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 20px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.3);
+        }
+
+        .project-header h2 {
+            margin: 0;
+            font-size: 1.6em;
+            font-weight: 700;
+            background: linear-gradient(to right, #06b6d4, #a78bfa, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
         }
 
         /* ===== TOP TOOLBAR ===== */
@@ -1910,11 +1930,6 @@
     <div class="animated-bg__blob"></div>
 </div>
 
-<!-- MAIN HEADER -->
-<div style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.3), rgba(118, 75, 162, 0.3)); backdrop-filter: blur(12px); padding: 20px; border-bottom: 1px solid rgba(148, 163, 184, 0.3); position: sticky; top: 0; z-index: 100;">
-    <h1 style="margin: 0; font-size: 1.6em; font-weight: 700; background: linear-gradient(to right, #06b6d4, #a78bfa, #f472b6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-align: center;">✨ Kreator Paneli Tapicerowanych</h1>
-</div>
-
 <div class="layout">
 
     <!-- 1. LEWA KOLUMNA (KONFIGURACJA) -->
@@ -1986,6 +2001,11 @@
 
     <!-- 2. PRAWA STRONA (PROJEKT) -->
     <div class="project-area fade-in-up delay-100">
+
+        <!-- TYTUŁ SEKCJI PROJEKTU -->
+        <div class="project-header">
+            <h2>✨ Kreator Paneli Tapicerowanych</h2>
+        </div>
 
         <!-- TOP BAR: SZYBKIE DODAWANIE -->
         <div class="top-bar" id="topBar">
