@@ -1,4 +1,4 @@
-<!-- kreator.html v0.050 🐛 FIX: View collapse icons sync with visibility -->
+<!-- kreator.html v0.051 🐛 FIX: Complete sync - sections + icons (v0.051) -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -3221,19 +3221,25 @@
         if (mode === 'frontal') {
             // Frontal visible → expanded icon (▼)
             if (frontalHeader) frontalHeader.classList.remove('view-collapsed');
+            if (frontalView) frontalView.classList.remove('collapsed');
             // Top hidden → collapsed icon (►)
             if (topHeader) topHeader.classList.add('view-collapsed');
+            if (topView) topView.classList.add('collapsed');
 
         } else if (mode === 'top') {
             // Frontal hidden → collapsed icon (►)
             if (frontalHeader) frontalHeader.classList.add('view-collapsed');
+            if (frontalView) frontalView.classList.add('collapsed');
             // Top visible → expanded icon (▼)
             if (topHeader) topHeader.classList.remove('view-collapsed');
+            if (topView) topView.classList.remove('collapsed');
 
         } else if (mode === 'dual') {
             // Both visible → expanded icons (▼)
             if (frontalHeader) frontalHeader.classList.remove('view-collapsed');
+            if (frontalView) frontalView.classList.remove('collapsed');
             if (topHeader) topHeader.classList.remove('view-collapsed');
+            if (topView) topView.classList.remove('collapsed');
         }
 
         // Save preference to localStorage
