@@ -1,4 +1,4 @@
-<!-- kreator.html v0.047 ✨ NEW: Custom preset + 📱 MOBILE UX: Touch targets, grid, spacing -->
+<!-- kreator.html v0.048 🐛 FIX: Segment angle input - max-width constraint -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -1637,7 +1637,8 @@
             }
 
             .segment-angle-input {
-                min-width: 60px; /* UX: Czytelność dla 3-cyfrowych wartości (270°) */
+                width: 60px;     /* UX: Czytelność dla 3-cyfrowych wartości (270°) */
+                max-width: 60px; /* Zapobiega rozciąganiu na mobile */
                 min-height: 44px; /* UX: Touch target */
             }
 
