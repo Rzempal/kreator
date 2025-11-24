@@ -1,4 +1,4 @@
-<!-- kreator.html v0.049 ♻️ REFACTOR: Title moved to project section (not sticky) -->
+<!-- kreator.html v0.050 🐛 FIX: View collapse icons sync with visibility -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -3210,6 +3210,30 @@
             if (topView) topView.style.display = 'flex';
             // Keep current flex direction (responsive via CSS)
             if (canvasContainer) canvasContainer.style.flexDirection = '';
+        }
+
+        // 🐛 FIX: Synchronize collapse button icons with actual visibility
+        // Get view headers (buttons with collapse icons)
+        const viewHeaders = document.querySelectorAll('.view-header');
+        const frontalHeader = viewHeaders[0]; // First header = Frontal
+        const topHeader = viewHeaders[1];     // Second header = Top
+
+        if (mode === 'frontal') {
+            // Frontal visible → expanded icon (▼)
+            if (frontalHeader) frontalHeader.classList.remove('view-collapsed');
+            // Top hidden → collapsed icon (►)
+            if (topHeader) topHeader.classList.add('view-collapsed');
+
+        } else if (mode === 'top') {
+            // Frontal hidden → collapsed icon (►)
+            if (frontalHeader) frontalHeader.classList.add('view-collapsed');
+            // Top visible → expanded icon (▼)
+            if (topHeader) topHeader.classList.remove('view-collapsed');
+
+        } else if (mode === 'dual') {
+            // Both visible → expanded icons (▼)
+            if (frontalHeader) frontalHeader.classList.remove('view-collapsed');
+            if (topHeader) topHeader.classList.remove('view-collapsed');
         }
 
         // Save preference to localStorage
