@@ -1,6 +1,6 @@
 # Kreator Paneli Tapicerowanych
 
-**Wersja:** v0.039
+**Wersja:** v0.051
 **Status:** Aktywny rozwój
 **Design:** Modern Dark Theme + Glassmorphism ✨
 **Mobile:** Samsung Galaxy Fold 7 Optimized 📱
@@ -221,6 +221,34 @@ Zamiast prostego podsumowania, pełna lista z rozbiciem:
 - v0.038: Per-header collapse buttons, removed [F][T][FT]
 - v0.039: Null-safety fix w toggleViewSection()
 
+### I. Frontend Design Review (v0.040-v0.051) ✅
+
+**Mobile UX Improvements & Bug Fixes:**
+
+#### v0.047-v0.048: Custom Preset + Mobile UX
+- **Nowy Preset**: 4 segmenty (60cm, 200cm, 60cm, 100cm) z kątami 270°
+- **Touch Targets**: Zwiększone do 44px (Apple/Google standard)
+- **Input Width**: Segment angle input 50px → 60px (3-cyfrowe wartości)
+- **Grid Layout**: 3 kolumny → 2 kolumny na <400px (iPhone SE)
+- **Spacing**: Zwiększony między segmentami na mobile
+- **Fix v0.048**: Max-width constraint dla angle input (zapobiega rozciąganiu)
+
+#### v0.049: Title Refactor
+- **Zmiana struktury**: "Kreator Paneli Tapicerowanych" przeniesiony z sticky header do sekcji projektu
+- **UX**: Tytuł scrolluje z zawartością (nie sticky)
+- **Semantyka**: h1 → h2 (section heading zamiast main heading)
+
+#### v0.050-v0.051: Collapse Buttons Sync
+- **Problem v0.050**: Ikony collapse (▼/►) nie synchronizowane z widocznością widoków
+- **Fix v0.051**: Pełna synchronizacja - section classes + header icons + inline styles
+- **Rezultat**: 1 kliknięcie zamiast 2 dla toggle collapse
+
+#### v0.046: Mobile Layout Order
+- **Fix**: Display flex zamiast block na <600px (order property wymaga flex)
+- **Mobile Priority**: Project area PIERWSZA, controls DRUGA
+
+**Status Mobile:** Wersja mobilna przetestowana na Samsung Fold 7 - UX zatwierdzony ✅
+
 ---
 
 ## 3. Jak działa aplikacja (User Flow)
@@ -323,6 +351,37 @@ W sekcji "Wycena i Materiały":
 ---
 
 ## 6. Historia Wersji (Ostatnie Zmiany)
+
+### v0.051 - Fix: Complete sync - sections + icons
+- Pełna synchronizacja collapse: section classes + header icons + inline styles
+- Fix dla odwrotnego problemu z v0.050
+- Rezultat: 1 kliknięcie działa poprawnie w obie strony
+
+### v0.050 - Fix: View collapse icons sync with visibility
+- Synchronizacja ikon collapse (▼/►) z widocznością widoków w changeView()
+- Header classes (view-collapsed) zsynchronizowane z display properties
+- Naprawiono: ikony pokazują faktyczny stan (expanded/collapsed)
+
+### v0.049 - Refactor: Title moved to project section
+- "Kreator Paneli Tapicerowanych" przeniesiony z sticky header do project-area
+- Tytuł jako h2 (section heading) zamiast h1 w sticky bar
+- Scrolluje z zawartością zamiast być przyklejony do góry
+
+### v0.048 - Fix: Segment angle input width constraint
+- Max-width: 60px dla segment-angle-input (zapobiega rozciąganiu)
+- Fix dla problemu rozciągania pola na całą szerokość na mobile
+
+### v0.047 - Feature: Custom preset + Mobile UX improvements
+- Nowy preset: 4 segmenty (60cm, 200cm, 60cm, 100cm) z kątami 270°
+- Touch targets 44px dla .angle-btn (Apple/Google standard)
+- Input angle width 50px → 60px (3-cyfrowe wartości)
+- Grid 2-kolumnowy na <400px (Szer + Wys pocz)
+- Zwiększony spacing między segmentami na mobile
+
+### v0.046 - Fix: Mobile layout flexbox override
+- Display flex zamiast block na <600px (order property wymaga flex)
+- Mobile priority: project area PIERWSZA, controls DRUGA
+- Fix dla problemu z display: block wyłączającym flexbox order
 
 ### v0.039 - Fix: Collapse functionality null-safety
 - Naprawiono toggleViewSection() - sprawdzanie section/header przed użyciem
@@ -570,8 +629,9 @@ Projekt prywatny - brak publicznej licencji.
 
 ---
 
-**Ostatnia aktualizacja:** 2025-11-22
+**Ostatnia aktualizacja:** 2025-11-25
 **Autor:** Rzempal
 **Design Version:** v0.030 - Modern Dark Theme ✨
-**Mobile Version:** v0.039 - Samsung Fold 7 Optimized 📱
+**Mobile Version:** v0.051 - Samsung Fold 7 Optimized & Tested ✅📱
+**Mobile Status:** Wersja mobilna przetestowana i zatwierdzona - UX działa poprawnie
 **Roadmap:** Zobacz `TASKS.md` dla szczegółów faz i postępu
