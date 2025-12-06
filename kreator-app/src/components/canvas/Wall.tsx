@@ -1,4 +1,4 @@
-// src/components/canvas/Wall.tsx v0.002 Komponent sciany SVG
+// src/components/canvas/Wall.tsx v0.003 Komponent sciany SVG z obsluga wyrownania
 'use client';
 
 import { memo, useMemo, type ReactNode } from 'react';
@@ -10,6 +10,13 @@ interface WallProps {
 }
 
 function WallComponent({ wall, scale }: WallProps) {
+  // Oblicz maksymalna wysokosc dla wyrownania
+  const maxHeight = useMemo(() => {
+    return Math.max(
+      ...wall.segments.flatMap((seg) => [seg.startHeight, seg.endHeight])
+    );
+  }, [wall.segments]);
+
   // Generuj sciezke SVG dla ksztaltu sciany
   const wallPath = useMemo(() => {
     if (wall.segments.length === 0) return '';
@@ -17,35 +24,54 @@ function WallComponent({ wall, scale }: WallProps) {
     let path = '';
     let currentX = 0;
 
-    // Gorna krawedz (od lewej do prawej)
-    path += `M 0 0`;
+    // Sprawdz wyrownanie pierwszego segmentu (zakladamy ze wszystkie maja to samo)
+    const alignment = wall.segments[0]?.alignment ?? 'bottom';
 
-    for (const segment of wall.segments) {
-      const nextX = currentX + segment.width * scale;
-      // Linia gorna (zakres wysokosci nie ma znaczenia - rysujemy od Y=0)
-      path += ` L ${nextX} 0`;
-      currentX = nextX;
-    }
+    if (alignment === 'top') {
+      // Wyrownanie do gory - skos na dole (obecne zachowanie)
+      path += `M 0 0`;
 
-    // Prawa krawedz (w dol)
-    const lastSegment = wall.segments[wall.segments.length - 1];
-    path += ` L ${currentX} ${lastSegment.endHeight * scale}`;
+      for (const segment of wall.segments) {
+        const nextX = currentX + segment.width * scale;
+        path += ` L ${nextX} 0`;
+        currentX = nextX;
+      }
 
-    // Dolna krawedz (od prawej do lewej) - uwzgledniaj skosy
-    currentX = wall.segments.reduce((sum, seg) => sum + seg.width, 0) * scale;
+      const lastSegment = wall.segments[wall.segments.length - 1];
+      path += ` L ${currentX} ${lastSegment.endHeight * scale}`;
 
-    for (let i = wall.segments.length - 1; i >= 0; i--) {
-      const segment = wall.segments[i];
-      const segmentStartX = currentX - segment.width * scale;
+      currentX = wall.segments.reduce((sum, seg) => sum + seg.width, 0) * scale;
 
-      // Interpolacja dla skosow
-      path += ` L ${segmentStartX} ${segment.startHeight * scale}`;
-      currentX = segmentStartX;
+      for (let i = wall.segments.length - 1; i >= 0; i--) {
+        const segment = wall.segments[i];
+        const segmentStartX = currentX - segment.width * scale;
+        path += ` L ${segmentStartX} ${segment.startHeight * scale}`;
+        currentX = segmentStartX;
+      }
+    } else {
+      // Wyrownanie do dolu (default) - skos na gorze
+      // Gorna krawedz ze skosem
+      const firstSeg = wall.segments[0];
+      const topYStart = (maxHeight - firstSeg.startHeight) * scale;
+      path += `M 0 ${topYStart}`;
+
+      for (const segment of wall.segments) {
+        const nextX = currentX + segment.width * scale;
+        const topYEnd = (maxHeight - segment.endHeight) * scale;
+        path += ` L ${nextX} ${topYEnd}`;
+        currentX = nextX;
+      }
+
+      // Prawa krawedz w dol do maxHeight
+      path += ` L ${currentX} ${maxHeight * scale}`;
+
+      // Dolna krawedz (prosta linia)
+      path += ` L 0 ${maxHeight * scale}`;
     }
 
     path += ' Z';
     return path;
-  }, [wall.segments, scale]);
+  }, [wall.segments, scale, maxHeight]);
 
   // Wymiary zewnetrzne
   const dimensions = useMemo(() => {
@@ -129,9 +155,13 @@ function WallGrid({ wall, scale }: WallProps) {
   const maxHeight = Math.max(
     ...wall.segments.flatMap((seg) => [seg.startHeight, seg.endHeight])
   );
+  const alignment = wall.segments[0]?.alignment ?? 'bottom';
 
   const gridSpacing = 50; // 50cm
   const lines: ReactNode[] = [];
+
+  // Oblicz offsetY dla wyrownania
+  const offsetY = alignment === 'top' ? 0 : 0; // Siatka zaczyna sie od 0
 
   // Linie pionowe
   for (let x = 0; x <= totalWidth; x += gridSpacing) {
@@ -139,7 +169,7 @@ function WallGrid({ wall, scale }: WallProps) {
       <line
         key={`v-${x}`}
         x1={x * scale}
-        y1={0}
+        y1={offsetY}
         x2={x * scale}
         y2={maxHeight * scale}
         stroke="rgba(255, 255, 255, 0.1)"

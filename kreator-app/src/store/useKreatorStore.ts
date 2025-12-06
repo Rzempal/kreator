@@ -1,4 +1,4 @@
-// src/store/useKreatorStore.ts v0.001 Zustand store dla Kreatora Paneli
+// src/store/useKreatorStore.ts v0.002 Zustand store dla Kreatora Paneli
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
@@ -27,6 +27,7 @@ const initialState: KreatorState = {
         startHeight: 250,
         endHeight: 250,
         angle: 180,
+        alignment: 'bottom',
       },
     ],
     masterSegmentId: 'seg-1',

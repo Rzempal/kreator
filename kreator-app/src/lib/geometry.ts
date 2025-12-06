@@ -1,4 +1,4 @@
-// src/lib/geometry.ts v0.001 Algorytmy geometryczne (snap, kolizje, fit)
+// src/lib/geometry.ts v0.002 Algorytmy geometryczne (snap, kolizje, fit) z wyrownaniem
 
 import type {
   Panel,
@@ -81,6 +81,24 @@ export function getWallHeightAtX(wall: Wall, x: number): number {
 }
 
 /**
+ * Oblicza granice Y sciany w danym punkcie X (z uwzglednieniem wyrownania)
+ * Zwraca { top, bottom } - pozycje Y gornej i dolnej krawedzi sciany
+ */
+export function getWallBoundsAtX(wall: Wall, x: number): { top: number; bottom: number } {
+  const maxHeight = getMaxWallHeight(wall);
+  const heightAtX = getWallHeightAtX(wall, x);
+  const alignment = wall.segments[0]?.alignment ?? 'bottom';
+
+  if (alignment === 'top') {
+    // Wyrownanie do gory: top=0, bottom=heightAtX
+    return { top: 0, bottom: heightAtX };
+  } else {
+    // Wyrownanie do dolu: top=maxHeight-heightAtX, bottom=maxHeight
+    return { top: maxHeight - heightAtX, bottom: maxHeight };
+  }
+}
+
+/**
  * Oblicza calkowita szerokosc sciany
  */
 export function getTotalWallWidth(wall: Wall): number {
@@ -103,6 +121,7 @@ export function getMaxWallHeight(wall: Wall): number {
 /**
  * Sprawdza czy panel miesci sie w obszarze sciany
  * Zwraca informacje o czesciowym wychodzeniu poza obszar
+ * Uwzglednia wyrownanie sciany (top/bottom)
  */
 export function checkPanelFits(
   panel: Rectangle,
@@ -115,21 +134,23 @@ export function checkPanelFits(
     return { fits: false, partiallyOutside: false, outsideArea: 100 };
   }
 
-  // Panel powyzej sciany (Y < 0)
-  if (panel.y < 0) {
-    return { fits: false, partiallyOutside: true, outsideArea: 50 };
-  }
-
-  // Sprawdz 5 punktow na dolnej krawedzi panelu
+  // Sprawdz 5 punktow na kazdej krawedzi panelu
   const samplePoints = 5;
   let outsideCount = 0;
 
   for (let i = 0; i <= samplePoints; i++) {
     const sampleX = panel.x + (panel.width * i) / samplePoints;
-    const wallHeight = getWallHeightAtX(wall, sampleX);
+    const bounds = getWallBoundsAtX(wall, sampleX);
+    const panelTop = panel.y;
     const panelBottom = panel.y + panel.height;
 
-    if (panelBottom > wallHeight || sampleX < 0 || sampleX > totalWidth) {
+    // Sprawdz czy punkt jest poza granicami sciany
+    if (
+      sampleX < 0 ||
+      sampleX > totalWidth ||
+      panelTop < bounds.top ||
+      panelBottom > bounds.bottom
+    ) {
       outsideCount++;
     }
   }
@@ -159,6 +180,7 @@ const SNAP_THRESHOLD = 15; // cm
 
 /**
  * Glowny algorytm snap - przyciaga panel do najblizszych krawedzi
+ * Uwzglednia wyrownanie sciany (top/bottom)
  */
 export function findSnapPosition(
   mouseX: number,
@@ -188,10 +210,12 @@ export function findSnapPosition(
     snappedTo = edgeSnap.snappedTo;
   }
 
-  // Ogranicz do granic sciany
+  // Ogranicz do granic sciany (z uwzglednieniem wyrownania)
   const totalWidth = getTotalWallWidth(wall);
+  const bounds = getWallBoundsAtX(wall, targetX + panelWidth / 2);
+
   targetX = Math.max(0, Math.min(totalWidth - panelWidth, targetX));
-  targetY = Math.max(0, targetY);
+  targetY = Math.max(bounds.top, Math.min(bounds.bottom - panelHeight, targetY));
 
   return { x: targetX, y: targetY, snappedTo };
 }
@@ -240,6 +264,7 @@ function findVerticalSnapTarget(
 
 /**
  * Szuka najblizszych krawedzi do snap (lewa/dolna sciana lub panele)
+ * Uwzglednia wyrownanie sciany (top/bottom)
  */
 function findEdgeSnapTarget(
   x: number,
@@ -253,15 +278,24 @@ function findEdgeSnapTarget(
   let snapY = y;
   let snappedTo: SnapResult['snappedTo'] = 'none';
 
+  // Pobierz granice sciany w punkcie X
+  const bounds = getWallBoundsAtX(wall, x + panelWidth / 2);
+
   // Snap do lewej krawedzi sciany
   if (x < SNAP_THRESHOLD) {
     snapX = 0;
     snappedTo = 'wall';
   }
 
-  // Snap do dolnej krawedzi sciany (Y = 0)
-  if (y < SNAP_THRESHOLD) {
-    snapY = 0;
+  // Snap do gornej krawedzi sciany
+  if (Math.abs(y - bounds.top) < SNAP_THRESHOLD) {
+    snapY = bounds.top;
+    snappedTo = 'wall';
+  }
+
+  // Snap do dolnej krawedzi sciany
+  if (Math.abs(y + panelHeight - bounds.bottom) < SNAP_THRESHOLD) {
+    snapY = bounds.bottom - panelHeight;
     snappedTo = 'wall';
   }
 
@@ -298,6 +332,7 @@ function findEdgeSnapTarget(
 /**
  * Znajduje alternatywna pozycje bez kolizji
  * Priorytet: Y wazniejsze niz X (waga 3x)
+ * Uwzglednia wyrownanie sciany (top/bottom)
  */
 export function findNonCollidingPosition(
   x: number,
@@ -331,7 +366,10 @@ export function findNonCollidingPosition(
       for (const testX of [x + dx, x - dx]) {
         for (const testY of [y + dy, y - dy]) {
           if (testX < 0 || testX + panelWidth > totalWidth) continue;
-          if (testY < 0) continue;
+
+          // Sprawdz granice sciany w tym punkcie
+          const bounds = getWallBoundsAtX(wall, testX + panelWidth / 2);
+          if (testY < bounds.top || testY + panelHeight > bounds.bottom) continue;
 
           const testCollision = checkCollisions(
             { x: testX, y: testY, width: panelWidth, height: panelHeight },

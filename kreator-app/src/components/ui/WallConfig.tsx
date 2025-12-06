@@ -1,10 +1,10 @@
-// src/components/ui/WallConfig.tsx v0.001 Konfiguracja sciany - segmenty
+// src/components/ui/WallConfig.tsx v0.002 Konfiguracja sciany - segmenty z wyrownaniem
 'use client';
 
 import { useState } from 'react';
 import { useWall, useKreatorStore } from '@/store/useKreatorStore';
 import { cn } from '@/lib/utils';
-import type { WallSegment } from '@/types';
+import type { WallSegment, WallAlignment } from '@/types';
 
 // Wartosci domyslne dla nowego segmentu
 const DEFAULT_SEGMENT = {
@@ -12,6 +12,7 @@ const DEFAULT_SEGMENT = {
   startHeight: 250,
   endHeight: 250,
   angle: 180 as const,
+  alignment: 'bottom' as WallAlignment,
 };
 
 // Limity
@@ -37,6 +38,7 @@ export default function WallConfig() {
       startHeight: newSegment.startHeight,
       endHeight: newSegment.endHeight,
       angle: newSegment.angle,
+      alignment: newSegment.alignment,
     });
     setNewSegment(DEFAULT_SEGMENT);
     setIsAdding(false);
@@ -54,8 +56,8 @@ export default function WallConfig() {
     clearPanels();
   };
 
-  // Aktualizuj segment
-  const handleUpdateSegment = (id: string, field: keyof WallSegment, value: number) => {
+  // Aktualizuj segment (liczby)
+  const handleUpdateSegment = (id: string, field: keyof WallSegment, value: number | WallAlignment) => {
     updateSegment(id, { [field]: value });
     clearPanels();
   };
@@ -164,7 +166,7 @@ interface SegmentRowProps {
   segment: WallSegment;
   index: number;
   canDelete: boolean;
-  onUpdate: (field: keyof WallSegment, value: number) => void;
+  onUpdate: (field: keyof WallSegment, value: number | WallAlignment) => void;
   onDelete: () => void;
 }
 
@@ -231,6 +233,47 @@ function SegmentRow({ segment, index, canDelete, onUpdate, onDelete }: SegmentRo
           />
         </div>
       </div>
+
+      {/* Przelacznik wyrownania - tylko dla skosow */}
+      {isSloped && (
+        <div className="mt-3 pt-3 border-t border-slate-600/50">
+          <label className="text-xs text-slate-400 block mb-2">Wyrownanie sciany</label>
+          <div className="flex gap-1">
+            <button
+              onClick={() => onUpdate('alignment', 'bottom')}
+              className={cn(
+                'flex-1 flex items-center justify-center gap-1 px-2 py-1.5 text-xs font-medium rounded transition-colors',
+                segment.alignment === 'bottom'
+                  ? 'bg-amber-600 text-white'
+                  : 'bg-slate-600 text-slate-300 hover:bg-slate-500'
+              )}
+            >
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M4 20h16" />
+                <path d="M4 20V8l8-4v16" />
+                <path d="M12 20V4l8 4v12" />
+              </svg>
+              Dol
+            </button>
+            <button
+              onClick={() => onUpdate('alignment', 'top')}
+              className={cn(
+                'flex-1 flex items-center justify-center gap-1 px-2 py-1.5 text-xs font-medium rounded transition-colors',
+                segment.alignment === 'top'
+                  ? 'bg-amber-600 text-white'
+                  : 'bg-slate-600 text-slate-300 hover:bg-slate-500'
+              )}
+            >
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M4 4h16" />
+                <path d="M4 4v12l8 4V4" />
+                <path d="M12 4v16l8-4V4" />
+              </svg>
+              Gora
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

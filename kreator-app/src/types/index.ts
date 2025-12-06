@@ -1,4 +1,4 @@
-// src/types/index.ts v0.001 Definicje typow dla Kreatora Paneli Tapicerowanych
+// src/types/index.ts v0.002 Definicje typow dla Kreatora Paneli Tapicerowanych
 
 // ============================================
 // WYMIARY I POZYCJE
@@ -20,12 +20,15 @@ export interface Rectangle extends Position, Dimensions {}
 // SEGMENT SCIANY
 // ============================================
 
+export type WallAlignment = 'top' | 'bottom';
+
 export interface WallSegment {
   id: string;
   width: number;       // cm - szerokosc segmentu
   startHeight: number; // cm - wysokosc na poczatku (lewa strona)
   endHeight: number;   // cm - wysokosc na koncu (prawa strona) - dla skosow
   angle: 90 | 180 | 270; // kat polaczenia z nastepnym segmentem
+  alignment: WallAlignment; // wyrownanie: 'top' = skos na dole, 'bottom' = skos na gorze
 }
 
 export interface Wall {
