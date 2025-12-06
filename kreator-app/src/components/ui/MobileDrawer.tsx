@@ -1,12 +1,13 @@
-// src/components/ui/MobileDrawer.tsx v0.001 Wysuwany panel dla mobile
+// src/components/ui/MobileDrawer.tsx v0.002 Wysuwany panel dla mobile
 'use client';
 
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
+import WallConfig from './WallConfig';
 import ColorPicker from './ColorPicker';
 import PriceSummary from './PriceSummary';
 
-type Tab = 'colors' | 'price';
+type Tab = 'wall' | 'colors' | 'price';
 
 export default function MobileDrawer() {
   const [isOpen, setIsOpen] = useState(false);
@@ -45,11 +46,26 @@ export default function MobileDrawer() {
             <button
               onClick={(e) => {
                 e.stopPropagation();
+                setActiveTab('wall');
+                setIsOpen(true);
+              }}
+              className={cn(
+                'px-3 py-2 rounded-lg text-sm font-medium transition-all',
+                activeTab === 'wall'
+                  ? 'bg-purple-600 text-white'
+                  : 'bg-slate-700 text-slate-300'
+              )}
+            >
+              Sciana
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
                 setActiveTab('colors');
                 setIsOpen(true);
               }}
               className={cn(
-                'px-4 py-2 rounded-lg text-sm font-medium transition-all',
+                'px-3 py-2 rounded-lg text-sm font-medium transition-all',
                 activeTab === 'colors'
                   ? 'bg-cyan-600 text-white'
                   : 'bg-slate-700 text-slate-300'
@@ -64,7 +80,7 @@ export default function MobileDrawer() {
                 setIsOpen(true);
               }}
               className={cn(
-                'px-4 py-2 rounded-lg text-sm font-medium transition-all',
+                'px-3 py-2 rounded-lg text-sm font-medium transition-all',
                 activeTab === 'price'
                   ? 'bg-emerald-600 text-white'
                   : 'bg-slate-700 text-slate-300'
@@ -90,6 +106,7 @@ export default function MobileDrawer() {
 
         {/* Content */}
         <div className="px-4 pb-6 overflow-y-auto" style={{ maxHeight: 'calc(70vh - 60px)' }}>
+          {activeTab === 'wall' && <WallConfig />}
           {activeTab === 'colors' && <ColorPicker />}
           {activeTab === 'price' && <PriceSummary />}
         </div>
