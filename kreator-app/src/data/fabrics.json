@@ -1,0 +1,78 @@
+{
+  "_meta": {
+    "file": "fabrics.json",
+    "version": "v0.001",
+    "description": "Kolekcje tkanin z kategoriami cenowymi - konwersja z fabricImages.js"
+  },
+  "categories": {
+    "standard": ["DIANA", "LUNA", "SWEET", "TANGO", "TRINITY", "IVA", "EKO_SKORA", "TREND"],
+    "premium": ["OLIMP", "RIVIERA", "JASMINE_PIK", "PRESTON", "GEMMA", "MONOLITH", "MATT_VELVET", "RIO", "COLIN", "RODOS", "KRONOS", "FOREST", "CROWN", "NUBUK", "LARY", "FRESH"],
+    "exclusive": ["NOW_OR_NEVER"]
+  },
+  "collections": {
+    "DIANA": {
+      "category": "standard",
+      "colors": [
+        { "id": "diana-03", "name": "DIANA 03 - cynamonowy", "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_aec539991a8b2c8d63fbcf50e8bee361-jpg.webp" },
+        { "id": "diana-14", "name": "DIANA 14 - szary", "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_17232e67cc124823c52bb8aff2790390-jpg.webp" },
+        { "id": "diana-15", "name": "DIANA 15 - czarny", "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_7b3552d6382a94f15c00518766ee5ecf-jpg.webp" },
+        { "id": "diana-31", "name": "DIANA 31 - bialy", "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_7a1b5ecd794b72e184e7182a8a766242-jpg.webp" },
+        { "id": "diana-11", "name": "DIANA 11 - ciemny granat", "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_9ff37c58e6093fece3274ff31144bf04-jpg.webp" },
+        { "id": "diana-22", "name": "DIANA 22 - czerwony", "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_027cf8a45518ccc3d70e4d4397a43afd-jpg.webp" },
+        { "id": "diana-82", "name": "DIANA 82 - grafitowy", "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_c8af48c76402f3d0c18b3bd63fa69d5a-jpg.webp" }
+      ]
+    },
+    "LUNA": {
+      "category": "standard",
+      "colors": [
+        { "id": "luna-05", "name": "LUNA 05 - szary", "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_31579c807ff7d24dcfd47e9ed0b679f1-jpg.webp" },
+        { "id": "luna-23", "name": "LUNA 23 - gleboka czern", "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_1f1477f5c9349e0bd5918342872c4c1e-jpg.webp" },
+        { "id": "luna-34", "name": "LUNA 34 - granatowy", "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_476552027c146b17fcac242432f032ea-jpg.webp" },
+        { "id": "luna-01", "name": "LUNA 01 - ecru", "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_37f488f1dec39b5dc8cce7dbaefdee0f-jpg.webp" }
+      ]
+    },
+    "SWEET": {
+      "category": "standard",
+      "colors": [
+        { "id": "sweet-16", "name": "SWEET 16 - szary", "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_5f1f593c00871c32a241e971cc9e0fc1-jpg.webp" },
+        { "id": "sweet-18", "name": "SWEET 18 - czarny", "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_4d6c335765433c549acdec400110ccf6-jpg.webp" },
+        { "id": "sweet-00", "name": "SWEET 00 - bialy", "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_f6edd2a8782847e4ff287165efc6dd69-jpg.webp" },
+        { "id": "sweet-26", "name": "SWEET 26 - granatowy", "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_b95c99213c11dba3d91a713b06492e10-jpg.webp" }
+      ]
+    },
+    "MONOLITH": {
+      "category": "premium",
+      "colors": [
+        { "id": "monolith-gray", "name": "MONOLITH - szary", "image": null },
+        { "id": "monolith-black", "name": "MONOLITH - czarny", "image": null },
+        { "id": "monolith-navy", "name": "MONOLITH - granatowy", "image": null }
+      ]
+    },
+    "MATT_VELVET": {
+      "category": "premium",
+      "colors": [
+        { "id": "matt-velvet-gray", "name": "MATT VELVET - szary", "image": null },
+        { "id": "matt-velvet-green", "name": "MATT VELVET - butelkowa zielen", "image": null },
+        { "id": "matt-velvet-navy", "name": "MATT VELVET - granatowy", "image": null }
+      ]
+    },
+    "NOW_OR_NEVER": {
+      "category": "exclusive",
+      "colors": [
+        { "id": "now-or-never-1", "name": "NOW OR NEVER - wariant 1", "image": null }
+      ]
+    }
+  },
+  "defaultPalette": [
+    { "id": "color-white", "name": "Bialy", "hex": "#FFFFFF" },
+    { "id": "color-cream", "name": "Kremowy", "hex": "#F5F5DC" },
+    { "id": "color-beige", "name": "Bezowy", "hex": "#D4C4A8" },
+    { "id": "color-gray-light", "name": "Jasny szary", "hex": "#C0C0C0" },
+    { "id": "color-gray", "name": "Szary", "hex": "#808080" },
+    { "id": "color-gray-dark", "name": "Grafitowy", "hex": "#4A4A4A" },
+    { "id": "color-black", "name": "Czarny", "hex": "#1A1A1A" },
+    { "id": "color-navy", "name": "Granatowy", "hex": "#1E3A5F" },
+    { "id": "color-green", "name": "Butelkowa zielen", "hex": "#2D5A3D" },
+    { "id": "color-burgundy", "name": "Bordowy", "hex": "#722F37" }
+  ]
+}
