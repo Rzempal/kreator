@@ -1,8 +1,41 @@
 {
   "_meta": {
     "file": "prices.json",
-    "version": "v0.001",
-    "description": "Tabele cenowe paneli tapicerowanych - konwersja z rozmiary.js"
+    "version": "v0.002",
+    "description": "Tabele cenowe paneli tapicerowanych z algorytmem dla nietypowych wymiarow"
+  },
+  "customPricing": {
+    "_comment": "Algorytm wyceny dla nietypowych wymiarow (priorytet od gory)",
+    "verySmall": {
+      "maxAreaM2": 0.05,
+      "price": 25
+    },
+    "small": {
+      "minAreaM2": 0.05,
+      "maxAreaM2": 0.1,
+      "minSideCm": 10,
+      "maxSideCm": 50,
+      "price": 30
+    },
+    "narrowVertical": {
+      "_comment": "Wąski pionowy: szer 10-20cm, wys > 50cm",
+      "minWidth": 10,
+      "maxWidth": 20,
+      "minHeight": 50,
+      "pricePerM2": 300,
+      "useWidth": 20
+    },
+    "narrowHorizontal": {
+      "_comment": "Wąski poziomy: wys 10-20cm, szer > 50cm",
+      "minHeight": 10,
+      "maxHeight": 20,
+      "minWidth": 50,
+      "pricePerM2": 300,
+      "useHeight": 20
+    },
+    "default": {
+      "pricePerM2": 300
+    }
   },
   "standard": {
     "20x20": 21, "20x30": 22, "20x40": 24,
