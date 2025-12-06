@@ -1,8 +1,15 @@
-// src/components/ui/PriceSummary.tsx v0.001 Podsumowanie wyceny
+// src/components/ui/PriceSummary.tsx v0.002 Podsumowanie wyceny + eksport PDF
 'use client';
 
+import dynamic from 'next/dynamic';
 import { usePriceSummary, useAddons, useKreatorStore } from '@/store/useKreatorStore';
 import { formatPrice } from '@/lib/utils';
+
+// Dynamic import dla PDF (wymaga window)
+const ExportPdfButton = dynamic(
+  () => import('@/components/pdf/ExportPdfButton'),
+  { ssr: false, loading: () => <div className="h-12 bg-slate-700 rounded-xl animate-pulse" /> }
+);
 
 export default function PriceSummary() {
   const summary = usePriceSummary();
@@ -139,6 +146,11 @@ export default function PriceSummary() {
         <span className="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
           {formatPrice(summary.grandTotal)}
         </span>
+      </div>
+
+      {/* Przycisk eksportu PDF */}
+      <div className="pt-4">
+        <ExportPdfButton />
       </div>
     </div>
   );
