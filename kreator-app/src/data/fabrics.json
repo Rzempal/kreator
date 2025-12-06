@@ -1,78 +1,3186 @@
 {
   "_meta": {
     "file": "fabrics.json",
-    "version": "v0.001",
-    "description": "Kolekcje tkanin z kategoriami cenowymi - konwersja z fabricImages.js"
+    "version": "v0.002",
+    "description": "Kolekcje tkanin z kategoriami cenowymi - wygenerowano automatycznie z fabricImages.js",
+    "generatedAt": "2025-12-06T21:12:27.989Z"
   },
   "categories": {
-    "standard": ["DIANA", "LUNA", "SWEET", "TANGO", "TRINITY", "IVA", "EKO_SKORA", "TREND"],
-    "premium": ["OLIMP", "RIVIERA", "JASMINE_PIK", "PRESTON", "GEMMA", "MONOLITH", "MATT_VELVET", "RIO", "COLIN", "RODOS", "KRONOS", "FOREST", "CROWN", "NUBUK", "LARY", "FRESH"],
-    "exclusive": ["NOW_OR_NEVER"]
+    "standard": [
+      "DIANA",
+      "EKO_SKÓRA",
+      "IVA",
+      "LUNA",
+      "SWEET",
+      "TANGO",
+      "TREND",
+      "TRINITY"
+    ],
+    "premium": [
+      "COLIN",
+      "CROWN",
+      "EVO",
+      "FOREST",
+      "FRESH",
+      "GEMMA",
+      "JASMINE_PIK",
+      "KRONOS",
+      "LARY",
+      "MATT_VELVET",
+      "MONOLITH",
+      "NUBUK",
+      "OLIMP",
+      "PRESTON",
+      "RIO",
+      "RIVIERA",
+      "RODOS"
+    ],
+    "exclusive": [
+      "NOW_OR_NEVER"
+    ]
   },
   "collections": {
     "DIANA": {
       "category": "standard",
       "colors": [
-        { "id": "diana-03", "name": "DIANA 03 - cynamonowy", "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_aec539991a8b2c8d63fbcf50e8bee361-jpg.webp" },
-        { "id": "diana-14", "name": "DIANA 14 - szary", "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_17232e67cc124823c52bb8aff2790390-jpg.webp" },
-        { "id": "diana-15", "name": "DIANA 15 - czarny", "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_7b3552d6382a94f15c00518766ee5ecf-jpg.webp" },
-        { "id": "diana-31", "name": "DIANA 31 - bialy", "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_7a1b5ecd794b72e184e7182a8a766242-jpg.webp" },
-        { "id": "diana-11", "name": "DIANA 11 - ciemny granat", "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_9ff37c58e6093fece3274ff31144bf04-jpg.webp" },
-        { "id": "diana-22", "name": "DIANA 22 - czerwony", "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_027cf8a45518ccc3d70e4d4397a43afd-jpg.webp" },
-        { "id": "diana-82", "name": "DIANA 82 - grafitowy", "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_c8af48c76402f3d0c18b3bd63fa69d5a-jpg.webp" }
+        {
+          "id": "diana-03-1000-cynamonowy",
+          "name": "DIANA 03 (1000) - cynamonowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_aec539991a8b2c8d63fbcf50e8bee361-jpg.webp"
+        },
+        {
+          "id": "diana-04-braz",
+          "name": "DIANA 04 - brąz",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_d140e48db2f45c58199b467a1b83de9a-jpg.webp"
+        },
+        {
+          "id": "diana-05-ciemny-bez",
+          "name": "DIANA 05 - ciemny beż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_42f4d07f91bf2642e1a226599fefd46b-jpg.webp"
+        },
+        {
+          "id": "diana-07-jasny-orzechowy",
+          "name": "DIANA 07 - jasny orzechowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_df73ac762ef6c692b5739f612efb273d-jpg.webp"
+        },
+        {
+          "id": "diana-10-blady-zielony",
+          "name": "DIANA 10 - blady zielony",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_3e56c0c418931288271889f183e0eeec-jpg.webp"
+        },
+        {
+          "id": "diana-11-34-ciemny-granat",
+          "name": "DIANA 11 (34) - ciemny granat",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_9ff37c58e6093fece3274ff31144bf04-jpg.webp"
+        },
+        {
+          "id": "diana-12-granatowy",
+          "name": "DIANA 12 - granatowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_c01852f664d31a75cb4a024156503af0-jpg.webp"
+        },
+        {
+          "id": "diana-13-pastelowy-blekit",
+          "name": "DIANA 13 - pastelowy błękit",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_4b31bc8f25b68549e1a9d7a8d6d5cefb-jpg.webp"
+        },
+        {
+          "id": "diana-14-1008-szary",
+          "name": "DIANA 14 (1008) - szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_17232e67cc124823c52bb8aff2790390-jpg.webp"
+        },
+        {
+          "id": "diana-15-1-czarny",
+          "name": "DIANA 15 (1) - czarny",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_7b3552d6382a94f15c00518766ee5ecf-jpg.webp"
+        },
+        {
+          "id": "diana-16-jasny-bez",
+          "name": "DIANA 16 - jasny beż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_ad7fceafc7b4d2b7a08aa96884ef8c77-jpg.webp"
+        },
+        {
+          "id": "diana-18-1331-turkusowy",
+          "name": "DIANA 18 (1331) - turkusowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_5ce73890e5fd35a8ad08048e1ce77a37-jpg.webp"
+        },
+        {
+          "id": "diana-2-10-navy",
+          "name": "DIANA 2-10  - navy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_934846233ea6935ed6c2e42d1794a9bd-jpg.webp"
+        },
+        {
+          "id": "diana-2-1022-camel",
+          "name": "DIANA 2-1022  - camel",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_148fca2468d79e8945404586fbbb2bc1-jpg.webp"
+        },
+        {
+          "id": "diana-2-1219-kremowy",
+          "name": "DIANA 2-1219  - kremowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_8b928a347a7fc03dd0edd99035a091e6-jpg.webp"
+        },
+        {
+          "id": "diana-2-1221-ceglasty",
+          "name": "DIANA 2-1221  - ceglasty",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_56d649cdecd5d45b9112024541d90979-jpg.webp"
+        },
+        {
+          "id": "diana-2-1227-zimny-rozowy",
+          "name": "DIANA 2-1227  - zimny różowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_35f2f671ee9c56db5fe6ce63d69d2875-jpg.webp"
+        },
+        {
+          "id": "diana-2-1229-limonka",
+          "name": "DIANA 2-1229  - limonka",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_b3159347b5fecb6229684bc8b7f48b9b-jpg.webp"
+        },
+        {
+          "id": "diana-2-3000-ciemny-orzechowy",
+          "name": "DIANA 2-3000  - ciemny orzechowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_a60cd6d5b6be168f5df69b039ef00560-jpg.webp"
+        },
+        {
+          "id": "diana-2-390-jasny-niebieski",
+          "name": "DIANA 2-390  - jasny niebieski",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_052308eed912fd6a2f98283ef3fda7be-jpg.webp"
+        },
+        {
+          "id": "diana-2-4001-sloniowy",
+          "name": "DIANA 2-4001  - słoniowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_4c1d931b0f73ff63f81343e321df9199-jpg.webp"
+        },
+        {
+          "id": "diana-2-5920-zielen-butelkowa",
+          "name": "DIANA 2-5920  - zieleń butelkowa",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_9587294555f452f1087949a71a74a163-jpg.webp"
+        },
+        {
+          "id": "diana-2-9-cobalt",
+          "name": "DIANA 2-9  - cobalt",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_1f3c433bd557dd7c16aff4b3cf47add6-jpg.webp"
+        },
+        {
+          "id": "diana-20-czekoladowy",
+          "name": "DIANA 20 - czekoladowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_51bfdfb3c2b05ec75a6bbb3dc81acb5b-jpg.webp"
+        },
+        {
+          "id": "diana-21-jaskrawy-zolty",
+          "name": "DIANA 21 - jaskrawy żółty",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_28c9f82a20661b5949d5bc9b9527a1df-jpg.webp"
+        },
+        {
+          "id": "diana-22-3100-czerwony",
+          "name": "DIANA 22 (3100) - czerwony",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_027cf8a45518ccc3d70e4d4397a43afd-jpg.webp"
+        },
+        {
+          "id": "diana-23-ciemny-purpurowy",
+          "name": "DIANA 23 - ciemny purpurowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_dcf65eb103faccf69581b96f066c994f-jpg.webp"
+        },
+        {
+          "id": "diana-25-1224-oberzyna",
+          "name": "DIANA 25 (1224) - oberżyna",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_8c71bcf0b310b14289b8cda908b105a8-jpg.webp"
+        },
+        {
+          "id": "diana-26-blady-pomarancz",
+          "name": "DIANA 26 - blady pomarańcz",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_e6eb96794f931bae05e84a6530398abb-jpg.webp"
+        },
+        {
+          "id": "diana-28-fuksja",
+          "name": "DIANA 28 - fuksja",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_48a07745db115d4e8a8ebc0e32d0bdfa-jpg.webp"
+        },
+        {
+          "id": "diana-31-bialy",
+          "name": "DIANA 31 - biały",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_7a1b5ecd794b72e184e7182a8a766242-jpg.webp"
+        },
+        {
+          "id": "diana-34-wisniowy",
+          "name": "DIANA 34 - wiśniowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_6a8753c8150c6719bcde382126428fee-jpg.webp"
+        },
+        {
+          "id": "diana-36-blekit-krolewski",
+          "name": "DIANA 36 - błękit królewski",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_cad2af1dbf303e38a524d9e70d023f86-jpg.webp"
+        },
+        {
+          "id": "diana-41-1021-ciemny-braz",
+          "name": "DIANA 41 (1021) - ciemny brąz",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_d3842df997c3a51b43f8a8607c0d1a93-jpg.webp"
+        },
+        {
+          "id": "diana-45-501-bordo",
+          "name": "DIANA 45 (501) - bordo",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_5d42a77a292eb1f0e92288c1f7afa142-jpg.webp"
+        },
+        {
+          "id": "diana-46-1009-blady-bez",
+          "name": "DIANA 46 (1009) - blady beż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_6deebc76e30367597474a87206b5a12c-jpg.webp"
+        },
+        {
+          "id": "diana-48-jasny-braz",
+          "name": "DIANA 48 - jasny brąz",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_c2209a14566a0f6306599e32b65556e9-jpg.webp"
+        },
+        {
+          "id": "diana-50-marengo",
+          "name": "DIANA 50 - marengo",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_c79594807bcaedee38008bd5025dac83-jpg.webp"
+        },
+        {
+          "id": "diana-51-popiel",
+          "name": "DIANA 51 - popiel",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_f03101cf983fc7e425369a2ed5710567-jpg.webp"
+        },
+        {
+          "id": "diana-58-pastelowy-jasny-roz",
+          "name": "DIANA 58 - pastelowy jasny róż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_45a366eba6e14ab0ec33145d27cb69b6-jpg.webp"
+        },
+        {
+          "id": "diana-59-purpurowy",
+          "name": "DIANA 59 - purpurowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_0e9bc92ef0d6196faf9ad524254a055e-jpg.webp"
+        },
+        {
+          "id": "diana-61-1337-pistacjowy",
+          "name": "DIANA 61 (1337) - pistacjowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_9159ae6ad05d47aa6f60a4d3b40e7582-jpg.webp"
+        },
+        {
+          "id": "diana-62-neonowa-zielen",
+          "name": "DIANA 62 - neonowa zieleń",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_245676f140036be2d600fa408132bde4-jpg.webp"
+        },
+        {
+          "id": "diana-63-pomaranczowy",
+          "name": "DIANA 63 - pomarańczowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_6f2d634a25b85d67aa64264500db1a8f-jpg.webp"
+        },
+        {
+          "id": "diana-64-neonowa-pomarancz",
+          "name": "DIANA 64 - neonowa pomarańcz",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_85728f043bf2892dbaa9ee30dd232c58-jpg.webp"
+        },
+        {
+          "id": "diana-82-1024-grafitowy",
+          "name": "DIANA 82 (1024) - grafitowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_c8af48c76402f3d0c18b3bd63fa69d5a-jpg.webp"
+        }
       ]
     },
     "LUNA": {
       "category": "standard",
       "colors": [
-        { "id": "luna-05", "name": "LUNA 05 - szary", "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_31579c807ff7d24dcfd47e9ed0b679f1-jpg.webp" },
-        { "id": "luna-23", "name": "LUNA 23 - gleboka czern", "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_1f1477f5c9349e0bd5918342872c4c1e-jpg.webp" },
-        { "id": "luna-34", "name": "LUNA 34 - granatowy", "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_476552027c146b17fcac242432f032ea-jpg.webp" },
-        { "id": "luna-01", "name": "LUNA 01 - ecru", "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_37f488f1dec39b5dc8cce7dbaefdee0f-jpg.webp" }
+        {
+          "id": "luna-01-ecru",
+          "name": "LUNA 01 - ecru",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_37f488f1dec39b5dc8cce7dbaefdee0f-jpg.webp"
+        },
+        {
+          "id": "luna-02-bez",
+          "name": "LUNA 02 - beż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_d53506c3f686c34f615bbce33a5fcb13-jpg.webp"
+        },
+        {
+          "id": "luna-03-ciemny-bez",
+          "name": "LUNA 03 - ciemny beż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_95823b12452e6c4fc9cc794acb8b29a6-jpg.webp"
+        },
+        {
+          "id": "luna-04-szaro-brazowy",
+          "name": "LUNA 04 - szaro-brązowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_7f5e5835dcaf8eaa5e23b180e42fa066-jpg.webp"
+        },
+        {
+          "id": "luna-05-szary",
+          "name": "LUNA 05 - szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_31579c807ff7d24dcfd47e9ed0b679f1-jpg.webp"
+        },
+        {
+          "id": "luna-06-ciemny-szary",
+          "name": "LUNA 06 - ciemny szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_53066b9ff0c9d8df1f72a7dbbac838c1-jpg.webp"
+        },
+        {
+          "id": "luna-08-gaszona-czern",
+          "name": "LUNA 08 - gaszona czerń",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_77f63f87ba0a3232afd4a388da523efe-jpg.webp"
+        },
+        {
+          "id": "luna-09-orzechowy",
+          "name": "LUNA 09 - orzechowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_fe7c9f9b6b96dafe18d921876382d771-jpg.webp"
+        },
+        {
+          "id": "luna-10-miedziany",
+          "name": "LUNA 10 - miedziany",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_7894404c7550a8d4daa9b86060d45011-jpg.webp"
+        },
+        {
+          "id": "luna-11-brazowy",
+          "name": "LUNA 11 - brązowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_de4bc0bbb458053bc172b9317f50f333-jpg.webp"
+        },
+        {
+          "id": "luna-12-ciemny-braz",
+          "name": "LUNA 12 - ciemny brąz",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_696d557168b875046acc842afd496aa0-jpg.webp"
+        },
+        {
+          "id": "luna-13-czarny-braz",
+          "name": "LUNA 13 - czarny brąz",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_3973d08c7b59850e96525b3db9c0646c-jpg.webp"
+        },
+        {
+          "id": "luna-14-czerwony",
+          "name": "LUNA 14 - czerwony",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_a238594de654a7dfc8e407463a9ee379-jpg.webp"
+        },
+        {
+          "id": "luna-15-burgund",
+          "name": "LUNA 15 - burgund",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_ac23055eccd85fd075d02a281b07aee0-jpg.webp"
+        },
+        {
+          "id": "luna-16-fuksja-rozowa",
+          "name": "LUNA 16 - fuksja różowa",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_7bce8be4d7deca1b7c974e6ab4086250-jpg.webp"
+        },
+        {
+          "id": "luna-17-oberzyna",
+          "name": "LUNA 17 - oberżyna",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_54c66f9d62a74f2a5e2c4773e8391c27-jpg.webp"
+        },
+        {
+          "id": "luna-18-zgnila-zielen",
+          "name": "LUNA 18 - zgniła zieleń",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_74fb45233ea8beb4714e933b6ee22f7c-jpg.webp"
+        },
+        {
+          "id": "luna-20-niebieski",
+          "name": "LUNA 20 - niebieski",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_6eb73c298a7daeec121213a0d68feaea-jpg.webp"
+        },
+        {
+          "id": "luna-21-bordo",
+          "name": "LUNA 21 - bordo",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_dfff4042f53ae7ffa416fad8a0c62dc3-jpg.webp"
+        },
+        {
+          "id": "luna-22-zielony",
+          "name": "LUNA 22 - zielony",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_d4b8e9ce912ede54fbd8ccc3d3936469-jpg.webp"
+        },
+        {
+          "id": "luna-23-gleboka-czern",
+          "name": "LUNA 23 - głęboka czerń",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_1f1477f5c9349e0bd5918342872c4c1e-jpg.webp"
+        },
+        {
+          "id": "luna-24-piaskowy",
+          "name": "LUNA 24 - piaskowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_322a44993119f3c32dc0aa5f6c8e3225-jpg.webp"
+        },
+        {
+          "id": "luna-25-szare-ecru",
+          "name": "LUNA 25 - szare ecru",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_4cf191636606a91ff865bc002cd798f1-jpg.webp"
+        },
+        {
+          "id": "luna-26-szary-bez",
+          "name": "LUNA 26 - szary beż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_56af7913f8c413b0019b3da175c362e1-jpg.webp"
+        },
+        {
+          "id": "luna-27-jasny-wrzos",
+          "name": "LUNA 27 - jasny wrzos",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_2d740c0550b2889351a18c4b9713b2a3-jpg.webp"
+        },
+        {
+          "id": "luna-28-jasny-roz",
+          "name": "LUNA 28 - jasny róż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_082240e3b0387cac13d84d40188c4ee7-jpg.webp"
+        },
+        {
+          "id": "luna-29-blady-seledyn",
+          "name": "LUNA 29 - blady seledyn",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_a5d7d82d1ecd6e85b651acc9c3a34274-jpg.webp"
+        },
+        {
+          "id": "luna-30-ciemny-turkus",
+          "name": "LUNA 30 - ciemny turkus",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_704732f2855c0734c00864f1e0cebf60-jpg.webp"
+        },
+        {
+          "id": "luna-31-lodowy",
+          "name": "LUNA 31 - lodowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_482b4b09c2ca870c29688b91fdad75f3-jpg.webp"
+        },
+        {
+          "id": "luna-32-szary",
+          "name": "LUNA 32 - szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_ef55549fed9605e152fb64c271804fcc-jpg.webp"
+        },
+        {
+          "id": "luna-33-jeansowy",
+          "name": "LUNA 33 - jeansowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_06f66eb60c15b04d049ac22bb7d9cf90-jpg.webp"
+        },
+        {
+          "id": "luna-34-granatowy",
+          "name": "LUNA 34 - granatowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_476552027c146b17fcac242432f032ea-jpg.webp"
+        }
       ]
     },
     "SWEET": {
       "category": "standard",
       "colors": [
-        { "id": "sweet-16", "name": "SWEET 16 - szary", "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_5f1f593c00871c32a241e971cc9e0fc1-jpg.webp" },
-        { "id": "sweet-18", "name": "SWEET 18 - czarny", "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_4d6c335765433c549acdec400110ccf6-jpg.webp" },
-        { "id": "sweet-00", "name": "SWEET 00 - bialy", "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_f6edd2a8782847e4ff287165efc6dd69-jpg.webp" },
-        { "id": "sweet-26", "name": "SWEET 26 - granatowy", "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_b95c99213c11dba3d91a713b06492e10-jpg.webp" }
+        {
+          "id": "sweet-00-bialy",
+          "name": "SWEET 00 - biały",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_f6edd2a8782847e4ff287165efc6dd69-jpg.webp"
+        },
+        {
+          "id": "sweet-01-ecru",
+          "name": "SWEET 01 - ecru",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_6f442a6a52a8c77c709e7419b37b9dda-jpg.webp"
+        },
+        {
+          "id": "sweet-02-jasny-bez",
+          "name": "SWEET 02 - jasny beż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_10efb2b1cf48e31beb981057eac77bc7-jpg.webp"
+        },
+        {
+          "id": "sweet-03-szary-bez",
+          "name": "SWEET 03 - szary beż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_97ebbfeced742a4e81f9eb44f238b78e-jpg.webp"
+        },
+        {
+          "id": "sweet-04-brazowy",
+          "name": "SWEET 04 - brązowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_5caf7c7b3f317a585eefbdb0704ef4d5-jpg.webp"
+        },
+        {
+          "id": "sweet-05-szary-braz",
+          "name": "SWEET 05 - szary brąz",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_8e746fa30b0848c7a685c49cad961db0-jpg.webp"
+        },
+        {
+          "id": "sweet-06-oberzynowy",
+          "name": "SWEET 06 - oberżynowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_6d24a75c99d0efa65d711e847d975a35-jpg.webp"
+        },
+        {
+          "id": "sweet-07-szara-lawenda",
+          "name": "SWEET 07 - szara lawenda",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_5b3df64c921d36646d3084ad6db09b14-jpg.webp"
+        },
+        {
+          "id": "sweet-09-pudrowy-roz",
+          "name": "SWEET 09 - pudrowy róż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_c247e944fa4cdb7a591bbdfbf14b011d-jpg.webp"
+        },
+        {
+          "id": "sweet-10-jasny-niebieski",
+          "name": "SWEET 10 - jasny niebieski",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_e9af257525e2aacd0cff49b991eba23d-jpg.webp"
+        },
+        {
+          "id": "sweet-11-mietowy",
+          "name": "SWEET 11 - miętowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_d2fd128afa480b03a8626980e8a1d3ba-jpg.webp"
+        },
+        {
+          "id": "sweet-12-jasny-turkus",
+          "name": "SWEET 12 - jasny turkus",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_aea6a627589d54aa11b3fa4b05ae4c86-jpg.webp"
+        },
+        {
+          "id": "sweet-13-biel-przydymiona",
+          "name": "SWEET 13 - biel przydymiona",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_477f56b99dee28fa4e7dae1f780701ab-jpg.webp"
+        },
+        {
+          "id": "sweet-14-popielaty",
+          "name": "SWEET 14 - popielaty",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_bd2ac9a597d8132b0810f488e116e496-jpg.webp"
+        },
+        {
+          "id": "sweet-15-jasny-szary",
+          "name": "SWEET 15 - jasny szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_0da0fcc3cd7c5be20d2a41e2bb39cb3c-jpg.webp"
+        },
+        {
+          "id": "sweet-16-szary",
+          "name": "SWEET 16 - szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_5f1f593c00871c32a241e971cc9e0fc1-jpg.webp"
+        },
+        {
+          "id": "sweet-17-ciemny-szary",
+          "name": "SWEET 17 - ciemny szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_c0356998413ebb5e26f93aa499de1fb1-jpg.webp"
+        },
+        {
+          "id": "sweet-18-czarny",
+          "name": "SWEET 18 - czarny",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_4d6c335765433c549acdec400110ccf6-jpg.webp"
+        },
+        {
+          "id": "sweet-19-antracyt",
+          "name": "SWEET 19 - antracyt",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_363e8578f9316d62628be2a4799142e0-jpg.webp"
+        },
+        {
+          "id": "sweet-21-bez",
+          "name": "SWEET 21 - beż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_109d3c59411e0d6d08e37edb265f891f-jpg.webp"
+        },
+        {
+          "id": "sweet-22-jasne-kakao",
+          "name": "SWEET 22 - jasne kakao",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_034266fd010be39099f5c796d420406a-jpg.webp"
+        },
+        {
+          "id": "sweet-23-bordowy",
+          "name": "SWEET 23 - bordowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_e253784f3e6014055649573db5dc050f-jpg.webp"
+        },
+        {
+          "id": "sweet-25-atramentowy",
+          "name": "SWEET 25 - atramentowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_1be7f4ec2691a458cc9d1aeae34ac0c2-jpg.webp"
+        },
+        {
+          "id": "sweet-26-granatowy",
+          "name": "SWEET 26 - granatowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_b95c99213c11dba3d91a713b06492e10-jpg.webp"
+        },
+        {
+          "id": "sweet-27-niebieski-morski",
+          "name": "SWEET 27 - niebieski morski",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_9b8947b0ea7194e488d07c22a08a4be3-jpg.webp"
+        },
+        {
+          "id": "sweet-28-czerowny",
+          "name": "SWEET 28 - czerowny",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_0a036051c8a67ee2f07aac483c7095b4-jpg.webp"
+        },
+        {
+          "id": "sweet-29-lososiowy-roz",
+          "name": "SWEET 29 - łososiowy róż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_03ca7e206105158d667028ec920b2ab2-jpg.webp"
+        },
+        {
+          "id": "sweet-30-lososiowy",
+          "name": "SWEET 30 - łososiowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_f6b9e980cd472a050fc823b8b2ce6a18-jpg.webp"
+        },
+        {
+          "id": "sweet-31-marchewkowy",
+          "name": "SWEET 31 - marchewkowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_ae8a99bbc407667192dbe67f8198ed42-jpg.webp"
+        },
+        {
+          "id": "sweet-32-zolty-miodowy",
+          "name": "SWEET 32 - żółty miodowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_7234ef4242d945b88d81e29dc69a4e5b-jpg.webp"
+        },
+        {
+          "id": "sweet-33-musztardowy",
+          "name": "SWEET 33 - musztardowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_847899cbede8b7d430a9476d0b4fbf53-jpg.webp"
+        },
+        {
+          "id": "sweet-34-zielen-wojskowa",
+          "name": "SWEET 34 - zieleń wojskowa",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_ebf0a1099cfb233da8f887c50045a47f-jpg.webp"
+        },
+        {
+          "id": "sweet-35-zielen-butelkowa",
+          "name": "SWEET 35 - zieleń butelkowa",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_9044eae81395ece64055e9841494f394-jpg.webp"
+        },
+        {
+          "id": "sweet-37-ciemny-turkus",
+          "name": "SWEET 37 - ciemny turkus",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_f569d7eafc455328f389c8070f818962-jpg.webp"
+        },
+        {
+          "id": "sweet-39-niebieski-krolewski",
+          "name": "SWEET 39 - niebieski królewski",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_278d94317a3b459f3cd9541d96ea779f-jpg.webp"
+        },
+        {
+          "id": "sweet-40-zgnila-zielen",
+          "name": "SWEET 40 - zgniła zieleń",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_df117c4bd587fc51b18944a3de976dbd-jpg.webp"
+        },
+        {
+          "id": "sweet-41-zielony",
+          "name": "SWEET 41 - zielony",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_ad1d1152962a8270a214e7533a8ec73e-jpg.webp"
+        }
+      ]
+    },
+    "TANGO": {
+      "category": "standard",
+      "colors": [
+        {
+          "id": "tango-01-kremowy",
+          "name": "TANGO 01 - kremowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_b129656d9454f748f76a3f44c39fe22b-jpg.webp"
+        },
+        {
+          "id": "tango-02-bezowy",
+          "name": "TANGO 02 - beżowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_acb05cd886d455f147f58369eae6de39-jpg.webp"
+        },
+        {
+          "id": "tango-03-ciemny-bez",
+          "name": "TANGO 03 - ciemny beż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_31eff1470b68444896a7fa1f1dcd4e36-jpg.webp"
+        },
+        {
+          "id": "tango-04-szarobez",
+          "name": "TANGO 04 - szarobeż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_26a5841f12bead5c52f453505073d522-jpg.webp"
+        },
+        {
+          "id": "tango-05-brazowy",
+          "name": "TANGO 05 - brązowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_727de2317e9c174dbb03c650a90ff771-jpg.webp"
+        },
+        {
+          "id": "tango-06-rubinowy",
+          "name": "TANGO 06 - rubinowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_3636561e6b06d65e8a1c2da4d6a01ea6-jpg.webp"
+        },
+        {
+          "id": "tango-07-musztardowy",
+          "name": "TANGO 07 - musztardowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_432043ed63c452430955a292eb1f2d33-jpg.webp"
+        },
+        {
+          "id": "tango-08-zielen-butelkowa",
+          "name": "TANGO 08 - zieleń butelkowa",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_75676754565ca7330a35beb3dd70fc06-jpg.webp"
+        },
+        {
+          "id": "tango-09-turkusowy",
+          "name": "TANGO 09 - turkusowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_aee4a0e3e87f95e0c23d23360676bfcd-jpg.webp"
+        },
+        {
+          "id": "tango-10-niebieski",
+          "name": "TANGO 10 - niebieski",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_215d60d679722763b9b0e4cc54525473-jpg.webp"
+        },
+        {
+          "id": "tango-11-lazurowy",
+          "name": "TANGO 11 - lazurowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_d197a7d5df9337710e4cf6e40d73e00d-jpg.webp"
+        },
+        {
+          "id": "tango-12-lodowy",
+          "name": "TANGO 12 - lodowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_7114174c3e836b87313572359794bdd9-jpg.webp"
+        },
+        {
+          "id": "tango-13-lawendowy-roz",
+          "name": "TANGO 13 - lawendowy róż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_e232a4eadfd083e0a33352f0c7031ee5-jpg.webp"
+        },
+        {
+          "id": "tango-14-blady-roz",
+          "name": "TANGO 14 - blady róż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_374be82a3ca81160efc1d74d03e204d9-jpg.webp"
+        },
+        {
+          "id": "tango-15-mietowy",
+          "name": "TANGO 15 - miętowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_679be89e2431665bea8f3121a7dae678-jpg.webp"
+        },
+        {
+          "id": "tango-16-popielaty",
+          "name": "TANGO 16 - popielaty",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_e2e1a86827d2062a52f85c6d6a3684fa-jpg.webp"
+        },
+        {
+          "id": "tango-17-szary",
+          "name": "TANGO 17 - szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_6c5fb287b8faef1a2d72c14283ace714-jpg.webp"
+        },
+        {
+          "id": "tango-18-ciemny-szary",
+          "name": "TANGO 18 - ciemny szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_e9969fadaf0ed96eb2b0094222df2659-jpg.webp"
+        },
+        {
+          "id": "tango-19-grafitowy",
+          "name": "TANGO 19 - grafitowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_804490d16a628b957a674a3cd739b702-jpg.webp"
+        },
+        {
+          "id": "tango-20-czarny",
+          "name": "TANGO 20 - czarny",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_1b73d2c9bc853bea8579899102ea2632-jpg.webp"
+        }
+      ]
+    },
+    "NUBUK": {
+      "category": "premium",
+      "colors": [
+        {
+          "id": "nubuk-03-ecru",
+          "name": "NUBUK 03 - ecru",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_866431f1c9932363ff47a0dd22b5e707-jpg.webp"
+        },
+        {
+          "id": "nubuk-126-bez",
+          "name": "NUBUK 126 - beż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_29590b523adfc69a338ed40da7d874c9-jpg.webp"
+        },
+        {
+          "id": "nubuk-138-zielony",
+          "name": "NUBUK 138 - zielony",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_992bdec2b24ebaff1d7f7620dea2cb3e-jpg.webp"
+        },
+        {
+          "id": "nubuk-15-marchewkowy",
+          "name": "NUBUK 15 - marchewkowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_5f20fb30acb96a3da6cea46847c9d836-jpg.webp"
+        },
+        {
+          "id": "nubuk-16-jasny-blady-braz",
+          "name": "NUBUK 16 - jasny blady brąz",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_ff30def4d1ba01ae661a7d0041e8fa08-jpg.webp"
+        },
+        {
+          "id": "nubuk-2014-czarny",
+          "name": "NUBUK 2014 - czarny",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_c01c65c115a4d15682f04deeb98b4e13-jpg.webp"
+        },
+        {
+          "id": "nubuk-21-popielaty",
+          "name": "NUBUK 21 - popielaty",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_a17fb34a486d03c0813be53ea5180fbe-jpg.webp"
+        },
+        {
+          "id": "nubuk-213-czerwony",
+          "name": "NUBUK 213 - czerwony",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_9ebeecd1f75863663b51c32659cf0bbd-jpg.webp"
+        },
+        {
+          "id": "nubuk-226-ciemny-braz",
+          "name": "NUBUK 226 - ciemny brąz",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_a29ba1c0cf0a38d449765d1b61377234-jpg.webp"
+        },
+        {
+          "id": "nubuk-23-niebieski",
+          "name": "NUBUK 23 - niebieski",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_a926086225e26d37078ef1dc5b8eed59-jpg.webp"
+        },
+        {
+          "id": "nubuk-236-blekit-turkusowy",
+          "name": "NUBUK 236 - błękit turkusowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_724a0bf5237219b3a302b24c52d5225d-jpg.webp"
+        },
+        {
+          "id": "nubuk-241-fuksja",
+          "name": "NUBUK 241 - fuksja",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_c18aca3859a034b1768073d3468be47e-jpg.webp"
+        },
+        {
+          "id": "nubuk-26-jasny-brazowy",
+          "name": "NUBUK 26 - jasny brązowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_91b6a102dd3a74a6144c8db0024260f0-jpg.webp"
+        },
+        {
+          "id": "nubuk-27-szary",
+          "name": "NUBUK 27 - szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_cc51f1c6ec807d9d265a551919a9687b-jpg.webp"
+        },
+        {
+          "id": "nubuk-36-blekit",
+          "name": "NUBUK 36 - błękit",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_ac46a6d1a472f7b0e59a5d0aeeff6244-jpg.webp"
+        },
+        {
+          "id": "nubuk-38-ciemny-bez",
+          "name": "NUBUK 38 - ciemny beż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_a70be3b8cbcd3123772818b40d69e666-jpg.webp"
+        },
+        {
+          "id": "nubuk-41-szary-ecru",
+          "name": "NUBUK 41 - szary ecru",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_7746451ef1de9e768c4f7cf852c4fbe8-jpg.webp"
+        },
+        {
+          "id": "nubuk-48-pomaranczowy",
+          "name": "NUBUK 48 - pomarańczowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_84791e792ae3087fb1eeb867bf983328-jpg.webp"
+        },
+        {
+          "id": "nubuk-52-brazowy",
+          "name": "NUBUK 52 - brązowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_3a2e9162c4934c4f7f89375b0289c3b5-jpg.webp"
+        },
+        {
+          "id": "nubuk-53-burgundowy",
+          "name": "NUBUK 53 - burgundowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_de8cf41bf8baa68db7004613d0947a23-jpg.webp"
+        },
+        {
+          "id": "nubuk-60-jasny-szary",
+          "name": "NUBUK 60 - jasny szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_aa2c1dbe8c22739774f39ff99f1916b1-jpg.webp"
+        },
+        {
+          "id": "nubuk-96-grafitowy",
+          "name": "NUBUK 96 - grafitowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_f2a531fea5aa7cc7924579264d1482ad-jpg.webp"
+        }
+      ]
+    },
+    "TREND": {
+      "category": "standard",
+      "colors": [
+        {
+          "id": "trend-01-kremowy",
+          "name": "TREND 01 - kremowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_cf472f453430c4ef6b5000ee9518eba7-jpg.webp"
+        },
+        {
+          "id": "trend-02-bezowy",
+          "name": "TREND 02 - beżowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_0b8e95f312b701d7175b7d6e4d97b538-jpg.webp"
+        },
+        {
+          "id": "trend-03-szarobez",
+          "name": "TREND 03 - szarobeż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_3896b6459a55a91a7e8e928796b60f77-jpg.webp"
+        },
+        {
+          "id": "trend-04-kamienisty",
+          "name": "TREND 04 - kamienisty",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_45e794be2fda4f67681c726523392ace-jpg.webp"
+        },
+        {
+          "id": "trend-05-taupe",
+          "name": "TREND 05 - taupe",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_bbcdba7bb4af0c5c6300b826a1d17124-jpg.webp"
+        },
+        {
+          "id": "trend-06-blady-braz",
+          "name": "TREND 06 - blady brąz",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_fef585978958dc2e598f116a4f2baa0f-jpg.webp"
+        },
+        {
+          "id": "trend-07-brazowy",
+          "name": "TREND 07 - brązowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_378370cbd052597c3a7f928d6fc7a574-jpg.webp"
+        },
+        {
+          "id": "trend-08-ciemny-braz",
+          "name": "TREND 08 - ciemny brąz",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_9450b0dde444a5de07d6e817a54cb1a4-jpg.webp"
+        },
+        {
+          "id": "trend-09-bordowy",
+          "name": "TREND 09 - bordowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_90bb0d73b95cce48b8f6728013bdb1c8-jpg.webp"
+        },
+        {
+          "id": "trend-10-musztardowy",
+          "name": "TREND 10 - musztardowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_473d316730a178f282f3246d253d5f80-jpg.webp"
+        },
+        {
+          "id": "trend-11-limonka",
+          "name": "TREND 11 - limonka",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_ef5d847b8251b098236acc13ec5f07fc-jpg.webp"
+        },
+        {
+          "id": "trend-12-turkus",
+          "name": "TREND 12 - turkus",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_a0721970c905e5eaa6c148504a3bb32f-jpg.webp"
+        },
+        {
+          "id": "trend-13-granatowy",
+          "name": "TREND 13 - granatowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_208d06a68f37c75188ab1ed40613e714-jpg.webp"
+        },
+        {
+          "id": "trend-14-fioletowy",
+          "name": "TREND 14 - fioletowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_4908e0ef2845188a79f18ea2b7fc788b-jpg.webp"
+        },
+        {
+          "id": "trend-15-mietowy",
+          "name": "TREND 15 - miętowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_216cb87b0b24f41032e7f96f34d23b0a-jpg.webp"
+        },
+        {
+          "id": "trend-16-jasny-roz",
+          "name": "TREND 16 - jasny róż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_253cd4a986bcdc1d0946ccab5bf02b87-jpg.webp"
+        },
+        {
+          "id": "trend-17-jasny-niebieski",
+          "name": "TREND 17 - jasny niebieski",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_8ee2e2bfe62c39a54d36f386d7bd682d-jpg.webp"
+        },
+        {
+          "id": "trend-18-popielaty",
+          "name": "TREND 18 - popielaty",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_e915c99a7a054efc334419cdd3a19aec-jpg.webp"
+        },
+        {
+          "id": "trend-19-szary",
+          "name": "TREND 19 - szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_4da72a983f44cec7ac00428a2486a119-jpg.webp"
+        },
+        {
+          "id": "trend-20-grafitowy",
+          "name": "TREND 20 - grafitowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_a1443aa6fb19efbedf21d1e5321d85d2-jpg.webp"
+        },
+        {
+          "id": "trend-21-szary-melanz",
+          "name": "TREND 21 - szary melanż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_0c03fb23e42fc56b883ff7ca8f02b6f7-jpg.webp"
+        },
+        {
+          "id": "trend-23-czarny",
+          "name": "TREND 23 - czarny",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_29536f0749657cba94c3def14e60ab07-jpg.webp"
+        }
+      ]
+    },
+    "OLIMP": {
+      "category": "premium",
+      "colors": [
+        {
+          "id": "olimp-01-ecru",
+          "name": "OLIMP 01 - ecru",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_73d095994643999c9ff0968ae8c7190b-jpg.webp"
+        },
+        {
+          "id": "olimp-02-kawa-z-mlekiem",
+          "name": "OLIMP 02 - kawa z mlekiem",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_c9d0174d04719ce3bec6968c78bc99c9-jpg.webp"
+        },
+        {
+          "id": "olimp-03-czarny-braz",
+          "name": "OLIMP 03 - czarny brąz",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_562f805288a48995843381b5e3bbf1e3-jpg.webp"
+        },
+        {
+          "id": "olimp-04-braz",
+          "name": "OLIMP 04 - brąz",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_c15902e057ee013d94e563528ecbee52-jpg.webp"
+        },
+        {
+          "id": "olimp-05-czarny-braz-z-biela",
+          "name": "OLIMP 05 - czarny brąz z bielą",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_b264fa9b86732b703e80a56591285d41-jpg.webp"
+        },
+        {
+          "id": "olimp-06-smolisty-z-biela",
+          "name": "OLIMP 06 - smolisty z bielą",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_f5c01cb2f541cd202b66d142aca74201-jpg.webp"
+        },
+        {
+          "id": "olimp-07-gleboka-czern",
+          "name": "OLIMP 07 - głęboka czerń",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_5b95a09328aba24e71932dcad0a8dd26-jpg.webp"
+        },
+        {
+          "id": "olimp-08-czarny-z-brazem-ii",
+          "name": "OLIMP 08 - czarny z brązem II",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_bb9709d248a09cd6344db08f4bfd1f9c-jpg.webp"
+        },
+        {
+          "id": "olimp-09-biel-z-popielem",
+          "name": "OLIMP 09 - biel z popielem",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_22469d8352936ac146a88f913d804883-jpg.webp"
+        },
+        {
+          "id": "olimp-10-ecru-z-czernia-i-brazem",
+          "name": "OLIMP 10 - ecru z czernią i brązem",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_0ad6775830b456aa7762de5c03d220cd-jpg.webp"
+        },
+        {
+          "id": "olimp-11-oberzyna-z-czernia",
+          "name": "OLIMP 11 - oberżyna z czernią",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_318a760cad283715a509e6079954947f-jpg.webp"
+        },
+        {
+          "id": "olimp-12-czern-z-fioletem",
+          "name": "OLIMP 12 - czerń z fioletem",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_a3e70a6168e7719904adf9396b0aebd8-jpg.webp"
+        },
+        {
+          "id": "olimp-13-ceglany",
+          "name": "OLIMP 13 - ceglany",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_020e1ec6242de7883a82de6930a29817-jpg.webp"
+        },
+        {
+          "id": "olimp-14-czern-z-brazem-i-niebieskim",
+          "name": "OLIMP 14 - czerń z brązem i niebieskim",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_39362a57b09a6a48749d68d4cb5117e4-jpg.webp"
+        },
+        {
+          "id": "olimp-17-czern-z-popiela",
+          "name": "OLIMP 17 - czerń z popielą",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_36c59951f2d6cb2385d7672db007911a-jpg.webp"
+        }
+      ]
+    },
+    "TRINITY": {
+      "category": "standard",
+      "colors": [
+        {
+          "id": "trinity-01-kremowy",
+          "name": "TRINITY 01 - kremowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_20e225089283f01c59eb9be0b156578f-jpg.webp"
+        },
+        {
+          "id": "trinity-02-jasny-bez",
+          "name": "TRINITY 02 - jasny beż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_ceeb94dfd6069e8602d2e804384049a9-jpg.webp"
+        },
+        {
+          "id": "trinity-03-szary-bez",
+          "name": "TRINITY 03 - szary beż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_1423754223a5a478d158d6b572fdfdb2-jpg.webp"
+        },
+        {
+          "id": "trinity-04-bezowy",
+          "name": "TRINITY 04 - beżowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_055fc3feb555f175093fcbe1eccd92e1-jpg.webp"
+        },
+        {
+          "id": "trinity-05-jasny-kakaowy",
+          "name": "TRINITY 05 - jasny kakaowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_415fb84f80c9ecb89a374cb51d6b083a-jpg.webp"
+        },
+        {
+          "id": "trinity-06-kakaowy",
+          "name": "TRINITY 06 - kakaowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_e076135ca60c6d2a52614914eb5aa7de-jpg.webp"
+        },
+        {
+          "id": "trinity-07-brazowy",
+          "name": "TRINITY 07 - brązowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_5b060e45586adae815e9f0a2d0bbfa29-jpg.webp"
+        },
+        {
+          "id": "trinity-08-ciemny-braz",
+          "name": "TRINITY 08 - ciemny brąz",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_5981146425db48e4fcb8ab37328984c1-jpg.webp"
+        },
+        {
+          "id": "trinity-09-malinowy-czerwony",
+          "name": "TRINITY 09 - malinowy czerwony",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_342f410da1a301bf8815cc8381f1af2a-jpg.webp"
+        },
+        {
+          "id": "trinity-10-rozowy",
+          "name": "TRINITY 10 - różowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_028aec33533a8b75a2aa47ee938e0ae8-jpg.webp"
+        },
+        {
+          "id": "trinity-11-lawendowy",
+          "name": "TRINITY 11 - lawendowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_ce9b6ef9948940a4126fbbc06982889e-jpg.webp"
+        },
+        {
+          "id": "trinity-12-zielony",
+          "name": "TRINITY 12 - zielony",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_2a5361e356964c150014da81db0734af-jpg.webp"
+        },
+        {
+          "id": "trinity-13-lazurowy",
+          "name": "TRINITY 13 - lazurowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_193448264d287ef8638b480a3a992190-jpg.webp"
+        },
+        {
+          "id": "trinity-14-jasny-szary",
+          "name": "TRINITY 14 - jasny szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_db5ef9698a9bc7031ae2b046b84dccfa-jpg.webp"
+        },
+        {
+          "id": "trinity-15-grafitowy",
+          "name": "TRINITY 15 - grafitowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_539c53356c4de04d3a26dfc940618922-jpg.webp"
+        },
+        {
+          "id": "trinity-16-czarny",
+          "name": "TRINITY 16 - czarny",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_edd3492bcd1e2b7ec0f05aa953fb158e-jpg.webp"
+        },
+        {
+          "id": "trinity-17-pomaranczowy",
+          "name": "TRINITY 17 - pomarańczowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_8ffd8b3476c767e3e6a01aebcc5c9c23-jpg.webp"
+        },
+        {
+          "id": "trinity-18-zolty",
+          "name": "TRINITY 18 - żółty",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_4518bbcac2c5abb29ee3e3024c566f77-jpg.webp"
+        },
+        {
+          "id": "trinity-19-jasny-roz",
+          "name": "TRINITY 19 - jasny róż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_31519a5ddeba4d6255afa0bce3562533-jpg.webp"
+        },
+        {
+          "id": "trinity-21-jasna-mieta",
+          "name": "TRINITY 21 - jasna mięta",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_07bc267d12b24ae7c9d53f218e18e233-jpg.webp"
+        },
+        {
+          "id": "trinity-22-jasny-niebieski",
+          "name": "TRINITY 22 - jasny niebieski",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_8d2f2586382dd3b08e585c312d381537-jpg.webp"
+        },
+        {
+          "id": "trinity-23-szary-roz",
+          "name": "TRINITY 23 - szary róż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_15f304f4a62b2cfda26106c6320bf1a0-jpg.webp"
+        },
+        {
+          "id": "trinity-24-rubinowy-czerwony",
+          "name": "TRINITY 24 - rubinowy czerwony",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_a94cac4e760804f46bd5b0017bc5dedc-jpg.webp"
+        },
+        {
+          "id": "trinity-25-rdzawy",
+          "name": "TRINITY 25 - rdzawy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_3900a934a417e659fdb73deedc5f3581-jpg.webp"
+        },
+        {
+          "id": "trinity-26-musztardowy",
+          "name": "TRINITY 26 - musztardowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_f0d1bae01905d5a8c8a003f9d09d48b5-jpg.webp"
+        },
+        {
+          "id": "trinity-27-oliwkowy",
+          "name": "TRINITY 27 - oliwkowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_7c0e232e8d19be9bae112fc3eee8f2e5-jpg.webp"
+        },
+        {
+          "id": "trinity-28-butelkowa-zielen",
+          "name": "TRINITY 28 - butelkowa zieleń",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_d34992e7920310cef9d217e1deb40de4-jpg.webp"
+        },
+        {
+          "id": "trinity-29-ciemny-turkus",
+          "name": "TRINITY 29 - ciemny turkus",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_b9dd78ab18be710a8aeb58efc6a35c76-jpg.webp"
+        },
+        {
+          "id": "trinity-30-ciemny-granatowy",
+          "name": "TRINITY 30 - ciemny granatowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_5167060a69366f2779058eff212d54ff-jpg.webp"
+        },
+        {
+          "id": "trinity-31-granatowy",
+          "name": "TRINITY 31 - granatowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_a0fd758ac3a4cd38b0de69b3d1caeb23-jpg.webp"
+        },
+        {
+          "id": "trinity-32-popielaty",
+          "name": "TRINITY 32 - popielaty",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_9abf4added36d5894a789b7c36c611bf-jpg.webp"
+        },
+        {
+          "id": "trinity-33-szary",
+          "name": "TRINITY 33 - szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_05576b157afdf5244579c97ee437dbef-jpg.webp"
+        }
+      ]
+    },
+    "RIO": {
+      "category": "premium",
+      "colors": [
+        {
+          "id": "rio-01-ciemny-ecru",
+          "name": "RIO 01 - ciemny ecru",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_0e6200555cca59776923e9b27620d386-jpg.webp"
+        },
+        {
+          "id": "rio-02-cieply-szary",
+          "name": "RIO 02 - ciepły szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_6bbfbcc6540c2918eebb669c17096869-jpg.webp"
+        },
+        {
+          "id": "rio-03-cieply-ciemny-szary",
+          "name": "RIO 03 - ciepły ciemny szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_f3c463ee942d448ee1cf2447401ecb25-jpg.webp"
+        },
+        {
+          "id": "rio-04-blady-braz",
+          "name": "RIO 04 - blady brąz",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_17f63fa09ccd1a2bb89f253502072b73-jpg.webp"
+        },
+        {
+          "id": "rio-05-czarny-gaszony",
+          "name": "RIO 05 - czarny gaszony",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_c916c2ebef18e54896139ebf542ceddd-jpg.webp"
+        },
+        {
+          "id": "rio-06-wyplowiala-czern",
+          "name": "RIO 06 - wypłowiała czerń",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_e215c381f718bd551e47cd623803e0fa-jpg.webp"
+        },
+        {
+          "id": "rio-07-purpurowy",
+          "name": "RIO 07 - purpurowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_ab4b65cbcfd47125e67cf2293bb77e94-jpg.webp"
+        },
+        {
+          "id": "rio-08-pomaranczowy",
+          "name": "RIO 08 - pomarańczowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_55d4223381eccba7e033239a86626b5f-jpg.webp"
+        },
+        {
+          "id": "rio-09-ciemny-szary",
+          "name": "RIO 09 - ciemny szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_f17dcdb6645002f4b938a8a3c3c54a26-jpg.webp"
+        },
+        {
+          "id": "rio-10-zolty-gaszony",
+          "name": "RIO 10 - żółty gaszony",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_883dc5659812b10e5ae04ec668110f60-jpg.webp"
+        },
+        {
+          "id": "rio-11-turkusowy",
+          "name": "RIO 11 - turkusowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_c47a7e2545a36da9ea6775c4d9d4caa5-jpg.webp"
+        },
+        {
+          "id": "rio-12-szary",
+          "name": "RIO 12 - szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_8132c9b6171e6aa05bcc4aeb6703769b-jpg.webp"
+        },
+        {
+          "id": "rio-13-czarny",
+          "name": "RIO 13 - czarny",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_9f0ae847c0b762a0de1ad209f970b57e-jpg.webp"
+        },
+        {
+          "id": "rio-14-ciemny-grafitowy",
+          "name": "RIO 14 - ciemny grafitowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_6e637648097842a1c6b867d82b5074de-jpg.webp"
+        },
+        {
+          "id": "rio-15-bez",
+          "name": "RIO 15 - beż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_f15465658b1bad16e68037bf68256e56-jpg.webp"
+        },
+        {
+          "id": "rio-16-brazowy",
+          "name": "RIO 16 - brązowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_46bbd4d6945d723efbb7a1ff76c948f9-jpg.webp"
+        },
+        {
+          "id": "rio-18-blady-mietowy",
+          "name": "RIO 18 - blady miętowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_af3495456eccddd64fcb674898c83246-jpg.webp"
+        },
+        {
+          "id": "rio-19-blady-roz",
+          "name": "RIO 19 - blady róż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_c64a9c154b5d2efbe2d1178148217387-jpg.webp"
+        },
+        {
+          "id": "rio-20-popielaty",
+          "name": "RIO 20 - popielaty",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_16f3b62022a184e1d084034bde0cc2f6-jpg.webp"
+        },
+        {
+          "id": "rio-21-szary-roz",
+          "name": "RIO 21 - szary róż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_d6dacbe5d69cfb0d8ee37b25ba03a049-jpg.webp"
+        },
+        {
+          "id": "rio-22-oberzynowy",
+          "name": "RIO 22 - oberżynowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_9a355946b331900a995bdf4973443ac2-jpg.webp"
+        },
+        {
+          "id": "rio-23-jasny-grafit",
+          "name": "RIO 23 - jasny grafit",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_84e858bb26bc263cec60716b86ab8a40-jpg.webp"
+        }
+      ]
+    },
+    "LARY": {
+      "category": "premium",
+      "colors": [
+        {
+          "id": "lary-07-bezowy",
+          "name": "LARY 07 - beżowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_9a18cfa2ca81f37b4ebab3e649882424-jpg.webp"
+        },
+        {
+          "id": "lary-100-czarny",
+          "name": "LARY 100 - czarny",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_228301ce469f2ad13e30344be8e1d19c-jpg.webp"
+        },
+        {
+          "id": "lary-27-bialo-czerwony",
+          "name": "LARY 27 - biało czerwony",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_c425a772d8acdffdf72897ba42dd0db4-jpg.webp"
+        },
+        {
+          "id": "lary-35-zgnila-zielen",
+          "name": "LARY 35 - zgniła zieleń",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_c8144a36c98ee9b530e04255234e261e-jpg.webp"
+        },
+        {
+          "id": "lary-45-piaskowy",
+          "name": "LARY 45 - piaskowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_4eac54313fe622dc6170cdbc7976f986-jpg.webp"
+        },
+        {
+          "id": "lary-59-czerwony-bordowy",
+          "name": "LARY 59 - czerwony bordowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_9687d4af28be627cb9814979615f9e8e-jpg.webp"
+        },
+        {
+          "id": "lary-62-brudny-bez",
+          "name": "LARY 62 - brudny beż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_55c4f95c1abdff123ca0f47e5334bff3-jpg.webp"
+        },
+        {
+          "id": "lary-68-purpurowy",
+          "name": "LARY 68 - purpurowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_885128ab85f03c46bb0075ea094232d4-jpg.webp"
+        },
+        {
+          "id": "lary-73-bezowo-niebieski",
+          "name": "LARY 73 - beżowo niebieski",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_8a685b70f6660ebaab6ef9fa57df05a4-jpg.webp"
+        },
+        {
+          "id": "lary-74-jasny-niebieski",
+          "name": "LARY 74 - jasny niebieski",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_de5e7f838cc1599b60755c0630970c72-jpg.webp"
+        },
+        {
+          "id": "lary-75-niebieski",
+          "name": "LARY 75 - niebieski",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_0934997e783bf861a16cdc985805beca-jpg.webp"
+        },
+        {
+          "id": "lary-76-szary-turkus",
+          "name": "LARY 76 - szary turkus",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_f9aa6a225d412d515fb39ca423e45fb1-jpg.webp"
+        },
+        {
+          "id": "lary-77-jeansowy",
+          "name": "LARY 77 - jeansowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_cae0a39da376506cf381bf835417de87-jpg.webp"
+        },
+        {
+          "id": "lary-79-granatowy",
+          "name": "LARY 79 - granatowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_6fa102e24deea2e998765eb285f614e4-jpg.webp"
+        },
+        {
+          "id": "lary-81-jasny-kamienisty",
+          "name": "LARY 81 - jasny kamienisty",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_fb1e624cb6af394a50adf8992f4f9b90-jpg.webp"
+        },
+        {
+          "id": "lary-82-szary-bez",
+          "name": "LARY 82 - szary beż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_b1551ecf672d9620541cf0064a006cce-jpg.webp"
+        },
+        {
+          "id": "lary-88-kamienisty",
+          "name": "LARY 88 - kamienisty",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_17fc1045fff1973dded22afef40249fa-jpg.webp"
+        },
+        {
+          "id": "lary-90-jasny-szary",
+          "name": "LARY 90 - jasny szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_2b205dde5e5493501841571bf50717d0-jpg.webp"
+        },
+        {
+          "id": "lary-92-szary",
+          "name": "LARY 92 - szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_0f5bd06f25de8bdb80600990c89d0626-jpg.webp"
+        },
+        {
+          "id": "lary-93-betonowy",
+          "name": "LARY 93 - betonowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_c0d2177cac66636364151eeb2ea75cab-jpg.webp"
+        },
+        {
+          "id": "lary-97-blady-czarny",
+          "name": "LARY 97 - blady czarny",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_72f97db3eb6f9fb99293eba08fefba5e-jpg.webp"
+        },
+        {
+          "id": "lary-98-czarno-bialy",
+          "name": "LARY 98 - czarno biały",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_266e6f786b5d9d7b0689dc13f07fc99b-jpg.webp"
+        },
+        {
+          "id": "lary-99-ciemny-szary",
+          "name": "LARY 99 - ciemny szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_6027d2412ba72ecd16c00635c455cf37-jpg.webp"
+        },
+        {
+          "id": "lary-ii-24-brazowy",
+          "name": "LARY II 24 - brązowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_41fb95bdb87d2c73083bf7992be6a7d9-jpg.webp"
+        }
+      ]
+    },
+    "IVA": {
+      "category": "standard",
+      "colors": [
+        {
+          "id": "iva-10-zielen-butelkowa",
+          "name": "IVA 10 - zieleń butelkowa",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_ae61fe665b51736fb08f53c195c918cd-jpg.webp"
+        },
+        {
+          "id": "iva-11-granatowy",
+          "name": "IVA 11 - granatowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_da0c132992881d5e199ca2df5382c801-jpg.webp"
+        },
+        {
+          "id": "iva-13-pastelowy-niebieski",
+          "name": "IVA 13 - pastelowy niebieski",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_634bf7c8a3c0baab4eca3c09b836bcd5-jpg.webp"
+        },
+        {
+          "id": "iva-14-szary",
+          "name": "IVA 14 - szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_e455a420fc5b50a4e750c7e4cce756c7-jpg.webp"
+        },
+        {
+          "id": "iva-15-czarny",
+          "name": "IVA 15 - czarny",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_87168ad4f39c309c9cae2d966d379a21-jpg.webp"
+        },
+        {
+          "id": "iva-16-kremowy",
+          "name": "IVA 16 - kremowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_236f6fce7c6b44d29b9dc07105d93be2-jpg.webp"
+        },
+        {
+          "id": "iva-20-brazowy",
+          "name": "IVA 20 - brązowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_1c4417c2059f394e400814d8417da360-jpg.webp"
+        },
+        {
+          "id": "iva-27-grafitowy",
+          "name": "IVA 27 - grafitowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_37fe40faa37d9c674c23418d8c4dcfe0-jpg.webp"
+        },
+        {
+          "id": "iva-33-musztardowy",
+          "name": "IVA 33 - musztardowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_543efc252d813e41ac67ba09593872c2-jpg.webp"
+        },
+        {
+          "id": "iva-34-czerwony",
+          "name": "IVA 34 - czerwony",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_8832dc07bde2dc7663a05c0f321aac52-jpg.webp"
+        },
+        {
+          "id": "iva-38-szary-roz",
+          "name": "IVA 38 - szary róż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_c96bf06f7eccf913cf56b928438d00bd-jpg.webp"
+        },
+        {
+          "id": "iva-39-ciemny-turkus",
+          "name": "IVA 39 - ciemny turkus",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_4b8d4e377a2293200c5b0fed4ad1a85b-jpg.webp"
+        },
+        {
+          "id": "iva-40-marengo",
+          "name": "IVA 40 - marengo",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_e7c73a0fc0bff46e52387112c9c87314-jpg.webp"
+        },
+        {
+          "id": "iva-41-ciemny-braz",
+          "name": "IVA 41 - ciemny brąz",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_cad032338e8f61cb5da0fcde18ed6f0a-jpg.webp"
+        },
+        {
+          "id": "iva-46-szary-bez",
+          "name": "IVA 46 - szary beż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_f464f4914db1cfcf88218a3cc5655b63-jpg.webp"
+        },
+        {
+          "id": "iva-48-ciemny-bez",
+          "name": "IVA 48 - ciemny beż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_3fe900523a090b890e53314fbb24007d-jpg.webp"
+        },
+        {
+          "id": "iva-5-bezowy",
+          "name": "IVA 5 - beżowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_23fff4a784f1b3c52e28ff4672a58b0c-jpg.webp"
+        },
+        {
+          "id": "iva-50-stalowy",
+          "name": "IVA 50 - stalowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_01c1bd74f99ff65e2f1b637882cad00f-jpg.webp"
+        },
+        {
+          "id": "iva-51-popielaty",
+          "name": "IVA 51 - popielaty",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_151d3605c5b488287115cee3d3ad6e25-jpg.webp"
+        },
+        {
+          "id": "iva-58-pastelowy-roz",
+          "name": "IVA 58 - pastelowy róż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_18f9b9255d2212adc7fd2b540dbaad70-jpg.webp"
+        },
+        {
+          "id": "iva-65-zgnila-zielen",
+          "name": "IVA 65 - zgniła zieleń",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_d27204e613f54fcfffb671f5dda89ca7-jpg.webp"
+        },
+        {
+          "id": "iva-9-jasny-mietowy",
+          "name": "IVA 9 - jasny miętowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_a167d19d7ef61e0bc8923b58b4b99382-jpg.webp"
+        }
+      ]
+    },
+    "EKO_SKÓRA": {
+      "category": "standard",
+      "colors": [
+        {
+          "id": "eko-skora-d-1000-jasny-szary",
+          "name": "EKO_SKÓRA D-1000  - jasny szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_758e8cbf88ed8e7d38855cff4621cb6b-jpg.webp"
+        },
+        {
+          "id": "eko-skora-d-13-zielen-butelkowa",
+          "name": "EKO_SKÓRA D-13  - zieleń butelkowa",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_d1cba3ef39dfc013af55b4ee454b5995-jpg.webp"
+        },
+        {
+          "id": "eko-skora-d-27-zielony",
+          "name": "EKO_SKÓRA D-27  - zielony",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_5e298515cb6bc5e8ea293520657e6bc8-jpg.webp"
+        },
+        {
+          "id": "eko-skora-d-2744-burgund",
+          "name": "EKO_SKÓRA D-2744  - burgund",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_f7bc2e76f569215837ad82cbab57fd12-jpg.webp"
+        },
+        {
+          "id": "eko-skora-d-28-zielony-jaskrawy",
+          "name": "EKO_SKÓRA D-28  - zielony jaskrawy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_39dfecc96fd381a4bbe7df93dacb57f0-jpg.webp"
+        },
+        {
+          "id": "eko-skora-d-33-rozowy",
+          "name": "EKO_SKÓRA D-33  - różowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_6e6a16fcac073e7348334582eaf91808-jpg.webp"
+        },
+        {
+          "id": "eko-skora-d-72-jagodowy",
+          "name": "EKO_SKÓRA D-72  - jagodowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_348a896142c87733fb5ac4ab91690609-jpg.webp"
+        },
+        {
+          "id": "eko-skora-h-0-bialy",
+          "name": "EKO_SKÓRA H-0  - biały",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_4a3fa3036a39d9776a9749a9e508397f-jpg.webp"
+        },
+        {
+          "id": "eko-skora-h-1-ecru",
+          "name": "EKO_SKÓRA H-1  - ecru",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_26bac7e2f0aee937b8f065dbb0ac1713-jpg.webp"
+        },
+        {
+          "id": "eko-skora-h-11-czerwony",
+          "name": "EKO_SKÓRA H-11  - czerwony",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_9cd125f628f7d5fd958fc2355321a313-jpg.webp"
+        },
+        {
+          "id": "eko-skora-h-12-ciemny-braz",
+          "name": "EKO_SKÓRA H-12  - ciemny brąz",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_779ccd602b48491b303e5c0dfb87a40e-jpg.webp"
+        },
+        {
+          "id": "eko-skora-h-13-porcelanowy",
+          "name": "EKO_SKÓRA H-13  - porcelanowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_6cd54e77ab3f0101005c836fd5433d76-jpg.webp"
+        },
+        {
+          "id": "eko-skora-h-14-szary-bez",
+          "name": "EKO_SKÓRA H-14  - szary beż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_c290eed94f59eb0012ed22971997cc5c-jpg.webp"
+        },
+        {
+          "id": "eko-skora-h-15-ciemny-szary",
+          "name": "EKO_SKÓRA H-15  - ciemny szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_7540bb06428950d64f298e987dfc901b-jpg.webp"
+        },
+        {
+          "id": "eko-skora-h-16-kawa-z-mlekiem",
+          "name": "EKO_SKÓRA H-16  - kawa z mlekiem",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_3f0218ce2b87486c25e7cdeac6a217b5-jpg.webp"
+        },
+        {
+          "id": "eko-skora-h-2-musztardowy",
+          "name": "EKO_SKÓRA H-2  - musztardowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_86d4fd242bac050d5b541de1107fa3b3-jpg.webp"
+        },
+        {
+          "id": "eko-skora-h-4-czarny",
+          "name": "EKO_SKÓRA H-4  - czarny",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_925541c3777b8a57253d5d049ecf8335-jpg.webp"
+        },
+        {
+          "id": "eko-skora-h-5-granatowy",
+          "name": "EKO_SKÓRA H-5  - granatowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_4b903af3b02822a09c971e7ff3b37f49-jpg.webp"
+        },
+        {
+          "id": "eko-skora-h-7-cielisty",
+          "name": "EKO_SKÓRA H-7  - cielisty",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_d0bbcacda87e693b80b0dc8531cc824c-jpg.webp"
+        },
+        {
+          "id": "eko-skora-h-8-brazowy",
+          "name": "EKO_SKÓRA H-8  - brązowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_941a2ad74e618f1ac18c44926b01507a-jpg.webp"
+        },
+        {
+          "id": "eko-skora-h-9-pomaranczowy",
+          "name": "EKO_SKÓRA H-9  - pomarańczowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_2ccef0c2700beac0652726297486a1f1-jpg.webp"
+        }
+      ]
+    },
+    "COLIN": {
+      "category": "premium",
+      "colors": [
+        {
+          "id": "colin-02-ecru",
+          "name": "COLIN 02 - ecru",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_869e5026bcff9198f7b5581bff6dec56-jpg.webp"
+        },
+        {
+          "id": "colin-15-cieply-szary",
+          "name": "COLIN 15 - ciepły szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_fd048fa4256f5c80a31180250fe24e1e-jpg.webp"
+        },
+        {
+          "id": "colin-24-cieply-ciemny-szary",
+          "name": "COLIN 24 - ciepły ciemny szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_64e38330bc8c6a7707b2f0759c7f057c-jpg.webp"
+        },
+        {
+          "id": "colin-29-braz-czerniony",
+          "name": "COLIN 29 - brąz czerniony",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_a50a9a716c82702a4920ce315f159342-jpg.webp"
+        },
+        {
+          "id": "colin-52-morelowy",
+          "name": "COLIN 52 - morelowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_2b47b0e10812018ff6e77eb6b58f4757-jpg.webp"
+        },
+        {
+          "id": "colin-61-lila",
+          "name": "COLIN 61 - lila",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_cac03abfea90087c34f98b6baeb3a999-jpg.webp"
+        },
+        {
+          "id": "colin-69-ciemny-braz",
+          "name": "COLIN 69 - ciemny brąz",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_b738f78240d2e350668ef9d584b65aa0-jpg.webp"
+        },
+        {
+          "id": "colin-70-niebieski",
+          "name": "COLIN 70 - niebieski",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_08f0057a7f2831bbb7234e8389f6783c-jpg.webp"
+        },
+        {
+          "id": "colin-83-jasny-szary",
+          "name": "COLIN 83 - jasny szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_2a19fff40888fd99924124faa3176dab-jpg.webp"
+        },
+        {
+          "id": "colin-87-szary",
+          "name": "COLIN 87 - szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_29e92b31082594cfe1bf4c5a0d55c04c-jpg.webp"
+        },
+        {
+          "id": "colin-92-ciemny-szary",
+          "name": "COLIN 92 - ciemny szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_e17d4beef94600ae418068356f3c5374-jpg.webp"
+        }
+      ]
+    },
+    "KRONOS": {
+      "category": "premium",
+      "colors": [
+        {
+          "id": "kronos-01-musztardowy",
+          "name": "KRONOS 01 - musztardowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_406cc8aa872a8da5575119dccc168d99-jpg.webp"
+        },
+        {
+          "id": "kronos-02-czerwony-krwisty",
+          "name": "KRONOS 02 - czerwony krwisty",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_41febc54b5a37b4a62ad1d12d6a3e1b8-jpg.webp"
+        },
+        {
+          "id": "kronos-03-oberzynowy",
+          "name": "KRONOS 03 - oberżynowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_96b179ed421fda85457b7c1e76d294ed-jpg.webp"
+        },
+        {
+          "id": "kronos-04-ciemny-turkus",
+          "name": "KRONOS 04 - ciemny turkus",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_b173337bd38b27f7addba411bf9f2293-jpg.webp"
+        },
+        {
+          "id": "kronos-05-niebieski",
+          "name": "KRONOS 05 - niebieski",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_fb3866e7c6dbb27473fb899013ecb724-jpg.webp"
+        },
+        {
+          "id": "kronos-06-brazowy",
+          "name": "KRONOS 06 - brązowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_f07a339fc73ea65aa156d5e1e2546941-jpg.webp"
+        },
+        {
+          "id": "kronos-07-czarny",
+          "name": "KRONOS 07 - czarny",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_ab68e05d64868f009b501e082faa51e9-jpg.webp"
+        },
+        {
+          "id": "kronos-09-granatowy",
+          "name": "KRONOS 09 - granatowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_bfa3151fe239c5b6d8c9f3140513fd38-jpg.webp"
+        },
+        {
+          "id": "kronos-11-blady-zolty",
+          "name": "KRONOS 11 - blady żółty",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_1d0f264cb644925dd63f0cf6013e79e8-jpg.webp"
+        },
+        {
+          "id": "kronos-13-lazurowy",
+          "name": "KRONOS 13 - lazurowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_d647dcca0b364d57ba39966bb5031f4d-jpg.webp"
+        },
+        {
+          "id": "kronos-14-zielen-butelkowa",
+          "name": "KRONOS 14 - zieleń butelkowa",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_73e3a7c607811ae916253967b77b20a4-jpg.webp"
+        },
+        {
+          "id": "kronos-15-szary-kamienny",
+          "name": "KRONOS 15 - szary kamienny",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_1ad2548a5c478b17819dc323bdfe4248-jpg.webp"
+        },
+        {
+          "id": "kronos-16-zielony",
+          "name": "KRONOS 16 - zielony",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_7c426dcdf7700e522ba9ff51e0fd4417-jpg.webp"
+        },
+        {
+          "id": "kronos-17-oliwkowy",
+          "name": "KRONOS 17 - oliwkowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_1bff4a73bc4f89bf6350215d41db320b-jpg.webp"
+        },
+        {
+          "id": "kronos-19-szmaragdowy",
+          "name": "KRONOS 19 - szmaragdowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_d8870e2be023a8d013959e407967d7fb-jpg.webp"
+        },
+        {
+          "id": "kronos-20-bordowy",
+          "name": "KRONOS 20 - bordowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_4d931b8eb4e165c985f45f2dcdd97511-jpg.webp"
+        },
+        {
+          "id": "kronos-201-kremowy",
+          "name": "KRONOS 201 - kremowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_b188532c3638c867126f753608904aca-jpg.webp"
+        },
+        {
+          "id": "kronos-202-szary-kremowy",
+          "name": "KRONOS 202 - szary kremowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_b461d45a01b89df2f4d16a4c273c4fea-jpg.webp"
+        },
+        {
+          "id": "kronos-203-szary-bez",
+          "name": "KRONOS 203 - szary beż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_ed79bca8383dedeb7dac71b0cdc9be71-jpg.webp"
+        },
+        {
+          "id": "kronos-204-szary-braz",
+          "name": "KRONOS 204 - szary brąz",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_dae7ade455af83a06391cd4838ef4424-jpg.webp"
+        },
+        {
+          "id": "kronos-205-lodowy",
+          "name": "KRONOS 205 - lodowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_fde6a0bd2e6e33013a891f96f066c118-jpg.webp"
+        },
+        {
+          "id": "kronos-206-ciemny-stalowy",
+          "name": "KRONOS 206 - ciemny stalowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_47c6efab169de9757748d12a493c156c-jpg.webp"
+        },
+        {
+          "id": "kronos-22-szary",
+          "name": "KRONOS 22 - szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_63f26231a9b9732092ca239a3299da9e-jpg.webp"
+        },
+        {
+          "id": "kronos-25-morski",
+          "name": "KRONOS 25 - morski",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_006ab9ff15d2ef7a8e4102f99d38d02b-jpg.webp"
+        },
+        {
+          "id": "kronos-26-szary-turkus",
+          "name": "KRONOS 26 - szary turkus",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_11cdbe197667c5a1a51be832a19bc4d6-jpg.webp"
+        },
+        {
+          "id": "kronos-27-szary-roz",
+          "name": "KRONOS 27 - szary róż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_7682317a144ca4e8925392d771e13fc1-jpg.webp"
+        },
+        {
+          "id": "kronos-28-cieply-braz",
+          "name": "KRONOS 28 - ciepły brąz",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_0d8484026dcaadd924a99401fe3dbd4b-jpg.webp"
+        },
+        {
+          "id": "kronos-29-ciemny-roz",
+          "name": "KRONOS 29 - ciemny róż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_a328cff14102caae143e4618130daed9-jpg.webp"
+        },
+        {
+          "id": "kronos-31-jasny-niebieski",
+          "name": "KRONOS 31 - jasny niebieski",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_7ead541ad7baf70c4798c715bbd53967-jpg.webp"
+        },
+        {
+          "id": "kronos-34-grafitowy",
+          "name": "KRONOS 34 - grafitowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_675e45d5bfd4d1fdf39f1a424217a745-jpg.webp"
+        },
+        {
+          "id": "kronos-35-bezowy",
+          "name": "KRONOS 35 - beżowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_0b931e0b107b54c3f0062ba5029c4100-jpg.webp"
+        },
+        {
+          "id": "kronos-37-fioletowy",
+          "name": "KRONOS 37 - fioletowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_8ecdeac5b7cf6109761f761f0bf02bfa-jpg.webp"
+        },
+        {
+          "id": "kronos-38-ecru",
+          "name": "KRONOS 38 - ecru",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_4462d146f21a7593dda60c29f3e8bfc8-jpg.webp"
+        },
+        {
+          "id": "kronos-39-ceglany",
+          "name": "KRONOS 39 - ceglany",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_d8116a5b01afd50762f88403c2198d86-jpg.webp"
+        },
+        {
+          "id": "kronos-40-pomaranczowy",
+          "name": "KRONOS 40 - pomarańczowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_6322a8e9659b013bbff9f767fc92b0c0-jpg.webp"
+        },
+        {
+          "id": "kronos-41-lososiowy",
+          "name": "KRONOS 41 - łososiowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_158f14bad64428fe16e61f916d8ab90e-jpg.webp"
+        },
+        {
+          "id": "kronos-42-kurkumowy",
+          "name": "KRONOS 42 - kurkumowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_b1b7db4acc0d4087234efab6e2543b62-jpg.webp"
+        },
+        {
+          "id": "kronos-43-zolty",
+          "name": "KRONOS 43 - żółty",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_9f8763dce1b2400d62e13c7e0070ca09-jpg.webp"
+        },
+        {
+          "id": "kronos-44-seledynowy",
+          "name": "KRONOS 44 - seledynowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_394c7b77afae6cb4d7e1318104075e10-jpg.webp"
+        },
+        {
+          "id": "kronos-46-szalwiowy",
+          "name": "KRONOS 46 - szałwiowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_c6d424a1dd4d24c2908be035eadf13a1-jpg.webp"
+        },
+        {
+          "id": "kronos-47-mietowy",
+          "name": "KRONOS 47 - miętowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_cf23d803d4da37f3e236ce29efa4cb80-jpg.webp"
+        },
+        {
+          "id": "kronos-52-rozowy",
+          "name": "KRONOS 52 - różowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_49f16411be3fab4e92ec87a0da415127-jpg.webp"
+        },
+        {
+          "id": "kronos-53-stalowy-szary",
+          "name": "KRONOS 53 - stalowy szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_f2ba7556308497ce08192ec2debd4682-jpg.webp"
+        }
+      ]
+    },
+    "RODOS": {
+      "category": "premium",
+      "colors": [
+        {
+          "id": "rodos-03-brazowy",
+          "name": "RODOS 03 - brązowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_936b607db749eb7d79eb6e87b40af654-jpg.webp"
+        },
+        {
+          "id": "rodos-04-orzechowy-braz",
+          "name": "RODOS 04 - orzechowy brąz",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_f35ca0f74348a4b900b1ca2d8b03078a-jpg.webp"
+        },
+        {
+          "id": "rodos-10-zielen-butelkowa",
+          "name": "RODOS 10 - zieleń butelkowa",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_759107579d88c1b6b625325f2da5f77a-jpg.webp"
+        },
+        {
+          "id": "rodos-14-szary",
+          "name": "RODOS 14 - szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_a82ed77ba857b5179f43104cc5804a3f-jpg.webp"
+        },
+        {
+          "id": "rodos-15-czarny",
+          "name": "RODOS 15 - czarny",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_422883ffd140b0502184c63e2b811957-jpg.webp"
+        },
+        {
+          "id": "rodos-16-kremowy",
+          "name": "RODOS 16 - kremowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_b847e26fed59590fcf37faf4fdc5137d-jpg.webp"
+        },
+        {
+          "id": "rodos-18-turkusowy",
+          "name": "RODOS 18 - turkusowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_a0a48bfdecadd1fdb0d7af5f4897ecfe-jpg.webp"
+        },
+        {
+          "id": "rodos-27-grafitowy",
+          "name": "RODOS 27 - grafitowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_94d5c1cf7200ed02bf6033260e03f6b0-jpg.webp"
+        },
+        {
+          "id": "rodos-31-bialy",
+          "name": "RODOS 31 - biały",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_1c463976a66caf97781a8e01262aef32-jpg.webp"
+        },
+        {
+          "id": "rodos-34-czerwony",
+          "name": "RODOS 34 - czerwony",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_8e347e470a1a88c29ed37b69e434932b-jpg.webp"
+        },
+        {
+          "id": "rodos-37-niebieski",
+          "name": "RODOS 37 - niebieski",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_3140e7069d7e98f981e81b5e1a93f1dc-jpg.webp"
+        },
+        {
+          "id": "rodos-41-blady-braz",
+          "name": "RODOS 41 - blady brąz",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_f6239f3b26b7a2b1381e698a3e109278-jpg.webp"
+        },
+        {
+          "id": "rodos-61-groszkowy",
+          "name": "RODOS 61 - groszkowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_eb36d6934a0c7aec6a1047246ef098cb-jpg.webp"
+        },
+        {
+          "id": "rodos-62-zielen-neonowa",
+          "name": "RODOS 62 - zieleń neonowa",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_94fb2e33f951d675e77d1123dfc7bd19-jpg.webp"
+        },
+        {
+          "id": "rodos-63-pomarancz",
+          "name": "RODOS 63 - pomarańcz",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_48b38cf6ca49f1aca137fa7f26bcc6b8-jpg.webp"
+        },
+        {
+          "id": "rodos-83-jasny-szary",
+          "name": "RODOS 83 - jasny szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_cae4098e11bcd8431fdcbc3225e5e03b-jpg.webp"
+        }
+      ]
+    },
+    "FOREST": {
+      "category": "premium",
+      "colors": [
+        {
+          "id": "forest-02-kremowy",
+          "name": "FOREST 02 - kremowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_651284e511087a722b3d9aad4b883c20-jpg.webp"
+        },
+        {
+          "id": "forest-04-bezowy",
+          "name": "FOREST 04 - beżowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_955c17fd771ca73c160e1dee1c0fb135-jpg.webp"
+        },
+        {
+          "id": "forest-06-szary-bez",
+          "name": "FOREST 06 - szary beż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_5e20a0eac504633d6ab7c9d207ba1d6e-jpg.webp"
+        },
+        {
+          "id": "forest-07-jasny-szary",
+          "name": "FOREST 07 - jasny szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_052c02ab3ac2de21557f96d0f6e5aef6-jpg.webp"
+        },
+        {
+          "id": "forest-08-czerwony-malinowy",
+          "name": "FOREST 08 - czerwony malinowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_2891326313af175dc01d0c0ea9b6339f-jpg.webp"
+        },
+        {
+          "id": "forest-09-ciemny-fioletowy",
+          "name": "FOREST 09 - ciemny fioletowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_99c83dcd3feb939fb15e088ce417316e-jpg.webp"
+        },
+        {
+          "id": "forest-11-ciemny-brazowy",
+          "name": "FOREST 11 - ciemny brązowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_676dca87373f6480e0d8013e8a2cb732-jpg.webp"
+        },
+        {
+          "id": "forest-12-ciemny-szary",
+          "name": "FOREST 12 - ciemny szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_e6e0cbe3c2cc3d88079904a3b2eb15ce-jpg.webp"
+        },
+        {
+          "id": "forest-15-kobalt",
+          "name": "FOREST 15 - kobalt",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_d7445af0a31e6c3c2f861ed89b28a48a-jpg.webp"
+        },
+        {
+          "id": "forest-28-zolty",
+          "name": "FOREST 28 - żółty",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_ef58e9e427fba070be2d015ed3a9ac25-jpg.webp"
+        },
+        {
+          "id": "forest-32-szary",
+          "name": "FOREST 32 - szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_e405437e6790ba3b4d12fe5603ca508b-jpg.webp"
+        },
+        {
+          "id": "forest-38-limonka",
+          "name": "FOREST 38 - limonka",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_c553541cb48dcef1de93fc6d36cb6e15-jpg.webp"
+        },
+        {
+          "id": "forest-44-pomaranczowy",
+          "name": "FOREST 44 - pomarańczowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_3dc6421a1c70a6134838bfc5de23ffb5-jpg.webp"
+        },
+        {
+          "id": "forest-60-ciemny-turkusowy",
+          "name": "FOREST 60 - ciemny turkusowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_ea3899f53bde5563b788f3831ebe8eba-jpg.webp"
+        },
+        {
+          "id": "forest-84-ciemna-czekolada",
+          "name": "FOREST 84 - ciemna czekolada",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_28e2cd252a8ad984e47bf637b09065f8-jpg.webp"
+        }
+      ]
+    },
+    "CROWN": {
+      "category": "premium",
+      "colors": [
+        {
+          "id": "crown-01-kremowy",
+          "name": "CROWN 01 - kremowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_ab3566725e9c981460e12f199dea9229-jpg.webp"
+        },
+        {
+          "id": "crown-02-bez",
+          "name": "CROWN 02 - beż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_33644fd9906dad8d207ea83d0485e8f7-jpg.webp"
+        },
+        {
+          "id": "crown-03-ciemny-bez",
+          "name": "CROWN 03 - ciemny beż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_c975881be28631409bf9e442c8979236-jpg.webp"
+        },
+        {
+          "id": "crown-04-szary-bez",
+          "name": "CROWN 04 - szary beż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_053bf58f3b89ccec520a04e99c51f075-jpg.webp"
+        },
+        {
+          "id": "crown-05-ciemny-braz",
+          "name": "CROWN 05 - ciemny brąz",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_a0c06bfd88e4b44fa1dcf23d126ee86e-jpg.webp"
+        },
+        {
+          "id": "crown-06-wisniowy",
+          "name": "CROWN 06 - wiśniowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_8d2f732972365a80346842b0f59d371c-jpg.webp"
+        },
+        {
+          "id": "crown-07-czerwony-krwisty",
+          "name": "CROWN 07 - czerwony krwisty",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_191b452df8e0e52b8487155df4a97684-jpg.webp"
+        },
+        {
+          "id": "crown-08-rdzawy",
+          "name": "CROWN 08 - rdzawy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_f0df1d9b113dc4a315afa59686028a0d-jpg.webp"
+        },
+        {
+          "id": "crown-09-bursztynowy",
+          "name": "CROWN 09 - bursztynowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_8d62d5c3ffa5601db1ef020d4f489c29-jpg.webp"
+        },
+        {
+          "id": "crown-10-musztardowy",
+          "name": "CROWN 10 - musztardowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_43ed076cfaa179514382193ad9a925b4-jpg.webp"
+        },
+        {
+          "id": "crown-11-oliwkowy",
+          "name": "CROWN 11 - oliwkowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_597c687e4ae51f6fec5b519e478157b8-jpg.webp"
+        },
+        {
+          "id": "crown-12-zielen-butelkowa",
+          "name": "CROWN 12 - zieleń butelkowa",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_33881358e74c07a646e5666e030b669c-jpg.webp"
+        },
+        {
+          "id": "crown-13-lazurowy",
+          "name": "CROWN 13 - lazurowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_9fdbbe9b7086cd740ad753e00b7a2609-jpg.webp"
+        },
+        {
+          "id": "crown-14-niebieski",
+          "name": "CROWN 14 - niebieski",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_ef5d466a5bc530983c549095c50add38-jpg.webp"
+        },
+        {
+          "id": "crown-15-ciemny-granatowy",
+          "name": "CROWN 15 - ciemny granatowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_838345b5d7308df367b80f52ab2919f9-jpg.webp"
+        },
+        {
+          "id": "crown-16-popielaty",
+          "name": "CROWN 16 - popielaty",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_c1d6f777dda896c754297edc302cd081-jpg.webp"
+        },
+        {
+          "id": "crown-17-szary",
+          "name": "CROWN 17 - szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_3d571e8029ef561e79f30b8b2a292465-jpg.webp"
+        },
+        {
+          "id": "crown-18-ciemny-szary",
+          "name": "CROWN 18 - ciemny szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_1bccb960051779d5adf4bbeb8a8f4c30-jpg.webp"
+        },
+        {
+          "id": "crown-19-blady-czarny",
+          "name": "CROWN 19 - blady czarny",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_bc0c832b39f39772f88217fbd85ae64b-jpg.webp"
+        },
+        {
+          "id": "crown-20-czarny",
+          "name": "CROWN 20 - czarny",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_bdc26d19084b54b0e56c189c6cc52fd3-jpg.webp"
+        }
       ]
     },
     "MONOLITH": {
       "category": "premium",
       "colors": [
-        { "id": "monolith-gray", "name": "MONOLITH - szary", "image": null },
-        { "id": "monolith-black", "name": "MONOLITH - czarny", "image": null },
-        { "id": "monolith-navy", "name": "MONOLITH - granatowy", "image": null }
+        {
+          "id": "monolith-02-ecru",
+          "name": "MONOLITH 02 - ecru",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_b88dc3b120a0445b443cc561fdcf1df3-jpg.webp"
+        },
+        {
+          "id": "monolith-09-jasny-braz",
+          "name": "MONOLITH 09 - jasny brąz",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_373f1beee6f36125bad2c55b949f2154-jpg.webp"
+        },
+        {
+          "id": "monolith-15-szary-braz",
+          "name": "MONOLITH 15 - szary brąz",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_fde305f5e92fbb08ffe60951cdefc5fe-jpg.webp"
+        },
+        {
+          "id": "monolith-29-ciemny-braz",
+          "name": "MONOLITH 29 - ciemny brąz",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_8a44b75fcd6420bbde841e8e1fd9ea82-jpg.webp"
+        },
+        {
+          "id": "monolith-37-zielen-butelkowa",
+          "name": "MONOLITH 37 - zieleń butelkowa",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_71a6de8978bad743d39e65dd969191ce-jpg.webp"
+        },
+        {
+          "id": "monolith-38-zgnila-zielen",
+          "name": "MONOLITH 38 - zgniła zieleń",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_299ee495a7eb4c6f28d1738663947e52-jpg.webp"
+        },
+        {
+          "id": "monolith-48-musztardowy",
+          "name": "MONOLITH 48 - musztardowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_70ac4c7665a4fdc5a4ec7e50ec92f809-jpg.webp"
+        },
+        {
+          "id": "monolith-59-czerwony-buraczkowy",
+          "name": "MONOLITH 59 - czerwony buraczkowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_1450f9d0353a38c844f869f4962253ca-jpg.webp"
+        },
+        {
+          "id": "monolith-61-lososiowy",
+          "name": "MONOLITH 61 - łososiowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_ca16000fc37ca8bda07d609edaa4340f-jpg.webp"
+        },
+        {
+          "id": "monolith-62-szary-roz",
+          "name": "MONOLITH 62 - szary róż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_317834d3d0bbf03537c147c97cc4c8f7-jpg.webp"
+        },
+        {
+          "id": "monolith-63-roz",
+          "name": "MONOLITH 63 - róż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_e7be55107375f41a06000dbb504e5c7e-jpg.webp"
+        },
+        {
+          "id": "monolith-69-oberzyna",
+          "name": "MONOLITH 69 - oberżyna",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_b3457350d123bbee24a77e8ce7b25454-jpg.webp"
+        },
+        {
+          "id": "monolith-70-jasny-niebieski",
+          "name": "MONOLITH 70 - jasny niebieski",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_15815002a5de04fc05322e51dc9c50c1-jpg.webp"
+        },
+        {
+          "id": "monolith-72-niebieski",
+          "name": "MONOLITH 72 - niebieski",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_4e84804fea79cb21de79089ab1f9d085-jpg.webp"
+        },
+        {
+          "id": "monolith-77-ciemny-niebieski",
+          "name": "MONOLITH 77 - ciemny niebieski",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_bf664d733deb30e5b48673994a63ffff-jpg.webp"
+        },
+        {
+          "id": "monolith-79-granatowy",
+          "name": "MONOLITH 79 - granatowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_1a2f45083b6550abf42d92e101fbeb63-jpg.webp"
+        },
+        {
+          "id": "monolith-84-popielaty",
+          "name": "MONOLITH 84 - popielaty",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_cd532ccb64585fb751b26ed605470511-jpg.webp"
+        },
+        {
+          "id": "monolith-85-szary",
+          "name": "MONOLITH 85 - szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_b2cd0ba02194284af857299ec45e1e2d-jpg.webp"
+        },
+        {
+          "id": "monolith-92-ciemny-szary",
+          "name": "MONOLITH 92 - ciemny szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_c04f0e522519e6856967480a0d2a090d-jpg.webp"
+        },
+        {
+          "id": "monolith-95-czern-gaszona",
+          "name": "MONOLITH 95 - czerń gaszona",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_70ca32ce3637b065b378733bfb28891b-jpg.webp"
+        },
+        {
+          "id": "monolith-97-grafitowy",
+          "name": "MONOLITH 97 - grafitowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_47154a9d08b6cab004f2b0019c8f67e3-jpg.webp"
+        }
+      ]
+    },
+    "EVO": {
+      "category": "premium",
+      "colors": [
+        {
+          "id": "evo-25-bezowy",
+          "name": "EVO 25 - beżowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_274d0f96753a28623dab9b2b53da5c10-jpg.webp"
+        },
+        {
+          "id": "evo-26-kamienisty",
+          "name": "EVO 26 - kamienisty",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_99a435c555c7658f8e82a2f62b416638-jpg.webp"
+        },
+        {
+          "id": "evo-27-jasne-kakao",
+          "name": "EVO 27 - jasne kakao",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_0a2f221eb2a9c75b58baef79328e902b-jpg.webp"
+        },
+        {
+          "id": "evo-28-jasny-roz",
+          "name": "EVO 28 - jasny róż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_d9567ec96ef5d6ec99fd0bd7d6f5d4a0-jpg.webp"
+        },
+        {
+          "id": "evo-29-blady-seledyn",
+          "name": "EVO 29 - blady seledyn",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_65e8e2de7a8aae74edc1842c079ad119-jpg.webp"
+        },
+        {
+          "id": "evo-30-turkus",
+          "name": "EVO 30 - turkus",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_b01fb3c49637f263c4619c03fc1c4dd7-jpg.webp"
+        },
+        {
+          "id": "evo-31-lodowy",
+          "name": "EVO 31 - lodowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_8ffec7b40409d200c7719b905997d472-jpg.webp"
+        },
+        {
+          "id": "evo-32-szary",
+          "name": "EVO 32 - szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_876b56558ad4536b6609c71336828f08-jpg.webp"
+        },
+        {
+          "id": "evo-33-grafit",
+          "name": "EVO 33 - grafit",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_e197faa77ec5cc44ad752ab9c00fa2a1-jpg.webp"
+        }
+      ]
+    },
+    "FRESH": {
+      "category": "premium",
+      "colors": [
+        {
+          "id": "fresh-01-ecru",
+          "name": "FRESH 01 - ecru",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_be779a427aa434b99c571e0fcdfcd691-jpg.webp"
+        },
+        {
+          "id": "fresh-02-ciemny-ecru",
+          "name": "FRESH 02 - ciemny ecru",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_4633334162732bd831e8b561ea76dc85-jpg.webp"
+        },
+        {
+          "id": "fresh-03-bez",
+          "name": "FRESH 03 - beż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_9f41647eaa726afacdda5343e59e7ff0-jpg.webp"
+        },
+        {
+          "id": "fresh-04-blady-braz",
+          "name": "FRESH 04 - blady brąz",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_812140bbbd474a87ebdac9f7f462f797-jpg.webp"
+        },
+        {
+          "id": "fresh-05-szary-braz",
+          "name": "FRESH 05 - szary brąz",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_ec14535086a7bd4f1b02877361e2dd2e-jpg.webp"
+        },
+        {
+          "id": "fresh-06-braz",
+          "name": "FRESH 06 - brąz",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_6f28ed4a52bf7d7e45cebbafe7f24365-jpg.webp"
+        },
+        {
+          "id": "fresh-08-czerwony",
+          "name": "FRESH 08 - czerwony",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_2ad10bb1918dc5de5cf7790c9d87d086-jpg.webp"
+        },
+        {
+          "id": "fresh-09-szary-roz",
+          "name": "FRESH 09 - szary róż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_3d15bd1a4117619a47677ef17a0d432d-jpg.webp"
+        },
+        {
+          "id": "fresh-10-ciemny-seledyn",
+          "name": "FRESH 10 - ciemny seledyn",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_168485b16231a49ecf73adf194323edd-jpg.webp"
+        },
+        {
+          "id": "fresh-11-granatowy",
+          "name": "FRESH 11 - granatowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_c21ec63a466c3c9778d922284ec84acf-jpg.webp"
+        },
+        {
+          "id": "fresh-12-zgnila-zielen",
+          "name": "FRESH 12 - zgniła zieleń",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_77a853641cd1baea0ab109ae1def582b-jpg.webp"
+        },
+        {
+          "id": "fresh-13-zielen-butelkowa",
+          "name": "FRESH 13 - zieleń butelkowa",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_193a09c8b03d6373549cd10145f0af1c-jpg.webp"
+        },
+        {
+          "id": "fresh-14-szary",
+          "name": "FRESH 14 - szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_82c35c386b6559d56c5ba5db255341a6-jpg.webp"
+        },
+        {
+          "id": "fresh-16-grafitowy",
+          "name": "FRESH 16 - grafitowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_920faf8449ae46c1bc6334f5a8adf541-jpg.webp"
+        },
+        {
+          "id": "fresh-17-czarny",
+          "name": "FRESH 17 - czarny",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_9e76899390ff9146e2bd5a535ec3fc3c-jpg.webp"
+        },
+        {
+          "id": "fresh-30-ciemny-turkus",
+          "name": "FRESH 30 - ciemny turkus",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_8580e256451b9cf3416129b1d1a97068-jpg.webp"
+        },
+        {
+          "id": "fresh-32-stalowy",
+          "name": "FRESH 32 - stalowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_3278a00be7b8f3242f4837378eba2d95-jpg.webp"
+        },
+        {
+          "id": "fresh-33-lodowy",
+          "name": "FRESH 33 - lodowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_a5d71512e93f693002ceb3ef8735f085-jpg.webp"
+        },
+        {
+          "id": "fresh-34-szaro-niebieski",
+          "name": "FRESH 34 - szaro niebieski",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_7397fa2694e3ebf2c188d95b1ec94b7e-jpg.webp"
+        },
+        {
+          "id": "fresh-36-granatowa-czern",
+          "name": "FRESH 36 - granatowa czerń",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_1894d9130b35aaa337539c4914cb1121-jpg.webp"
+        },
+        {
+          "id": "fresh-37-musztardowy",
+          "name": "FRESH 37 - musztardowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_5375b47b98fdd3708942ada919fefc2b-jpg.webp"
+        },
+        {
+          "id": "fresh-38-ciemny-szary",
+          "name": "FRESH 38 - ciemny szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_2dd537b96518ccc07447d9459d7d5f72-jpg.webp"
+        }
+      ]
+    },
+    "PRESTON": {
+      "category": "premium",
+      "colors": [
+        {
+          "id": "preston-100-czarny",
+          "name": "PRESTON 100 - czarny",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_b0e1d6879bde4dbb41ac002db7ca2a47-jpg.webp"
+        },
+        {
+          "id": "preston-20-kremowy",
+          "name": "PRESTON 20 - kremowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_d467d3af42454996940dc429be0c1687-jpg.webp"
+        },
+        {
+          "id": "preston-21-bezowy",
+          "name": "PRESTON 21 - beżowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_ae4efab5c61670e62293f0759308dae6-jpg.webp"
+        },
+        {
+          "id": "preston-22-szary-braz",
+          "name": "PRESTON 22 - szary brąz",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_c5ef345a7dccf65bb4abfa3f30e04602-jpg.webp"
+        },
+        {
+          "id": "preston-23-ciemny-bez",
+          "name": "PRESTON 23 - ciemny beż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_004b099d6ee49dba84f57c68d2a1292c-jpg.webp"
+        },
+        {
+          "id": "preston-24-braz",
+          "name": "PRESTON 24 - brąz",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_04960773b9a3696809aed8c1afda1663-jpg.webp"
+        },
+        {
+          "id": "preston-29-ciemny-braz",
+          "name": "PRESTON 29 - ciemny brąz",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_087af70fe14eb60a0f774f7024707a37-jpg.webp"
+        },
+        {
+          "id": "preston-31-cieply-popiel",
+          "name": "PRESTON 31 - ciepły popiel",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_dcbb395594a0887ec4cec8a0ae3f3ceb-jpg.webp"
+        },
+        {
+          "id": "preston-32-szary",
+          "name": "PRESTON 32 - szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_3242f979cffaabf6d468e29a56f96892-jpg.webp"
+        },
+        {
+          "id": "preston-38-ciemna-oliwka",
+          "name": "PRESTON 38 - ciemna oliwka",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_59a01597750b4efdd0a5812896561f82-jpg.webp"
+        },
+        {
+          "id": "preston-94-gaszony-braz",
+          "name": "PRESTON 94 - gaszony brąz",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_30c5af9a5290d23e6dc6c293a70d8648-jpg.webp"
+        },
+        {
+          "id": "preston-96-gaszony-czarny",
+          "name": "PRESTON 96 - gaszony czarny",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_bb484e4f9cc94b51986e19d38c341df1-jpg.webp"
+        }
       ]
     },
     "MATT_VELVET": {
       "category": "premium",
       "colors": [
-        { "id": "matt-velvet-gray", "name": "MATT VELVET - szary", "image": null },
-        { "id": "matt-velvet-green", "name": "MATT VELVET - butelkowa zielen", "image": null },
-        { "id": "matt-velvet-navy", "name": "MATT VELVET - granatowy", "image": null }
+        {
+          "id": "matt-velvet-01-ciemny-bez",
+          "name": "MATT_VELVET 01 - ciemny beż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_1c5b0bb3c3178de118907ee1379e2319-png.webp"
+        },
+        {
+          "id": "matt-velvet-02-stalowy",
+          "name": "MATT_VELVET 02 - stalowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_cdf7278d5f9e7d6df397601956ff53ca-png.webp"
+        },
+        {
+          "id": "matt-velvet-06-ecru",
+          "name": "MATT_VELVET 06 - ecru",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_2fddf17e5dd1422be05973d1453c3792-jpg.webp"
+        },
+        {
+          "id": "matt-velvet-08-bez",
+          "name": "MATT_VELVET 08 - beż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_827f1eabe7d17d0d9b0bf5d5d48913e3-jpg.webp"
+        },
+        {
+          "id": "matt-velvet-09-szary-bez",
+          "name": "MATT_VELVET 09 - szary beż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_f65d72a7f13de2896d608e1c93385ba7-jpg.webp"
+        },
+        {
+          "id": "matt-velvet-15-butelkowa-zielen",
+          "name": "MATT_VELVET 15 - butelkowa zieleń",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_897e7a7c150fc0225fa7795d0a85fafb-png.webp"
+        },
+        {
+          "id": "matt-velvet-29-braz",
+          "name": "MATT_VELVET 29 - brąz",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_917d6ebbf88daec63ec91439f96a78a8-jpg.webp"
+        },
+        {
+          "id": "matt-velvet-34-pistacjowy",
+          "name": "MATT_VELVET 34 - pistacjowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_75c6b6b073dd803e80a37c96d809f7f4-jpg.webp"
+        },
+        {
+          "id": "matt-velvet-38-zielen-wojskowa",
+          "name": "MATT_VELVET 38 - zieleń wojskowa",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_bee6a10beb48c7a22b5a8416db0af1f1-jpg.webp"
+        },
+        {
+          "id": "matt-velvet-48-zolty",
+          "name": "MATT_VELVET 48 - żółty",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_2ce14a97203c4f2233e3b06225ff3a3f-jpg.webp"
+        },
+        {
+          "id": "matt-velvet-59-czerwony",
+          "name": "MATT_VELVET 59 - czerwony",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_b5da69469f1084ad4ea61cc914a347a9-jpg.webp"
+        },
+        {
+          "id": "matt-velvet-61-jasny-roz",
+          "name": "MATT_VELVET 61 - jasny róż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_cae730cf21b92d53a5123a444aee159f-jpg.webp"
+        },
+        {
+          "id": "matt-velvet-63-rozowy",
+          "name": "MATT_VELVET 63 - różowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_4e6d5d9027c499e4dbab7cc59ec6888d-jpg.webp"
+        },
+        {
+          "id": "matt-velvet-68-bordowy",
+          "name": "MATT_VELVET 68 - bordowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_d244c74415e1db00517b64008f2b9e3e-jpg.webp"
+        },
+        {
+          "id": "matt-velvet-69-ciemny-purpurowy",
+          "name": "MATT_VELVET 69 - ciemny purpurowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_e78c82de6fd8a3d0b21f9d8816317732-jpg.webp"
+        },
+        {
+          "id": "matt-velvet-72-ciemny-mietowy",
+          "name": "MATT_VELVET 72 - ciemny miętowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_2a52d3d8186ebcad15e1c861d123da78-jpg.webp"
+        },
+        {
+          "id": "matt-velvet-73-jasny-niebieski",
+          "name": "MATT_VELVET 73 - jasny niebieski",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_4d10a89f09f808e9824633fffd80f510-jpg.webp"
+        },
+        {
+          "id": "matt-velvet-74-niebieski",
+          "name": "MATT_VELVET 74 - niebieski",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_5b92c154470bcc7b45d66532f1a3a7c5-jpg.webp"
+        },
+        {
+          "id": "matt-velvet-75-morski",
+          "name": "MATT_VELVET 75 - morski",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_f476aee489683b4d0d2776818e59f384-jpg.webp"
+        },
+        {
+          "id": "matt-velvet-77-ciemny-turkus",
+          "name": "MATT_VELVET 77 - ciemny turkus",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_05197602efbd1890d4115b2e958bda37-jpg.webp"
+        },
+        {
+          "id": "matt-velvet-79-granatowy",
+          "name": "MATT_VELVET 79 - granatowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_17d109e1821d0154f1f501663eacd636-jpg.webp"
+        },
+        {
+          "id": "matt-velvet-83-popiel",
+          "name": "MATT_VELVET 83 - popiel",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_65a9dda6338ddfe6baaf7cac46b19a0e-jpg.webp"
+        },
+        {
+          "id": "matt-velvet-85-szary",
+          "name": "MATT_VELVET 85 - szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_4f68e38547969577a4c1f37028c41c8e-jpg.webp"
+        },
+        {
+          "id": "matt-velvet-93-ciemny-szary",
+          "name": "MATT_VELVET 93 - ciemny szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_370f315788af92a160e7b1fe9dbe4f10-jpg.webp"
+        },
+        {
+          "id": "matt-velvet-97-grafitowy",
+          "name": "MATT_VELVET 97 - grafitowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_6b4281c44e8783197e7b6bdbb1a133bc-jpg.webp"
+        },
+        {
+          "id": "matt-velvet-99-czarny",
+          "name": "MATT_VELVET 99 - czarny",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_7c3546631dd69050853c74b17916b8a9-jpg.webp"
+        }
+      ]
+    },
+    "JASMINE_PIK": {
+      "category": "premium",
+      "colors": [
+        {
+          "id": "jasmine-pik-100-czarny",
+          "name": "JASMINE_PIK 100 - czarny",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_57eb5cdb26c62b04aca1ffbbef003475-jpg.webp"
+        },
+        {
+          "id": "jasmine-pik-21-kremowy",
+          "name": "JASMINE_PIK 21 - kremowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_29a1edc81e1f6a630edbbebae5705ea3-jpg.webp"
+        },
+        {
+          "id": "jasmine-pik-22-bezowy",
+          "name": "JASMINE_PIK 22 - beżowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_a4585e8565a040a645c82ed2fb5024ba-jpg.webp"
+        },
+        {
+          "id": "jasmine-pik-23-szary-bez",
+          "name": "JASMINE_PIK 23 - szary beż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_88dfbd6d9299c331e009f5e622dcec54-jpg.webp"
+        },
+        {
+          "id": "jasmine-pik-28-brazowy",
+          "name": "JASMINE_PIK 28 - brązowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_2e445250484fc5ce5587d54f56c521c3-jpg.webp"
+        },
+        {
+          "id": "jasmine-pik-34-jasny-mietowy",
+          "name": "JASMINE_PIK 34 - jasny miętowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_c425ba73b445ffd47a1ba0f96d4c24ba-jpg.webp"
+        },
+        {
+          "id": "jasmine-pik-60-czerwony",
+          "name": "JASMINE_PIK 60 - czerwony",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_f0018fff4f04ec1753a77b0c6de876c1-jpg.webp"
+        },
+        {
+          "id": "jasmine-pik-61-pudrowy-roz",
+          "name": "JASMINE_PIK 61 - pudrowy róż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_4d4c9b03e117329bf16e34b658769544-jpg.webp"
+        },
+        {
+          "id": "jasmine-pik-73-lodowy",
+          "name": "JASMINE_PIK 73 - lodowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_d83fdfeec67547d49f1d54a50b8c44fc-jpg.webp"
+        },
+        {
+          "id": "jasmine-pik-85-turkusowy",
+          "name": "JASMINE_PIK 85 - turkusowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_2661d9611db6f1545ca33a7fa4b9a32c-jpg.webp"
+        },
+        {
+          "id": "jasmine-pik-90-szary",
+          "name": "JASMINE_PIK 90 - szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_6ecf453250ace57872ffa4d8a9b371b9-jpg.webp"
+        },
+        {
+          "id": "jasmine-pik-96-grafit",
+          "name": "JASMINE_PIK 96 - grafit",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_41257088f72b57cc6ab2171d71032367-jpg.webp"
+        }
+      ]
+    },
+    "RIVIERA": {
+      "category": "premium",
+      "colors": [
+        {
+          "id": "riviera-74-niebieski",
+          "name": "RIVIERA 74 - niebieski",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_7ebd63ae75cfd158af3e1834d1be6417-jpg.webp"
+        },
+        {
+          "id": "riviera-82-popielaty",
+          "name": "RIVIERA 82 - popielaty",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_a2cd89761034008bf12784df866c18e1-jpg.webp"
+        },
+        {
+          "id": "riviera-100-czarny",
+          "name": "RIVIERA 100 - czarny",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_866abe7dbe53bceb00b61b1fdeb59dbc-jpg.webp"
+        },
+        {
+          "id": "riviera-16-szaro-bez",
+          "name": "RIVIERA 16 - szaro beż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_f0662eabad033c021151d21f69a7cda1-jpg.webp"
+        },
+        {
+          "id": "riviera-21-ecru",
+          "name": "RIVIERA 21 - ecru",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_253b30f06eee5a158c707711b1f709b4-jpg.webp"
+        },
+        {
+          "id": "riviera-24-bezowy",
+          "name": "RIVIERA 24 - beżowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_eff8366542d3059f47d137cbbe517da1-jpg.webp"
+        },
+        {
+          "id": "riviera-26-blady-braz",
+          "name": "RIVIERA 26 - blady brąz",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_178f243c17d2d76e8c4b7373a42e2578-jpg.webp"
+        },
+        {
+          "id": "riviera-28-braz",
+          "name": "RIVIERA 28 - brąz",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_fc495faabfbedf6b0cccfe7b3fb9e662-jpg.webp"
+        },
+        {
+          "id": "riviera-29-ciemny-braz",
+          "name": "RIVIERA 29 - ciemny brąz",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_9185727182740c33a87b002ca6a08572-jpg.webp"
+        },
+        {
+          "id": "riviera-34-mietowy",
+          "name": "RIVIERA 34 - miętowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_7edc8adcc625acee43957d13530b7c38-jpg.webp"
+        },
+        {
+          "id": "riviera-36-zielony",
+          "name": "RIVIERA 36 - zielony",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_b7eef1e9736657cbbcae5a22b8b77937-jpg.webp"
+        },
+        {
+          "id": "riviera-38-zielen-butelkowa",
+          "name": "RIVIERA 38 - zieleń butelkowa",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_213840c0f7822428acd41e7dd92860bc-jpg.webp"
+        },
+        {
+          "id": "riviera-41-musztardowy",
+          "name": "RIVIERA 41 - musztardowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_4dbc5ce0dde03724a01b212a98e1c103-jpg.webp"
+        },
+        {
+          "id": "riviera-51-pomaranczowy",
+          "name": "RIVIERA 51 - pomarańczowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_39c07d4a3ea7683a1e974d5b40a267e3-jpg.webp"
+        },
+        {
+          "id": "riviera-56-ceglany",
+          "name": "RIVIERA 56 - ceglany",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_c41a561a4aa8cc45325a12f0edab5df1-jpg.webp"
+        },
+        {
+          "id": "riviera-59-bordowy",
+          "name": "RIVIERA 59 - bordowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_936ab029e52f4b57c1c1ea19f1935be6-jpg.webp"
+        },
+        {
+          "id": "riviera-60-fioletowy",
+          "name": "RIVIERA 60 - fioletowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_3c391722f13bd4d2de2c474442190c9d-jpg.webp"
+        },
+        {
+          "id": "riviera-61-czerwony-krwisty",
+          "name": "RIVIERA 61 - czerwony krwisty",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_66ee82c2c57e9aa40a199cc53e371d41-jpg.webp"
+        },
+        {
+          "id": "riviera-62-szary-roz",
+          "name": "RIVIERA 62 - szary róż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_3ad3f38529f6a7039c99e0dea9f22520-jpg.webp"
+        },
+        {
+          "id": "riviera-63-jasny-fiolet",
+          "name": "RIVIERA 63 - jasny fiolet",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_2fd7a1969c53cf72ed121a8e19da46ae-jpg.webp"
+        },
+        {
+          "id": "riviera-69-ciemny-fiolet",
+          "name": "RIVIERA 69 - ciemny fiolet",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_c60932722d58d04846224935285ea596-jpg.webp"
+        },
+        {
+          "id": "riviera-76-turkusowy",
+          "name": "RIVIERA 76 - turkusowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_e99e1defefcc96b6e2928043e26d7e7d-jpg.webp"
+        },
+        {
+          "id": "riviera-79-atramentowy",
+          "name": "RIVIERA 79 - atramentowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_81bf2e21f98f594185371d47b7b31bc4-jpg.webp"
+        },
+        {
+          "id": "riviera-80-lodowy",
+          "name": "RIVIERA 80 - lodowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_bf1845d5998bfdf52dbc5362f23a5e32-jpg.webp"
+        },
+        {
+          "id": "riviera-81-granatowy",
+          "name": "RIVIERA 81 - granatowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_d0a2bbfbb08308a459b8f9cf78f9b295-jpg.webp"
+        },
+        {
+          "id": "riviera-87-ciemny-seledyn",
+          "name": "RIVIERA 87 - ciemny seledyn",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_c0d96af5413d64f3e952ec8a5619c0ff-jpg.webp"
+        },
+        {
+          "id": "riviera-91-szary",
+          "name": "RIVIERA 91 - szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_a81fac2516beb3c2d24583e8b3523abe-jpg.webp"
+        },
+        {
+          "id": "riviera-95-grafitowy",
+          "name": "RIVIERA 95 - grafitowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_0dc0eb4bddb1cf91276344393a98d4a9-jpg.webp"
+        }
+      ]
+    },
+    "GEMMA": {
+      "category": "premium",
+      "colors": [
+        {
+          "id": "gemma-01-lodowy",
+          "name": "GEMMA 01 - lodowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_f6aaed08685f9b824a82a6ac6b7b7473-jpg.webp"
+        },
+        {
+          "id": "gemma-04-ecru",
+          "name": "GEMMA 04 - ecru",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_f158b4ec8417ecb274ab8d97aa45deb1-jpg.webp"
+        },
+        {
+          "id": "gemma-06-bezowy",
+          "name": "GEMMA 06 - beżowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_38397b48bae55113807e17742283df8e-jpg.webp"
+        },
+        {
+          "id": "gemma-10-kremowy",
+          "name": "GEMMA 10 - kremowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_8b2b28970c7897e2cabf9bf24e1759ae-jpg.webp"
+        },
+        {
+          "id": "gemma-11-kamienisty",
+          "name": "GEMMA 11 - kamienisty",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_ba699b7cfbb5f10fdc1f8bc3a6150547-jpg.webp"
+        },
+        {
+          "id": "gemma-13-ciemny-bez",
+          "name": "GEMMA 13 - ciemny beż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_44cf59d0d5ad0ab7709dce73d0416633-jpg.webp"
+        },
+        {
+          "id": "gemma-39-zielen-butelkowa",
+          "name": "GEMMA 39 - zieleń butelkowa",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_0f71e9fc64cd5e00b23aa40ceea8ab7e-jpg.webp"
+        },
+        {
+          "id": "gemma-58-czerwony",
+          "name": "GEMMA 58 - czerwony",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_59119a816630c06d43a29cea5e8d4ba6-jpg.webp"
+        },
+        {
+          "id": "gemma-59-oberzynowy",
+          "name": "GEMMA 59 - oberżynowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_ff86c77b04e0e1290de7694a81c9733e-jpg.webp"
+        },
+        {
+          "id": "gemma-60-rozowy",
+          "name": "GEMMA 60 - różowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_393b784f2239080ab798809c2600e2dc-jpg.webp"
+        },
+        {
+          "id": "gemma-63-brudny-roz",
+          "name": "GEMMA 63 - brudny róż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_3b6ef2e2c6074c00e1ea936ac4619e31-jpg.webp"
+        },
+        {
+          "id": "gemma-70-jasny-niebieski",
+          "name": "GEMMA 70 - jasny niebieski",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_e46c4b03ce93c57d5b332437a919e219-jpg.webp"
+        },
+        {
+          "id": "gemma-75-turkusowy",
+          "name": "GEMMA 75 - turkusowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_3ec85ee8096ef3cdcbdfbed1a535c10c-jpg.webp"
+        },
+        {
+          "id": "gemma-77-niebieski",
+          "name": "GEMMA 77 - niebieski",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_4c63448d5de85cfcc69bb4037071ac62-jpg.webp"
+        },
+        {
+          "id": "gemma-79-granatowy",
+          "name": "GEMMA 79 - granatowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_ff5908571f75267851451295f1b1f7a4-jpg.webp"
+        },
+        {
+          "id": "gemma-80-popielaty",
+          "name": "GEMMA 80 - popielaty",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_a8ea08ff6ccd8f35579b98ca441d0459-jpg.webp"
+        },
+        {
+          "id": "gemma-85-szary",
+          "name": "GEMMA 85 - szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_49aab2e015a69b5f617930029237d7c9-jpg.webp"
+        },
+        {
+          "id": "gemma-86-jasny-szary",
+          "name": "GEMMA 86 - jasny szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_3f62fbd0961606fc42f2882ea88856f6-jpg.webp"
+        },
+        {
+          "id": "gemma-90-stalowy",
+          "name": "GEMMA 90 - stalowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_d74e01ae52a39c8e86810b9922abbb3e-jpg.webp"
+        },
+        {
+          "id": "gemma-93-ciemny-szary",
+          "name": "GEMMA 93 - ciemny szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_28db7e7367f2ec39880e2daefe948cf5-jpg.webp"
+        },
+        {
+          "id": "gemma-97-czarny",
+          "name": "GEMMA 97 - czarny",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_35f0d7390ed6b41c97ad0ac7c36d0c8e-jpg.webp"
+        }
       ]
     },
     "NOW_OR_NEVER": {
       "category": "exclusive",
       "colors": [
-        { "id": "now-or-never-1", "name": "NOW OR NEVER - wariant 1", "image": null }
+        {
+          "id": "now-or-never-01-bialy",
+          "name": "NOW_OR_NEVER 01 - biały",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_5e4929e5c2fe3afc7ff5fc8ab7470ed2-jpg.webp"
+        },
+        {
+          "id": "now-or-never-02-kremowy",
+          "name": "NOW_OR_NEVER 02 - kremowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_b7b8d405933665e9e8137e12d4131b20-jpg.webp"
+        },
+        {
+          "id": "now-or-never-03-porcelanowy",
+          "name": "NOW_OR_NEVER 03 - porcelanowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_80925a386e24d69c9b78fa427dfb376a-jpg.webp"
+        },
+        {
+          "id": "now-or-never-05-szary-bez",
+          "name": "NOW_OR_NEVER 05 - szary beż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_a55d0298f2e388a489fdbeff41360810-jpg.webp"
+        },
+        {
+          "id": "now-or-never-06-bez",
+          "name": "NOW_OR_NEVER 06 - beż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_49aacbefde173162840b4e05c529af65-jpg.webp"
+        },
+        {
+          "id": "now-or-never-100-czarny",
+          "name": "NOW_OR_NEVER 100 - czarny",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_d08c9b48769cdca511bf6d85b3136762-jpg.webp"
+        },
+        {
+          "id": "now-or-never-14-jasny-braz",
+          "name": "NOW_OR_NEVER 14 - jasny brąz",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_08f27c96713c26b54400b140cb034021-jpg.webp"
+        },
+        {
+          "id": "now-or-never-16-cieply-szary",
+          "name": "NOW_OR_NEVER 16 - ciepły szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_8de1649da2ea0b3222b5227d1889d928-jpg.webp"
+        },
+        {
+          "id": "now-or-never-18-ciemny-bez",
+          "name": "NOW_OR_NEVER 18 - ciemny beż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_e5590795c1160c4ea55c2aed753d2305-jpg.webp"
+        },
+        {
+          "id": "now-or-never-34-turkusowy",
+          "name": "NOW_OR_NEVER 34 - turkusowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_834ba571d78887a01529e0c6acfd9611-jpg.webp"
+        },
+        {
+          "id": "now-or-never-37-zielen-butelkowa",
+          "name": "NOW_OR_NEVER 37 - zieleń butelkowa",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_b54daf92f14e4cd37404f6884d297625-jpg.webp"
+        },
+        {
+          "id": "now-or-never-38-zielony",
+          "name": "NOW_OR_NEVER 38 - zielony",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_8364196a7cd06c07e433f2a7ff878fea-jpg.webp"
+        },
+        {
+          "id": "now-or-never-54-ceglany",
+          "name": "NOW_OR_NEVER 54 - ceglany",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_a9e5a840ff8f27dc7cda1b644fe08b37-jpg.webp"
+        },
+        {
+          "id": "now-or-never-56-braz",
+          "name": "NOW_OR_NEVER 56 - brąz",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_612bcc871ef886d9abd48f1f7ad0cc8e-jpg.webp"
+        },
+        {
+          "id": "now-or-never-61-jasny-roz",
+          "name": "NOW_OR_NEVER 61 - jasny róż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_608a695c7bc544a5f3e748e27e461390-jpg.webp"
+        },
+        {
+          "id": "now-or-never-64-roz",
+          "name": "NOW_OR_NEVER 64 - róż",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_767bbc036005f844d16a0308c4a134f1-jpg.webp"
+        },
+        {
+          "id": "now-or-never-73-jasny-niebieski",
+          "name": "NOW_OR_NEVER 73 - jasny niebieski",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_41e9820a894c5ecc5120dbe48b616d33-jpg.webp"
+        },
+        {
+          "id": "now-or-never-77-niebieski",
+          "name": "NOW_OR_NEVER 77 - niebieski",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_d70a0f0af8c311d624a3be68c2f07f25-jpg.webp"
+        },
+        {
+          "id": "now-or-never-79-granatowy",
+          "name": "NOW_OR_NEVER 79 - granatowy",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_7bc96db4be1142fc939ada4b5a0abf75-jpg.webp"
+        },
+        {
+          "id": "now-or-never-83-szary",
+          "name": "NOW_OR_NEVER 83 - szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_a6fe661d9f0c7da11c2ca916e623921d-jpg.webp"
+        },
+        {
+          "id": "now-or-never-92-ciemny-szary",
+          "name": "NOW_OR_NEVER 92 - ciemny szary",
+          "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_e771a052cc116d64bf243e58c4bceb30-jpg.webp"
+        }
       ]
     }
   },
   "defaultPalette": [
-    { "id": "color-white", "name": "Bialy", "hex": "#FFFFFF" },
-    { "id": "color-cream", "name": "Kremowy", "hex": "#F5F5DC" },
-    { "id": "color-beige", "name": "Bezowy", "hex": "#D4C4A8" },
-    { "id": "color-gray-light", "name": "Jasny szary", "hex": "#C0C0C0" },
-    { "id": "color-gray", "name": "Szary", "hex": "#808080" },
-    { "id": "color-gray-dark", "name": "Grafitowy", "hex": "#4A4A4A" },
-    { "id": "color-black", "name": "Czarny", "hex": "#1A1A1A" },
-    { "id": "color-navy", "name": "Granatowy", "hex": "#1E3A5F" },
-    { "id": "color-green", "name": "Butelkowa zielen", "hex": "#2D5A3D" },
-    { "id": "color-burgundy", "name": "Bordowy", "hex": "#722F37" }
+    {
+      "id": "color-white",
+      "name": "Bialy",
+      "hex": "#FFFFFF"
+    },
+    {
+      "id": "color-cream",
+      "name": "Kremowy",
+      "hex": "#F5F5DC"
+    },
+    {
+      "id": "color-beige",
+      "name": "Bezowy",
+      "hex": "#D4C4A8"
+    },
+    {
+      "id": "color-gray-light",
+      "name": "Jasny szary",
+      "hex": "#C0C0C0"
+    },
+    {
+      "id": "color-gray",
+      "name": "Szary",
+      "hex": "#808080"
+    },
+    {
+      "id": "color-gray-dark",
+      "name": "Grafitowy",
+      "hex": "#4A4A4A"
+    },
+    {
+      "id": "color-black",
+      "name": "Czarny",
+      "hex": "#1A1A1A"
+    },
+    {
+      "id": "color-navy",
+      "name": "Granatowy",
+      "hex": "#1E3A5F"
+    },
+    {
+      "id": "color-green",
+      "name": "Butelkowa zielen",
+      "hex": "#2D5A3D"
+    },
+    {
+      "id": "color-burgundy",
+      "name": "Bordowy",
+      "hex": "#722F37"
+    }
   ]
 }
