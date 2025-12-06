@@ -64,6 +64,7 @@ export default function WallConfig() {
 
   // Zapisz zmiany segmentu (wszystkie naraz)
   const handleSaveSegment = (id: string, data: SegmentFormData) => {
+    console.log('[WallConfig] handleSaveSegment:', id, data);
     updateSegment(id, {
       width: data.width,
       startHeight: data.startHeight,

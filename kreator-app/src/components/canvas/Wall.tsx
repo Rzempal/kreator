@@ -10,38 +10,51 @@ interface WallProps {
 }
 
 function WallComponent({ wall, scale }: WallProps) {
+  // Normalizuj segmenty - upewnij sie ze alignment jest zdefiniowany
+  const normalizedSegments = useMemo(() => {
+    return wall.segments.map(seg => ({
+      ...seg,
+      alignment: seg.alignment ?? 'bottom' as const,
+    }));
+  }, [wall.segments]);
+
+  // Debug - sprawdz alignment
+  console.log('[Wall] segments alignment:', normalizedSegments.map(s => s.alignment));
+
   // Oblicz maksymalna wysokosc dla wyrownania
   const maxHeight = useMemo(() => {
     return Math.max(
-      ...wall.segments.flatMap((seg) => [seg.startHeight, seg.endHeight])
+      ...normalizedSegments.flatMap((seg) => [seg.startHeight, seg.endHeight])
     );
-  }, [wall.segments]);
+  }, [normalizedSegments]);
 
   // Generuj sciezke SVG dla ksztaltu sciany
   const wallPath = useMemo(() => {
-    if (wall.segments.length === 0) return '';
+    if (normalizedSegments.length === 0) return '';
 
     let path = '';
     let currentX = 0;
 
     // Sprawdz wyrownanie pierwszego segmentu (zakladamy ze wszystkie maja to samo)
-    const alignment = wall.segments[0]?.alignment ?? 'bottom';
+    const alignment = normalizedSegments[0].alignment;
+
+    console.log('[Wall] Drawing with alignment:', alignment);
 
     if (alignment === 'top') {
       // Wyrownanie do gory - gorna krawedz na Y=0, skos na dole
       // Gorna krawedz (prosta linia na Y=0)
       path += `M 0 0`;
-      const totalWidth = wall.segments.reduce((sum, seg) => sum + seg.width, 0);
+      const totalWidth = normalizedSegments.reduce((sum, seg) => sum + seg.width, 0);
       path += ` L ${totalWidth * scale} 0`;
 
       // Prawa krawedz w dol
-      const lastSeg = wall.segments[wall.segments.length - 1];
+      const lastSeg = normalizedSegments[normalizedSegments.length - 1];
       path += ` L ${totalWidth * scale} ${lastSeg.endHeight * scale}`;
 
       // Dolna krawedz ze skosami (od prawej do lewej)
       currentX = totalWidth * scale;
-      for (let i = wall.segments.length - 1; i >= 0; i--) {
-        const segment = wall.segments[i];
+      for (let i = normalizedSegments.length - 1; i >= 0; i--) {
+        const segment = normalizedSegments[i];
         const segStartX = currentX - segment.width * scale;
 
         // Najpierw punkt endHeight (prawa krawedz segmentu)
@@ -54,10 +67,10 @@ function WallComponent({ wall, scale }: WallProps) {
     } else {
       // Wyrownanie do dolu (default) - dolna krawedz na Y=maxHeight, skos na gorze
       // Gorna krawedz ze skosami (od lewej do prawej)
-      const firstSeg = wall.segments[0];
+      const firstSeg = normalizedSegments[0];
       path += `M 0 ${(maxHeight - firstSeg.startHeight) * scale}`;
 
-      for (const segment of wall.segments) {
+      for (const segment of normalizedSegments) {
         const segStartX = currentX;
         const segEndX = currentX + segment.width * scale;
 
@@ -78,14 +91,14 @@ function WallComponent({ wall, scale }: WallProps) {
 
     path += ' Z';
     return path;
-  }, [wall.segments, scale, maxHeight]);
+  }, [normalizedSegments, scale, maxHeight]);
 
   // Wymiary zewnetrzne
   const dimensions = useMemo(() => {
     let currentX = 0;
     const result: Array<{ x: number; width: number; height: number }> = [];
 
-    for (const segment of wall.segments) {
+    for (const segment of normalizedSegments) {
       result.push({
         x: currentX * scale,
         width: segment.width * scale,
@@ -95,7 +108,7 @@ function WallComponent({ wall, scale }: WallProps) {
     }
 
     return result;
-  }, [wall.segments, scale]);
+  }, [normalizedSegments, scale]);
 
   return (
     <g>
@@ -148,7 +161,7 @@ function WallComponent({ wall, scale }: WallProps) {
             fontSize={11}
             fontFamily="sans-serif"
           >
-            {Math.round(wall.segments[i].width)} cm
+            {Math.round(normalizedSegments[i].width)} cm
           </text>
         </g>
       ))}
@@ -205,4 +218,5 @@ function WallGrid({ wall, scale }: WallProps) {
   return <g className="wall-grid">{lines}</g>;
 }
 
-export default memo(WallComponent);
+// Tymczasowo bez memo dla debugowania
+export default WallComponent;
