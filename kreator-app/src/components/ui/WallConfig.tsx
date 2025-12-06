@@ -172,6 +172,7 @@ interface SegmentRowProps {
 
 function SegmentRow({ segment, index, canDelete, onUpdate, onDelete }: SegmentRowProps) {
   const isSloped = segment.startHeight !== segment.endHeight;
+  const alignment = segment.alignment ?? 'bottom';
 
   return (
     <div className={cn(
@@ -240,10 +241,13 @@ function SegmentRow({ segment, index, canDelete, onUpdate, onDelete }: SegmentRo
           <label className="text-xs text-slate-400 block mb-2">Wyrownanie sciany</label>
           <div className="flex gap-1">
             <button
-              onClick={() => onUpdate('alignment', 'bottom')}
+              onClick={() => {
+                console.log('[WallConfig] Klik alignment: bottom');
+                onUpdate('alignment', 'bottom');
+              }}
               className={cn(
                 'flex-1 flex items-center justify-center gap-1 px-2 py-1.5 text-xs font-medium rounded transition-colors',
-                segment.alignment === 'bottom'
+                alignment === 'bottom'
                   ? 'bg-amber-600 text-white'
                   : 'bg-slate-600 text-slate-300 hover:bg-slate-500'
               )}
@@ -256,10 +260,13 @@ function SegmentRow({ segment, index, canDelete, onUpdate, onDelete }: SegmentRo
               Dol
             </button>
             <button
-              onClick={() => onUpdate('alignment', 'top')}
+              onClick={() => {
+                console.log('[WallConfig] Klik alignment: top');
+                onUpdate('alignment', 'top');
+              }}
               className={cn(
                 'flex-1 flex items-center justify-center gap-1 px-2 py-1.5 text-xs font-medium rounded transition-colors',
-                segment.alignment === 'top'
+                alignment === 'top'
                   ? 'bg-amber-600 text-white'
                   : 'bg-slate-600 text-slate-300 hover:bg-slate-500'
               )}

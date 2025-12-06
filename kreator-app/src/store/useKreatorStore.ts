@@ -108,6 +108,7 @@ export const useKreatorStore = create<KreatorStore>()(
       },
 
       updateSegment: (id, updates) => {
+        console.log('[Store] updateSegment:', id, updates);
         set((state) => ({
           wall: {
             ...state.wall,
@@ -305,6 +306,15 @@ export const useKreatorStore = create<KreatorStore>()(
         addons: state.addons,
         colorToFabricMapping: state.colorToFabricMapping,
       }),
+      // Migracja: dodaj alignment do segmentow jesli brakuje
+      onRehydrateStorage: () => (state) => {
+        if (state?.wall?.segments) {
+          state.wall.segments = state.wall.segments.map((seg) => ({
+            ...seg,
+            alignment: seg.alignment ?? 'bottom',
+          }));
+        }
+      },
     }
   )
 );
