@@ -109,14 +109,31 @@ export const useKreatorStore = create<KreatorStore>()(
 
       updateSegment: (id, updates) => {
         console.log('[Store] updateSegment:', id, updates);
-        set((state) => ({
-          wall: {
-            ...state.wall,
-            segments: state.wall.segments.map((s) =>
-              s.id === id ? { ...s, ...updates } : s
-            ),
-          },
-        }));
+        set((state) => {
+          // Jesli zmieniane jest alignment, zastosuj do wszystkich segmentow
+          if ('alignment' in updates && updates.alignment) {
+            const newAlignment = updates.alignment;
+            return {
+              wall: {
+                ...state.wall,
+                segments: state.wall.segments.map((s) => ({
+                  ...s,
+                  ...(s.id === id ? updates : {}),
+                  alignment: newAlignment, // Zastosuj alignment do wszystkich
+                })),
+              },
+            };
+          }
+          // Standardowa aktualizacja pojedynczego segmentu
+          return {
+            wall: {
+              ...state.wall,
+              segments: state.wall.segments.map((s) =>
+                s.id === id ? { ...s, ...updates } : s
+              ),
+            },
+          };
+        });
       },
 
       setMasterSegment: (id) => {
