@@ -1,4 +1,4 @@
-// src/components/canvas/Wall.tsx v0.003 Komponent sciany SVG z obsluga wyrownania
+// src/components/canvas/Wall.tsx v0.004 Fix renderowania startHeight/endHeight dla kazdego segmentu
 'use client';
 
 import { memo, useMemo, type ReactNode } from 'react';
@@ -28,38 +28,45 @@ function WallComponent({ wall, scale }: WallProps) {
     const alignment = wall.segments[0]?.alignment ?? 'bottom';
 
     if (alignment === 'top') {
-      // Wyrownanie do gory - skos na dole (obecne zachowanie)
+      // Wyrownanie do gory - gorna krawedz na Y=0, skos na dole
+      // Gorna krawedz (prosta linia na Y=0)
       path += `M 0 0`;
+      const totalWidth = wall.segments.reduce((sum, seg) => sum + seg.width, 0);
+      path += ` L ${totalWidth * scale} 0`;
 
-      for (const segment of wall.segments) {
-        const nextX = currentX + segment.width * scale;
-        path += ` L ${nextX} 0`;
-        currentX = nextX;
-      }
+      // Prawa krawedz w dol
+      const lastSeg = wall.segments[wall.segments.length - 1];
+      path += ` L ${totalWidth * scale} ${lastSeg.endHeight * scale}`;
 
-      const lastSegment = wall.segments[wall.segments.length - 1];
-      path += ` L ${currentX} ${lastSegment.endHeight * scale}`;
-
-      currentX = wall.segments.reduce((sum, seg) => sum + seg.width, 0) * scale;
-
+      // Dolna krawedz ze skosami (od prawej do lewej)
+      currentX = totalWidth * scale;
       for (let i = wall.segments.length - 1; i >= 0; i--) {
         const segment = wall.segments[i];
-        const segmentStartX = currentX - segment.width * scale;
-        path += ` L ${segmentStartX} ${segment.startHeight * scale}`;
-        currentX = segmentStartX;
+        const segStartX = currentX - segment.width * scale;
+
+        // Najpierw punkt endHeight (prawa krawedz segmentu)
+        path += ` L ${currentX} ${segment.endHeight * scale}`;
+        // Potem punkt startHeight (lewa krawedz segmentu)
+        path += ` L ${segStartX} ${segment.startHeight * scale}`;
+
+        currentX = segStartX;
       }
     } else {
-      // Wyrownanie do dolu (default) - skos na gorze
-      // Gorna krawedz ze skosem
+      // Wyrownanie do dolu (default) - dolna krawedz na Y=maxHeight, skos na gorze
+      // Gorna krawedz ze skosami (od lewej do prawej)
       const firstSeg = wall.segments[0];
-      const topYStart = (maxHeight - firstSeg.startHeight) * scale;
-      path += `M 0 ${topYStart}`;
+      path += `M 0 ${(maxHeight - firstSeg.startHeight) * scale}`;
 
       for (const segment of wall.segments) {
-        const nextX = currentX + segment.width * scale;
-        const topYEnd = (maxHeight - segment.endHeight) * scale;
-        path += ` L ${nextX} ${topYEnd}`;
-        currentX = nextX;
+        const segStartX = currentX;
+        const segEndX = currentX + segment.width * scale;
+
+        // Najpierw punkt startHeight (lewa krawedz segmentu)
+        path += ` L ${segStartX} ${(maxHeight - segment.startHeight) * scale}`;
+        // Potem punkt endHeight (prawa krawedz segmentu)
+        path += ` L ${segEndX} ${(maxHeight - segment.endHeight) * scale}`;
+
+        currentX = segEndX;
       }
 
       // Prawa krawedz w dol do maxHeight
