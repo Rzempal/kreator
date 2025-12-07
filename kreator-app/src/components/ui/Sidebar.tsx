@@ -1,10 +1,11 @@
-// src/components/ui/Sidebar.tsx v0.001 Accordion sidebar z sekcjami
+// src/components/ui/Sidebar.tsx v0.002 Accordion sidebar z sekcjami
 'use client';
 
 import { useState, ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 import WallConfig from './WallConfig';
 import ColorPicker from './ColorPicker';
+import SizePicker from './SizePicker';
 import PriceSummary from './PriceSummary';
 
 interface AccordionSectionProps {
@@ -139,18 +140,15 @@ export default function Sidebar() {
         <ColorPicker />
       </AccordionSection>
 
-      {/* Rozmiary - placeholder */}
+      {/* Rozmiary */}
       <AccordionSection
         id="size"
         title="Rozmiary"
         icon={icons.size}
         isOpen={openSection === 'size'}
         onToggle={() => toggleSection('size')}
-        badge="Wkrotce"
       >
-        <div className="text-sm text-slate-400 py-4 text-center">
-          Wybor rozmiaru paneli - w przygotowaniu
-        </div>
+        <SizePicker />
       </AccordionSection>
 
       {/* Wycena - zawsze widoczna podsumowanie */}
