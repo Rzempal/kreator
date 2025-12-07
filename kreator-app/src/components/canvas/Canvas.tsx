@@ -1,4 +1,4 @@
-// src/components/canvas/Canvas.tsx v0.001 Glowny komponent workspace SVG
+// src/components/canvas/Canvas.tsx v0.002 Glowny komponent workspace SVG
 'use client';
 
 import { useRef, useState, useCallback, useEffect } from 'react';
@@ -26,6 +26,7 @@ export default function Canvas() {
   const {
     setPreview,
     lockPreview,
+    unlockPreview,
     addPanel,
     removePanel,
     updatePanel,
@@ -120,8 +121,11 @@ export default function Canvas() {
       // Jesli jest aktywny rozmiar panelu
       if (activePanelSize && preview.visible) {
         if (preview.locked) {
-          // Klik gdy locked = dodaj panel
-          if (preview.status !== 'error') {
+          if (preview.status === 'error') {
+            // Klik gdy locked + error = odblokuj (anuluj)
+            unlockPreview();
+          } else {
+            // Klik gdy locked + valid/warning = dodaj panel
             addPanel({
               x: preview.x,
               y: preview.y,
@@ -129,15 +133,30 @@ export default function Canvas() {
               height: preview.height,
               colorId: activeColorId,
             });
+            // Odblokuj po dodaniu zeby mozna bylo dodac nastepny
+            unlockPreview();
           }
         } else {
-          // Pierwszy klik = lock preview
-          lockPreview();
+          // Pierwszy klik = lock preview (tylko jesli nie error)
+          if (preview.status !== 'error') {
+            lockPreview();
+          }
         }
       }
     },
-    [toolMode, activePanelSize, preview, activeColorId, addPanel, lockPreview]
+    [toolMode, activePanelSize, preview, activeColorId, addPanel, lockPreview, unlockPreview]
   );
+
+  // Escape = anuluj/odblokuj
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && preview.locked) {
+        unlockPreview();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [preview.locked, unlockPreview]);
 
   // Klik na panel
   const handlePanelClick = useCallback(
