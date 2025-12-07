@@ -151,6 +151,7 @@ export interface KreatorState {
   // Preview
   preview: PanelPreview;
   activePanelSize: Dimensions | null;
+  recentSizes: Dimensions[]; // Historia ostatnich 6 rozmiarow
 
   // Narzedzia
   toolMode: ToolMode;

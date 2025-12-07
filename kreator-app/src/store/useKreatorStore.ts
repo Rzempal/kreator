@@ -1,4 +1,4 @@
-// src/store/useKreatorStore.ts v0.002 Zustand store dla Kreatora Paneli
+// src/store/useKreatorStore.ts v0.003 Zustand store dla Kreatora Paneli
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
@@ -16,6 +16,16 @@ import type {
 } from '@/types';
 import { generateId } from '@/lib/utils';
 import { calculatePriceSummary } from '@/lib/pricing';
+
+// Domyslne rozmiary paneli
+const DEFAULT_SIZES: Dimensions[] = [
+  { width: 30, height: 100 },
+  { width: 20, height: 100 },
+  { width: 30, height: 60 },
+  { width: 40, height: 60 },
+  { width: 20, height: 140 },
+  { width: 15, height: 100 },
+];
 
 // Stan poczatkowy
 const initialState: KreatorState = {
@@ -47,6 +57,7 @@ const initialState: KreatorState = {
     locked: false,
   },
   activePanelSize: null,
+  recentSizes: DEFAULT_SIZES,
 
   toolMode: 'select',
   activeColorId: 'color-gray',
@@ -201,18 +212,41 @@ export const useKreatorStore = create<KreatorStore>()(
       },
 
       setActivePanelSize: (size) => {
-        set((state) => ({
-          activePanelSize: size,
-          preview: size
-            ? {
-                ...state.preview,
-                width: size.width,
-                height: size.height,
-                visible: true,
-                locked: false,
-              }
-            : { ...state.preview, visible: false },
-        }));
+        set((state) => {
+          // Dodaj do historii (jesli nowy rozmiar)
+          let newRecentSizes = state.recentSizes;
+          if (size) {
+            const exists = state.recentSizes.some(
+              (s) => s.width === size.width && s.height === size.height
+            );
+            if (!exists) {
+              // Dodaj na poczatek, ogranicz do 6
+              newRecentSizes = [size, ...state.recentSizes.slice(0, 5)];
+            } else {
+              // Przesun na poczatek
+              newRecentSizes = [
+                size,
+                ...state.recentSizes.filter(
+                  (s) => !(s.width === size.width && s.height === size.height)
+                ),
+              ].slice(0, 6);
+            }
+          }
+
+          return {
+            activePanelSize: size,
+            recentSizes: newRecentSizes,
+            preview: size
+              ? {
+                  ...state.preview,
+                  width: size.width,
+                  height: size.height,
+                  visible: true,
+                  locked: false,
+                }
+              : { ...state.preview, visible: false },
+          };
+        });
       },
 
       lockPreview: () => {
@@ -322,6 +356,7 @@ export const useKreatorStore = create<KreatorStore>()(
         panels: state.panels,
         addons: state.addons,
         colorToFabricMapping: state.colorToFabricMapping,
+        recentSizes: state.recentSizes,
       }),
       // Migracja: dodaj alignment do segmentow jesli brakuje
       onRehydrateStorage: () => (state) => {
@@ -345,3 +380,4 @@ export const useActiveColor = () => useKreatorStore((state) => state.activeColor
 export const useZoom = () => useKreatorStore((state) => state.zoom);
 export const usePriceSummary = () => useKreatorStore((state) => state.priceSummary);
 export const useAddons = () => useKreatorStore((state) => state.addons);
+export const useRecentSizes = () => useKreatorStore((state) => state.recentSizes);
