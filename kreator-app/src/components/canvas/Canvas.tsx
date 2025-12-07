@@ -1,4 +1,4 @@
-// src/components/canvas/Canvas.tsx v0.002 Glowny komponent workspace SVG
+// src/components/canvas/Canvas.tsx v0.003 Naprawiono obsluge dotyku - preventDefault + touch-canvas
 'use client';
 
 import { useRef, useState, useCallback, useEffect } from 'react';
@@ -171,8 +171,18 @@ export default function Canvas() {
   );
 
   // Touch events
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      // Zapobiegaj domyslnemu scrollowaniu strony
+      e.preventDefault();
+    },
+    []
+  );
+
   const handleTouchMove = useCallback(
     (e: React.TouchEvent) => {
+      // Zapobiegaj domyslnemu scrollowaniu strony
+      e.preventDefault();
       if (e.touches.length !== 1) return;
       const touch = e.touches[0];
       handleMouseMove({
@@ -185,6 +195,8 @@ export default function Canvas() {
 
   const handleTouchEnd = useCallback(
     (e: React.TouchEvent) => {
+      // Zapobiegaj domyslnemu zachowaniu
+      e.preventDefault();
       handleClick({} as React.MouseEvent);
     },
     [handleClick]
@@ -195,10 +207,11 @@ export default function Canvas() {
       <svg
         ref={svgRef}
         viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
-        className="w-full h-full min-h-[400px]"
+        className="w-full h-full min-h-[400px] touch-canvas"
         style={{ transform: `scale(${zoom})`, transformOrigin: 'center' }}
         onMouseMove={handleMouseMove}
         onClick={handleClick}
+        onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
