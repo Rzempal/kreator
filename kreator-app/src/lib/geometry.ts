@@ -1,4 +1,4 @@
-// src/lib/geometry.ts v0.002 Algorytmy geometryczne (snap, kolizje, fit) z wyrownaniem
+// src/lib/geometry.ts v0.003 Algorytmy geometryczne - soft clamp pozwala wyjsc poza obszar
 
 import type {
   Panel,
@@ -210,12 +210,19 @@ export function findSnapPosition(
     snappedTo = edgeSnap.snappedTo;
   }
 
-  // Ogranicz do granic sciany (z uwzglednieniem wyrownania)
-  const totalWidth = getTotalWallWidth(wall);
-  const bounds = getWallBoundsAtX(wall, targetX + panelWidth / 2);
+  // Nie ograniczamy twardo do granic sciany - pozwalamy preview wyjsc poza
+  // Uzytkownik zobaczy error/warning status i moze swobodnie ruszac myszka
+  // Soft clamp - tylko gdy snap jest aktywny i blisko krawedzi
+  if (snappedTo !== 'none') {
+    const totalWidth = getTotalWallWidth(wall);
+    const bounds = getWallBoundsAtX(wall, targetX + panelWidth / 2);
 
-  targetX = Math.max(0, Math.min(totalWidth - panelWidth, targetX));
-  targetY = Math.max(bounds.top, Math.min(bounds.bottom - panelHeight, targetY));
+    // Delikatne ograniczenie tylko gdy snap jest aktywny
+    if (targetX < 0) targetX = 0;
+    if (targetX > totalWidth - panelWidth) targetX = totalWidth - panelWidth;
+    if (targetY < bounds.top) targetY = bounds.top;
+    if (targetY > bounds.bottom - panelHeight) targetY = bounds.bottom - panelHeight;
+  }
 
   return { x: targetX, y: targetY, snappedTo };
 }
