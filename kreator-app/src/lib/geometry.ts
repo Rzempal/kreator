@@ -210,18 +210,23 @@ export function findSnapPosition(
     snappedTo = edgeSnap.snappedTo;
   }
 
-  // Nie ograniczamy twardo do granic sciany - pozwalamy preview wyjsc poza
-  // Uzytkownik zobaczy error/warning status i moze swobodnie ruszac myszka
-  // Soft clamp - tylko gdy snap jest aktywny i blisko krawedzi
+  // Soft clamp - pozwala panelowi wyjsc czesciowo poza obszar sciany
+  // Przy skosach uzytkownik moze chciec umiescic panel wystajacy poza krawedz
+  // Pozwalamy na wyjscie do 50% rozmiaru panelu poza granice
+  const OVERFLOW_MARGIN = 0.5; // 50% panelu moze wyjsc poza
+
   if (snappedTo !== 'none') {
     const totalWidth = getTotalWallWidth(wall);
     const bounds = getWallBoundsAtX(wall, targetX + panelWidth / 2);
 
-    // Delikatne ograniczenie tylko gdy snap jest aktywny
-    if (targetX < 0) targetX = 0;
-    if (targetX > totalWidth - panelWidth) targetX = totalWidth - panelWidth;
-    if (targetY < bounds.top) targetY = bounds.top;
-    if (targetY > bounds.bottom - panelHeight) targetY = bounds.bottom - panelHeight;
+    // Liberalne ograniczenie - pozwala na czesciowe wyjscie
+    const maxOverflowX = panelWidth * OVERFLOW_MARGIN;
+    const maxOverflowY = panelHeight * OVERFLOW_MARGIN;
+
+    if (targetX < -maxOverflowX) targetX = -maxOverflowX;
+    if (targetX > totalWidth - panelWidth + maxOverflowX) targetX = totalWidth - panelWidth + maxOverflowX;
+    if (targetY < bounds.top - maxOverflowY) targetY = bounds.top - maxOverflowY;
+    if (targetY > bounds.bottom - panelHeight + maxOverflowY) targetY = bounds.bottom - panelHeight + maxOverflowY;
   }
 
   return { x: targetX, y: targetY, snappedTo };
