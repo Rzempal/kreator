@@ -1,11 +1,9 @@
-// src/app/page.tsx v0.002 Glowna strona Kreatora Paneli Tapicerowanych
+// src/app/page.tsx v0.003 Glowna strona Kreatora Paneli Tapicerowanych
 'use client';
 
 import dynamic from 'next/dynamic';
 import Toolbar from '@/components/ui/Toolbar';
-import ColorPicker from '@/components/ui/ColorPicker';
-import PriceSummary from '@/components/ui/PriceSummary';
-import WallConfig from '@/components/ui/WallConfig';
+import Sidebar from '@/components/ui/Sidebar';
 import MobileDrawer from '@/components/ui/MobileDrawer';
 
 // Dynamic import dla Canvas (wymaga window)
@@ -43,10 +41,8 @@ export default function KreatorPage() {
         {/* Layout */}
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Sidebar - desktop only */}
-          <aside className="hidden lg:flex flex-col gap-4 w-72 flex-shrink-0 max-h-[calc(100vh-120px)] overflow-y-auto">
-            <WallConfig />
-            <ColorPicker />
-            <PriceSummary />
+          <aside className="hidden lg:block max-h-[calc(100vh-120px)] overflow-y-auto">
+            <Sidebar />
           </aside>
 
           {/* Main workspace */}

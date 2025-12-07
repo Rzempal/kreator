@@ -1,7 +1,7 @@
-// src/components/canvas/Panel.tsx v0.001 Komponent pojedynczego panelu SVG
+// src/components/canvas/Panel.tsx v0.002 Komponent panelu z obsługą tekstur tkanin
 'use client';
 
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 import type { Panel as PanelType, PanelStatus } from '@/types';
 import { isLightColor } from '@/lib/utils';
 import fabricsData from '@/data/fabrics.json';
@@ -21,10 +21,54 @@ const statusColors: Record<PanelStatus, string> = {
   error: 'stroke-red-500',
 };
 
-// Znajdz kolor hex dla colorId
-function getColorHex(colorId: string): string {
-  const paletteColor = fabricsData.defaultPalette.find((c) => c.id === colorId);
-  return paletteColor?.hex ?? '#808080';
+interface FabricColor {
+  id: string;
+  name: string;
+  image: string | null;
+}
+
+interface FabricCollection {
+  category: string;
+  colors: FabricColor[];
+}
+
+interface DefaultPaletteColor {
+  id: string;
+  name: string;
+  hex: string;
+}
+
+type ColorInfo = {
+  type: 'hex' | 'image';
+  value: string; // hex color lub image URL
+  name: string;
+};
+
+// Znajdz informacje o kolorze/tkaninie
+function getColorInfo(colorId: string): ColorInfo {
+  // 1. Sprawdz defaultPalette (kolory hex)
+  const paletteColor = (fabricsData.defaultPalette as DefaultPaletteColor[]).find(
+    (c) => c.id === colorId
+  );
+  if (paletteColor) {
+    return { type: 'hex', value: paletteColor.hex, name: paletteColor.name };
+  }
+
+  // 2. Sprawdz kolekcje tkanin (obrazki)
+  const collections = fabricsData.collections as Record<string, FabricCollection>;
+  for (const [, collection] of Object.entries(collections)) {
+    const fabricColor = collection.colors.find((c) => c.id === colorId);
+    if (fabricColor) {
+      if (fabricColor.image) {
+        return { type: 'image', value: fabricColor.image, name: fabricColor.name };
+      }
+      // Tkanina bez obrazka - szary fallback
+      return { type: 'hex', value: '#808080', name: fabricColor.name };
+    }
+  }
+
+  // 3. Fallback - szary
+  return { type: 'hex', value: '#808080', name: 'Brak koloru' };
 }
 
 function PanelComponent({
@@ -34,8 +78,14 @@ function PanelComponent({
   isPreview = false,
   onClick,
 }: PanelProps) {
-  const colorHex = getColorHex(panel.colorId);
-  const textColor = isLightColor(colorHex) ? '#1a1a1a' : '#ffffff';
+  const colorInfo = useMemo(() => getColorInfo(panel.colorId), [panel.colorId]);
+
+  // Dla obrazkow tekst zawsze bialy z cieniem, dla hex - dynamiczny
+  const textColor = colorInfo.type === 'image'
+    ? '#ffffff'
+    : isLightColor(colorInfo.value) ? '#1a1a1a' : '#ffffff';
+  const textShadow = colorInfo.type === 'image' ? '0 1px 2px rgba(0,0,0,0.8)' : 'none';
+
   const opacity = isPreview ? 0.7 : 1;
 
   // Wymiary w jednostkach SVG (skalowane)
@@ -48,19 +98,41 @@ function PanelComponent({
   const dimensionText = `${panel.width}x${panel.height}`;
   const fontSize = Math.min(width, height) * 0.15;
 
+  // Unikalny ID dla patternu obrazka
+  const patternId = `fabric-${panel.id}`;
+
   return (
     <g
       onClick={onClick}
       className={`cursor-pointer transition-opacity ${onClick ? 'hover:opacity-90' : ''}`}
       style={{ opacity }}
     >
+      {/* Definicja patternu dla obrazka tkaniny */}
+      {colorInfo.type === 'image' && (
+        <defs>
+          <pattern
+            id={patternId}
+            patternUnits="objectBoundingBox"
+            width="1"
+            height="1"
+          >
+            <image
+              href={colorInfo.value}
+              width={width}
+              height={height}
+              preserveAspectRatio="xMidYMid slice"
+            />
+          </pattern>
+        </defs>
+      )}
+
       {/* Wypelnienie panelu */}
       <rect
         x={x}
         y={y}
         width={width}
         height={height}
-        fill={colorHex}
+        fill={colorInfo.type === 'image' ? `url(#${patternId})` : colorInfo.value}
         stroke={isSelected ? '#3b82f6' : isPreview ? '#10b981' : '#000'}
         strokeWidth={isSelected ? 3 : isPreview ? 2 : 1}
         strokeDasharray={isPreview ? '5,5' : undefined}
@@ -78,8 +150,12 @@ function PanelComponent({
           fill={textColor}
           fontSize={fontSize}
           fontFamily="sans-serif"
-          fontWeight="500"
-          style={{ pointerEvents: 'none', userSelect: 'none' }}
+          fontWeight="600"
+          style={{
+            pointerEvents: 'none',
+            userSelect: 'none',
+            textShadow,
+          }}
         >
           {dimensionText}
         </text>

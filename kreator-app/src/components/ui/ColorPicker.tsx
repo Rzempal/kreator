@@ -1,4 +1,4 @@
-// src/components/ui/ColorPicker.tsx v0.002 Rozbudowana paleta tkanin z kolekcjami
+// src/components/ui/ColorPicker.tsx v0.003 Rozbudowana paleta tkanin z kolekcjami
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -84,12 +84,7 @@ export default function ColorPicker() {
   };
 
   return (
-    <div className="flex flex-col gap-3 p-3 bg-slate-800/80 backdrop-blur-md rounded-xl border border-slate-700 max-h-[70vh] overflow-hidden">
-      {/* Naglowek */}
-      <div className="text-xs font-medium text-slate-400 uppercase tracking-wider">
-        Tkaniny
-      </div>
-
+    <div className="flex flex-col gap-3">
       {/* Kategorie - tabs */}
       <div className="flex gap-1">
         {(Object.keys(categories) as PriceCategory[]).map((cat) => (
