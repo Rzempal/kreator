@@ -1,4 +1,4 @@
-// src/lib/pricing.ts v0.001 Algorytm wyceny paneli tapicerowanych
+// src/lib/pricing.ts v0.002 Algorytm wyceny paneli tapicerowanych
 
 import type {
   Panel,
@@ -21,6 +21,14 @@ const prices = {
 };
 
 const FALLBACK_PRICE_PER_M2 = pricesData.fallbackPricePerM2;
+const customPricing = pricesData.customPricing;
+
+// Mnożniki cenowe dla kategorii (przy nietypowych wymiarach)
+const CATEGORY_MULTIPLIERS: Record<PriceCategory, number> = {
+  standard: 1.0,
+  premium: 1.15,
+  exclusive: 1.25,
+};
 
 /**
  * Pobiera kategorie cenowa dla tkaniny
@@ -45,6 +53,7 @@ function getFabricCategory(fabricId: string): PriceCategory {
 /**
  * Oblicza cene pojedynczego panelu
  * Priorytet: 1. Cena z tabeli, 2. Bardzo maly (<0.05m2), 3. Maly, 4. Waski, 5. Nietypowy
+ * Dla nietypowych wymiarow stosuje mnozniki kategorii
  */
 function calculatePanelPrice(
   width: number,
@@ -64,31 +73,64 @@ function calculatePanelPrice(
   }
 
   const area = calculateArea(width, height);
+  const multiplier = CATEGORY_MULTIPLIERS[category];
+  const { verySmall, small, narrowVertical, narrowHorizontal } = customPricing;
 
   // 2. Bardzo maly panel (< 0.05 m2)
-  if (area < 0.05) {
-    return 25;
+  if (area < verySmall.maxAreaM2) {
+    return Math.round(verySmall.price * multiplier);
   }
 
   // 3. Maly panel (0.05-0.1 m2, boki 10-50cm)
-  if (area >= 0.05 && area <= 0.1 && width <= 50 && height <= 50) {
-    return 30;
+  if (
+    area >= small.minAreaM2 &&
+    area <= small.maxAreaM2 &&
+    width >= small.minSideCm &&
+    width <= small.maxSideCm &&
+    height >= small.minSideCm &&
+    height <= small.maxSideCm
+  ) {
+    return Math.round(small.price * multiplier);
   }
 
-  // 4. Waski panel (pionowy: szer 10-20, wys > 50)
-  if (width >= 10 && width <= 20 && height > 50) {
-    const effectiveArea = calculateArea(20, height);
-    return Math.round(effectiveArea * FALLBACK_PRICE_PER_M2);
+  // 4. Waski panel pionowy (szer 10-20, wys > 50)
+  if (
+    width >= narrowVertical.minWidth &&
+    width <= narrowVertical.maxWidth &&
+    height >= narrowVertical.minHeight
+  ) {
+    const effectiveArea = calculateArea(narrowVertical.useWidth, height);
+    return Math.round(effectiveArea * narrowVertical.pricePerM2 * multiplier);
   }
 
-  // 4b. Waski panel (poziomy: wys 10-20, szer > 50)
-  if (height >= 10 && height <= 20 && width > 50) {
-    const effectiveArea = calculateArea(width, 20);
-    return Math.round(effectiveArea * FALLBACK_PRICE_PER_M2);
+  // 4b. Waski panel poziomy (wys 10-20, szer > 50)
+  if (
+    height >= narrowHorizontal.minHeight &&
+    height <= narrowHorizontal.maxHeight &&
+    width >= narrowHorizontal.minWidth
+  ) {
+    const effectiveArea = calculateArea(width, narrowHorizontal.useHeight);
+    return Math.round(effectiveArea * narrowHorizontal.pricePerM2 * multiplier);
   }
 
-  // 5. Nietypowy - cena za m2
-  return Math.round(area * FALLBACK_PRICE_PER_M2);
+  // 5. Nietypowy - cena za m2 z mnoznikiem kategorii
+  return Math.round(area * FALLBACK_PRICE_PER_M2 * multiplier);
+}
+
+/**
+ * Sprawdza czy wymiary sa typowe (istnieja w tabeli cenowej)
+ */
+export function isStandardDimension(width: number, height: number): boolean {
+  const key = dimensionKey(width, height);
+  const altKey = dimensionKey(height, width);
+  return !!(prices.standard[key] || prices.standard[altKey]);
+}
+
+/**
+ * Pobiera liste wszystkich typowych wymiarow
+ */
+export function getStandardDimensions(): string[] {
+  return Object.keys(prices.standard);
 }
 
 /**
