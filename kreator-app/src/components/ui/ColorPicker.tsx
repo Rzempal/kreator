@@ -1,4 +1,4 @@
-// src/components/ui/ColorPicker.tsx v0.003 Rozbudowana paleta tkanin z kolekcjami
+// src/components/ui/ColorPicker.tsx v0.004 Rozbudowana paleta tkanin z kolekcjami
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -63,10 +63,6 @@ export default function ColorPicker() {
   const handleColorClick = (colorId: string) => {
     setActiveColor(colorId);
     setToolMode('paint');
-  };
-
-  const handleEraserClick = () => {
-    setToolMode(toolMode === 'erase' ? 'select' : 'erase');
   };
 
   const handleCategoryChange = (category: PriceCategory) => {
@@ -181,44 +177,8 @@ export default function ColorPicker() {
 
       {/* Info o wybranym kolorze */}
       {activeColorId && toolMode === 'paint' && (
-        <div className="text-xs text-slate-400 truncate">
-          Wybrany: <span className="text-cyan-400">{activeColorId}</span>
-        </div>
-      )}
-
-      {/* Separator */}
-      <div className="h-px bg-slate-700" />
-
-      {/* Narzedzia */}
-      <div className="flex gap-2">
-        {/* Gumka */}
-        <button
-          onClick={handleEraserClick}
-          className={cn(
-            'flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg transition-all',
-            'border text-sm font-medium',
-            toolMode === 'erase'
-              ? 'bg-red-600 border-red-500 text-white'
-              : 'bg-slate-700 border-slate-600 text-slate-300 hover:bg-slate-600'
-          )}
-          title="Tryb gumki - kliknij panel aby go usunac"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-          </svg>
-          Gumka
-        </button>
-      </div>
-
-      {/* Info o aktywnym narzedziu */}
-      {toolMode === 'paint' && (
         <div className="text-xs text-cyan-400">
-          Kliknij panel aby zmienic kolor
-        </div>
-      )}
-      {toolMode === 'erase' && (
-        <div className="text-xs text-red-400">
-          Kliknij panel aby go usunac
+          Kliknij panel aby zmienic tkanine
         </div>
       )}
     </div>
