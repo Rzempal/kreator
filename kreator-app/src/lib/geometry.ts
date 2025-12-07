@@ -1,4 +1,4 @@
-// src/lib/geometry.ts v0.003 Algorytmy geometryczne - soft clamp pozwala wyjsc poza obszar
+// src/lib/geometry.ts v0.004 Panel poza obszarem = warning (nie error)
 
 import type {
   Panel,
@@ -122,6 +122,7 @@ export function getMaxWallHeight(wall: Wall): number {
  * Sprawdza czy panel miesci sie w obszarze sciany
  * Zwraca informacje o czesciowym wychodzeniu poza obszar
  * Uwzglednia wyrownanie sciany (top/bottom)
+ * UWAGA: Wyjscie poza obszar to tylko warning, nie error (error tylko dla kolizji)
  */
 export function checkPanelFits(
   panel: Rectangle,
@@ -129,9 +130,9 @@ export function checkPanelFits(
 ): FitResult {
   const totalWidth = getTotalWallWidth(wall);
 
-  // Panel calkowicie poza sciana (X)
+  // Panel calkowicie poza sciana (X) - warning, nie error
   if (panel.x + panel.width <= 0 || panel.x >= totalWidth) {
-    return { fits: false, partiallyOutside: false, outsideArea: 100 };
+    return { fits: true, partiallyOutside: true, outsideArea: 100 };
   }
 
   // Sprawdz 5 punktow na kazdej krawedzi panelu
@@ -161,15 +162,12 @@ export function checkPanelFits(
     return { fits: true, partiallyOutside: false, outsideArea: 0 };
   }
 
-  if (outsideRatio < 1) {
-    return {
-      fits: true,
-      partiallyOutside: true,
-      outsideArea: Math.round(outsideRatio * 100),
-    };
-  }
-
-  return { fits: false, partiallyOutside: false, outsideArea: 100 };
+  // Kazde wyjscie poza obszar to warning (fits: true, partiallyOutside: true)
+  return {
+    fits: true,
+    partiallyOutside: true,
+    outsideArea: Math.round(outsideRatio * 100),
+  };
 }
 
 // ============================================
