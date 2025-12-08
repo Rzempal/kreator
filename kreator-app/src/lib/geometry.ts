@@ -1,4 +1,4 @@
-// src/lib/geometry.ts v0.004 Panel poza obszarem = warning (nie error)
+// src/lib/geometry.ts v0.005 Dodano calculatePanelClipPath dla skosów
 
 import type {
   Panel,
@@ -9,6 +9,7 @@ import type {
   SnapResult,
   CollisionResult,
   FitResult,
+  ClipPathResult,
 } from '@/types';
 import { isClose } from './utils';
 
@@ -401,4 +402,134 @@ export function findNonCollidingPosition(
   }
 
   return { x: bestX, y: bestY };
+}
+
+// ============================================
+// CLIP PATH DLA SKOSÓW
+// ============================================
+
+/**
+ * Oblicza clip path dla panelu przecinającego skos ściany
+ * Zwraca punkty poligonu (względem panelu, nie canvas)
+ *
+ * @param panel - prostokąt panelu (x, y, width, height w cm)
+ * @param wall - definicja ściany z segmentami
+ * @returns ClipPathResult z punktami clip path i waste
+ */
+export function calculatePanelClipPath(
+  panel: Rectangle,
+  wall: Wall
+): ClipPathResult {
+  const alignment = wall.segments[0]?.alignment ?? 'bottom';
+  const maxHeight = getMaxWallHeight(wall);
+
+  // Sprawdź czy panel w ogóle przecina skos
+  // Zbierz punkty przecięcia skosu z krawędziami panelu
+  const panelLeft = panel.x;
+  const panelRight = panel.x + panel.width;
+  const panelTop = panel.y;
+  const panelBottom = panel.y + panel.height;
+
+  // Pobierz wysokość ściany na lewej i prawej krawędzi panelu
+  const heightAtLeft = getWallHeightAtX(wall, panelLeft);
+  const heightAtRight = getWallHeightAtX(wall, panelRight);
+
+  // Oblicz granice ściany w pikselach (zgodnie z wyrównaniem)
+  let wallTopAtLeft: number, wallTopAtRight: number;
+  let wallBottomAtLeft: number, wallBottomAtRight: number;
+
+  if (alignment === 'top') {
+    // Wyrównanie do góry: góra = 0, dół = heightAtX
+    wallTopAtLeft = 0;
+    wallTopAtRight = 0;
+    wallBottomAtLeft = heightAtLeft;
+    wallBottomAtRight = heightAtRight;
+  } else {
+    // Wyrównanie do dołu: góra = maxHeight - heightAtX, dół = maxHeight
+    wallTopAtLeft = maxHeight - heightAtLeft;
+    wallTopAtRight = maxHeight - heightAtRight;
+    wallBottomAtLeft = maxHeight;
+    wallBottomAtRight = maxHeight;
+  }
+
+  // Sprawdź czy panel wymaga przycinania
+  // Panel wymaga przycinania gdy wychodzi poza skośną krawędź
+  let needsClipTop = false;
+  let needsClipBottom = false;
+
+  if (alignment === 'bottom') {
+    // Skos na górze - sprawdź czy góra panelu wychodzi ponad skos
+    if (panelTop < wallTopAtLeft || panelTop < wallTopAtRight) {
+      needsClipTop = true;
+    }
+  } else {
+    // Skos na dole - sprawdź czy dół panelu wychodzi poniżej skosu
+    if (panelBottom > wallBottomAtLeft || panelBottom > wallBottomAtRight) {
+      needsClipBottom = true;
+    }
+  }
+
+  // Jeśli nie trzeba przycinać, zwróć pusty wynik
+  if (!needsClipTop && !needsClipBottom) {
+    return {
+      hasClip: false,
+      clipPoints: [],
+      wastePoints: [],
+    };
+  }
+
+  // Oblicz punkty clip path (względem panelu, czyli x=0, y=0 to lewy górny róg panelu)
+  const clipPoints: Position[] = [];
+  const wastePoints: Position[] = [];
+
+  if (needsClipTop && alignment === 'bottom') {
+    // Skos na górze - przycinamy górną część panelu
+    // Linia skosu przechodzi od wallTopAtLeft do wallTopAtRight
+
+    // Oblicz gdzie skos przecina panel
+    const slopeYAtPanelLeft = Math.max(0, wallTopAtLeft - panelTop);
+    const slopeYAtPanelRight = Math.max(0, wallTopAtRight - panelTop);
+
+    // Clip path: kształt który zostaje (widoczna część)
+    // Zaczynamy od lewego dolnego rogu i idziemy zgodnie z ruchem wskazówek zegara
+    clipPoints.push({ x: 0, y: panel.height });                          // lewy dolny
+    clipPoints.push({ x: panel.width, y: panel.height });                // prawy dolny
+    clipPoints.push({ x: panel.width, y: slopeYAtPanelRight });         // prawy na linii skosu
+    clipPoints.push({ x: 0, y: slopeYAtPanelLeft });                    // lewy na linii skosu
+
+    // Waste: część która jest odpadem (górna część)
+    if (slopeYAtPanelLeft > 0 || slopeYAtPanelRight > 0) {
+      wastePoints.push({ x: 0, y: 0 });                                   // lewy górny
+      wastePoints.push({ x: panel.width, y: 0 });                         // prawy górny
+      wastePoints.push({ x: panel.width, y: slopeYAtPanelRight });       // prawy na linii skosu
+      wastePoints.push({ x: 0, y: slopeYAtPanelLeft });                  // lewy na linii skosu
+    }
+  } else if (needsClipBottom && alignment === 'top') {
+    // Skos na dole - przycinamy dolną część panelu
+    // Linia skosu przechodzi od wallBottomAtLeft do wallBottomAtRight
+
+    // Oblicz gdzie skos przecina panel (względem panelu)
+    const slopeYAtPanelLeft = Math.min(panel.height, wallBottomAtLeft - panelTop);
+    const slopeYAtPanelRight = Math.min(panel.height, wallBottomAtRight - panelTop);
+
+    // Clip path: kształt który zostaje (widoczna część - góra)
+    clipPoints.push({ x: 0, y: 0 });                                     // lewy górny
+    clipPoints.push({ x: panel.width, y: 0 });                           // prawy górny
+    clipPoints.push({ x: panel.width, y: slopeYAtPanelRight });         // prawy na linii skosu
+    clipPoints.push({ x: 0, y: slopeYAtPanelLeft });                    // lewy na linii skosu
+
+    // Waste: część która jest odpadem (dolna część)
+    if (slopeYAtPanelLeft < panel.height || slopeYAtPanelRight < panel.height) {
+      wastePoints.push({ x: 0, y: slopeYAtPanelLeft });                  // lewy na linii skosu
+      wastePoints.push({ x: panel.width, y: slopeYAtPanelRight });       // prawy na linii skosu
+      wastePoints.push({ x: panel.width, y: panel.height });             // prawy dolny
+      wastePoints.push({ x: 0, y: panel.height });                       // lewy dolny
+    }
+  }
+
+  return {
+    hasClip: clipPoints.length > 0,
+    clipPoints,
+    wastePoints,
+  };
 }

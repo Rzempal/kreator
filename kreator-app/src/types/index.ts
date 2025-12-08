@@ -1,4 +1,4 @@
-// src/types/index.ts v0.005 Dodano toolbarHint dla podpowiedzi przyciskow
+// src/types/index.ts v0.006 Dodano ClipPathResult dla skosów
 
 // ============================================
 // WYMIARY I POZYCJE
@@ -275,6 +275,12 @@ export interface FitResult {
   fits: boolean;
   partiallyOutside: boolean;
   outsideArea: number; // procent poza obszarem
+}
+
+export interface ClipPathResult {
+  hasClip: boolean;           // czy panel wymaga przycinania
+  clipPoints: Position[];     // punkty poligonu przycinajacego (wzgledem panelu)
+  wastePoints: Position[];    // punkty poligonu odpadu (wzgledem panelu)
 }
 
 // ============================================
