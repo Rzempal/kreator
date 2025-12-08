@@ -1,4 +1,4 @@
-// src/types/index.ts v0.003 Dodano isDragging, pan, canvasLocked
+// src/types/index.ts v0.006 Dodano ClipPathResult dla skosów
 
 // ============================================
 // WYMIARY I POZYCJE
@@ -135,6 +135,21 @@ export interface PriceSummary {
 }
 
 // ============================================
+// ZAPISANE PROJEKTY
+// ============================================
+
+export interface SavedProject {
+  id: string;
+  name: string;
+  createdAt: string;       // ISO date string
+  updatedAt: string;       // ISO date string
+  wall: Wall;
+  panels: Panel[];
+  addons: Addons;
+  colorToFabricMapping: Record<string, string>;
+}
+
+// ============================================
 // STAN APLIKACJI
 // ============================================
 
@@ -170,6 +185,13 @@ export interface KreatorState {
 
   // Wycena (computed)
   priceSummary: PriceSummary | null;
+
+  // Projekty
+  savedProjects: SavedProject[];
+  currentProjectId: string | null;
+
+  // UI
+  toolbarHint: string | null;  // Podpowiedz wyswietlana na canvas
 }
 
 // ============================================
@@ -221,9 +243,17 @@ export interface KreatorActions {
   recalculatePrice: () => void;
 
   // Projekt
-  saveProject: () => void;
-  loadProject: (projectId: string) => void;
-  resetProject: () => void;
+  saveProjectAs: (name: string) => string;        // Zapisz jako nowy, zwraca id
+  saveCurrentProject: () => void;                 // Nadpisz biezacy
+  loadProject: (projectId: string) => void;       // Wczytaj projekt
+  deleteProject: (projectId: string) => void;     // Usun projekt
+  renameProject: (projectId: string, name: string) => void;  // Zmien nazwe
+  newProject: () => void;                         // Nowy pusty projekt
+  exportProjectToJSON: () => string;              // Eksport do JSON string
+  importProjectFromJSON: (json: string) => boolean;  // Import z JSON, zwraca sukces
+
+  // UI
+  setToolbarHint: (hint: string | null) => void;  // Ustaw podpowiedz (lub null aby ukryc)
 }
 
 // ============================================
@@ -245,6 +275,12 @@ export interface FitResult {
   fits: boolean;
   partiallyOutside: boolean;
   outsideArea: number; // procent poza obszarem
+}
+
+export interface ClipPathResult {
+  hasClip: boolean;           // czy panel wymaga przycinania
+  clipPoints: Position[];     // punkty poligonu przycinajacego (wzgledem panelu)
+  wastePoints: Position[];    // punkty poligonu odpadu (wzgledem panelu)
 }
 
 // ============================================

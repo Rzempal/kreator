@@ -1,12 +1,12 @@
-// src/components/canvas/Canvas.tsx v0.005 Komunikaty przeniesione na gore canvas
+// src/components/canvas/Canvas.tsx v0.007 Dodano obliczanie clip path dla skosow
 'use client';
 
-import { useRef, useState, useCallback, useEffect } from 'react';
-import { useKreatorStore, usePanels, usePreview, useWall, useZoom, usePan, useCanvasLocked, useToolMode, useActiveColor } from '@/store/useKreatorStore';
-import { findSnapPosition, checkCollisions, checkPanelFits } from '@/lib/geometry';
+import { useRef, useState, useCallback, useEffect, useMemo } from 'react';
+import { useKreatorStore, usePanels, usePreview, useWall, useZoom, usePan, useCanvasLocked, useToolMode, useActiveColor, useToolbarHint } from '@/store/useKreatorStore';
+import { findSnapPosition, checkCollisions, checkPanelFits, calculatePanelClipPath } from '@/lib/geometry';
 import WallComponent from './Wall';
 import PanelComponent from './Panel';
-import type { PanelStatus } from '@/types';
+import type { PanelStatus, ClipPathResult } from '@/types';
 
 const SCALE = 2; // 1cm = 2px
 const PADDING = 50; // px padding wokol sciany
@@ -26,6 +26,7 @@ export default function Canvas() {
   const canvasLocked = useCanvasLocked();
   const toolMode = useToolMode();
   const activeColorId = useActiveColor();
+  const toolbarHint = useToolbarHint();
 
   const {
     setPreview,
@@ -52,6 +53,24 @@ export default function Canvas() {
   // SVG viewBox
   const viewBoxWidth = totalWidth * SCALE + PADDING * 2;
   const viewBoxHeight = maxHeight * SCALE + PADDING * 2;
+
+  // Oblicz clip paths dla wszystkich paneli (dla skosow)
+  const panelClipPaths = useMemo(() => {
+    const clipMap: Record<string, ClipPathResult> = {};
+    for (const panel of panels) {
+      clipMap[panel.id] = calculatePanelClipPath(panel, wall);
+    }
+    return clipMap;
+  }, [panels, wall]);
+
+  // Oblicz clip path dla preview
+  const previewClipPath = useMemo(() => {
+    if (!preview.visible || !activePanelSize) return null;
+    return calculatePanelClipPath(
+      { x: preview.x, y: preview.y, width: preview.width, height: preview.height },
+      wall
+    );
+  }, [preview.visible, preview.x, preview.y, preview.width, preview.height, activePanelSize, wall]);
 
   // Konwertuj pozycje myszy na koordynaty sciany
   const getWallCoords = useCallback(
@@ -422,15 +441,21 @@ export default function Canvas() {
           <WallComponent wall={wall} scale={SCALE} />
 
           {/* Panele */}
-          {panels.map((panel) => (
-            <PanelComponent
-              key={panel.id}
-              panel={panel}
-              scale={SCALE}
-              onClick={() => handlePanelClick(panel.id)}
-              onTouchEnd={() => handlePanelClick(panel.id)}
-            />
-          ))}
+          {panels.map((panel) => {
+            const clipData = panelClipPaths[panel.id];
+            return (
+              <PanelComponent
+                key={panel.id}
+                panel={panel}
+                scale={SCALE}
+                onClick={() => handlePanelClick(panel.id)}
+                onTouchEnd={() => handlePanelClick(panel.id)}
+                clipPoints={clipData?.clipPoints}
+                wastePoints={clipData?.wastePoints}
+                showWaste={clipData?.hasClip}
+              />
+            );
+          })}
 
           {/* Preview */}
           {preview.visible && activePanelSize && (
@@ -442,6 +467,9 @@ export default function Canvas() {
               scale={SCALE}
               isPreview={true}
               isDragging={preview.isDragging}
+              clipPoints={previewClipPath?.clipPoints}
+              wastePoints={previewClipPath?.wastePoints}
+              showWaste={previewClipPath?.hasClip}
             />
           )}
         </g>
@@ -479,9 +507,16 @@ export default function Canvas() {
       )}
 
       {/* Info o trybie gumki */}
-      {toolMode === 'erase' && (
+      {toolMode === 'erase' && !toolbarHint && (
         <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-red-600/90 text-white px-4 py-2 rounded-full text-sm">
           Tryb gumki - dotknij panel aby go usunac
+        </div>
+      )}
+
+      {/* Podpowiedz z toolbar (najwyzszy priorytet) */}
+      {toolbarHint && (
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-slate-700/95 text-white px-4 py-2 rounded-full text-sm border border-slate-500 shadow-lg">
+          {toolbarHint}
         </div>
       )}
     </div>

@@ -11,30 +11,57 @@ Aplikacja webowa do projektowania i wyceny paneli tapicerowanych na ścianę. Um
 - **Next.js 16** - React framework z App Router
 - **TypeScript** - typowanie statyczne
 - **Tailwind CSS** - stylowanie
-- **Zustand** - zarządzanie stanem
-- **SVG** - wizualizacja paneli
+- **Zustand** - zarządzanie stanem (z persistencją localStorage)
+- **SVG** - wizualizacja paneli z clip-path dla skosów
 
 ## Funkcje
 
 ### Zaimplementowane (Etap 1 - Lite)
+
+#### Projektowanie
 - [x] Konfiguracja ściany (segmenty, skosy, wyrównanie góra/dół)
-- [x] Biblioteka 592 tkanin w 26 kolekcjach (Standard/Premium/Exclusive)
-- [x] Wymiary paneli (standardowe + własne 10-300cm)
+- [x] Wizualne przycinanie paneli do skosów (clip-path + wyświetlanie odpadu)
 - [x] Snap do krawędzi i innych paneli
 - [x] Wykrywanie kolizji
 - [x] Soft clamp - panele mogą wychodzić poza obszar ściany (dla skosów)
 - [x] Historia ostatnich 6 rozmiarów paneli
-- [x] Narzędzia: dodawanie, malowanie, gumka
-- [x] Wycena z algorytmem dla nietypowych wymiarów
-- [x] Accordion sidebar (Ściana/Tkaniny/Wymiary/Wycena)
+
+#### Narzędzia
+- [x] Dodawanie paneli (drag & drop)
+- [x] Malowanie paneli (zmiana koloru)
+- [x] Gumka (usuwanie paneli)
+- [x] Cofanie ostatniego panelu
+- [x] Czyszczenie wszystkich paneli
+- [x] Zoom/Pan z możliwością blokady
+- [x] Podpowiedzi dla przycisków toolbar (hover/long-press/post-click)
+
+#### Materiały
+- [x] Biblioteka 592 tkanin w 26 kolekcjach (Standard/Premium/Exclusive)
+- [x] Wymiary paneli (standardowe + własne 10-300cm)
 - [x] Podgląd tekstur tkanin na panelach
+
+#### Wycena
+- [x] Automatyczna wycena z algorytmem dla nietypowych wymiarów
+- [x] Dodatki: podwójna pianka, rzepy, otwory na kontakty, klej
+
+#### Zarządzanie projektami
+- [x] Zapisywanie wielu projektów (localStorage)
+- [x] Wczytywanie projektów
+- [x] Usuwanie i zmiana nazwy projektów
+- [x] Eksport projektu do JSON
+- [x] Import projektu z JSON
+
+#### Interface
+- [x] Accordion sidebar (Projekty/Ściana/Tkaniny/Wymiary/Wycena)
+- [x] Responsywny MobileDrawer (5 zakładek: Projekty/Ściana/Kolory/Rozmiary/Wycena)
+- [x] Scrollowanie w sekcjach accordion
+- [x] Touch-friendly obsługa na mobile
 
 ### Planowane (Etap 2 - Full)
 - [ ] Eksport PDF z wizualizacją
 - [ ] Baza danych (Supabase)
 - [ ] Panel administratora
 - [ ] Konta użytkowników
-- [ ] Zapisywanie projektów
 
 ### Przyszłość (Etap 3 - SaaS)
 - [ ] Multi-tenancy
@@ -66,11 +93,11 @@ kreator/
 │   ├── src/
 │   │   ├── app/              # App Router (page.tsx)
 │   │   ├── components/
-│   │   │   ├── canvas/       # Wall, Panel, Canvas (SVG)
-│   │   │   └── ui/           # Sidebar, ColorPicker, SizePicker, Toolbar
+│   │   │   ├── canvas/       # Wall, Panel, Canvas (SVG + clip-path)
+│   │   │   └── ui/           # Sidebar, MobileDrawer, ColorPicker, SizePicker, Toolbar
 │   │   ├── data/             # JSON (fabrics, prices)
-│   │   ├── lib/              # geometry, pricing, utils
-│   │   ├── store/            # Zustand store
+│   │   ├── lib/              # geometry (snap, collision, clip-path), pricing, utils
+│   │   ├── store/            # Zustand store (z persist dla projektów)
 │   │   └── types/            # TypeScript definitions
 │   └── public/               # Statyczne zasoby
 ├── references/               # Dane referencyjne (tkaniny, ceny)
@@ -146,9 +173,19 @@ Projekt prywatny. Wszelkie prawa zastrzeżone.
 
 ### Etap 1: Lite (MVP) ✅
 Cyfrowy Asystent Sprzedaży - narzędzie przyspieszające wycenę.
+- Projektowanie paneli na ścianie ze skosami
+- Wizualizacja przycinania paneli do skosów
+- Lokalne zapisywanie projektów (localStorage + JSON export/import)
+- Responsywny interfejs (desktop + mobile)
 
 ### Etap 2: Full
 Profesjonalne Studio Projektowe - pełna samoobsługa klienta.
+- Eksport PDF z wizualizacją i wyceną
+- Baza danych w chmurze (Supabase)
+- Konta użytkowników i panel admina
 
 ### Etap 3: SaaS
 Twój Własny Konfigurator - oferta B2B white-label dla tapicerów.
+- Multi-tenancy dla wielu firm
+- Personalizacja brandingu
+- Integracja płatności (Stripe)

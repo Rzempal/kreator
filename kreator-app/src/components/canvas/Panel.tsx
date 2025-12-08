@@ -1,8 +1,8 @@
-// src/components/canvas/Panel.tsx v0.003 Dodano onTouchEnd i isDragging dla mobile
+// src/components/canvas/Panel.tsx v0.004 Dodano clip-path dla skosów i wyświetlanie odpadu
 'use client';
 
 import { memo, useMemo } from 'react';
-import type { Panel as PanelType, PanelStatus } from '@/types';
+import type { Panel as PanelType, PanelStatus, Position } from '@/types';
 import { isLightColor } from '@/lib/utils';
 import fabricsData from '@/data/fabrics.json';
 
@@ -14,6 +14,10 @@ interface PanelProps {
   isDragging?: boolean;
   onClick?: () => void;
   onTouchEnd?: () => void;
+  // Clip path dla skosów
+  clipPoints?: Position[];   // punkty poligonu przycinającego (względem panelu)
+  wastePoints?: Position[];  // punkty poligonu odpadu (względem panelu)
+  showWaste?: boolean;       // czy pokazywać odpad
 }
 
 // Kolory statusu
@@ -81,6 +85,9 @@ function PanelComponent({
   isDragging = false,
   onClick,
   onTouchEnd,
+  clipPoints = [],
+  wastePoints = [],
+  showWaste = true,
 }: PanelProps) {
   const colorInfo = useMemo(() => getColorInfo(panel.colorId), [panel.colorId]);
 
@@ -102,8 +109,24 @@ function PanelComponent({
   const dimensionText = `${panel.width}x${panel.height}`;
   const fontSize = Math.min(width, height) * 0.15;
 
-  // Unikalny ID dla patternu obrazka
+  // Unikalny ID dla patternu obrazka i clip path
   const patternId = `fabric-${panel.id}`;
+  const clipPathId = `clip-${panel.id}`;
+
+  // Czy mamy clip path do zastosowania
+  const hasClip = clipPoints.length > 0;
+
+  // Konwertuj punkty clip path na string dla SVG polygon (skalowane)
+  const clipPathString = useMemo(() => {
+    if (!hasClip) return '';
+    return clipPoints.map(p => `${x + p.x * scale},${y + p.y * scale}`).join(' ');
+  }, [clipPoints, x, y, scale, hasClip]);
+
+  // Konwertuj punkty waste na string dla SVG polygon (skalowane)
+  const wastePathString = useMemo(() => {
+    if (wastePoints.length === 0) return '';
+    return wastePoints.map(p => `${x + p.x * scale},${y + p.y * scale}`).join(' ');
+  }, [wastePoints, x, y, scale]);
 
   // Obsługa touch end (dla gumki na mobile)
   const handleTouchEnd = (e: React.TouchEvent) => {
@@ -123,9 +146,9 @@ function PanelComponent({
         filter: isDragging ? 'drop-shadow(0 4px 8px rgba(0,0,0,0.4))' : 'none',
       }}
     >
-      {/* Definicja patternu dla obrazka tkaniny */}
-      {colorInfo.type === 'image' && (
-        <defs>
+      <defs>
+        {/* Pattern dla obrazka tkaniny */}
+        {colorInfo.type === 'image' && (
           <pattern
             id={patternId}
             patternUnits="objectBoundingBox"
@@ -139,10 +162,28 @@ function PanelComponent({
               preserveAspectRatio="xMidYMid slice"
             />
           </pattern>
-        </defs>
+        )}
+
+        {/* Clip path dla skosu */}
+        {hasClip && (
+          <clipPath id={clipPathId}>
+            <polygon points={clipPathString} />
+          </clipPath>
+        )}
+      </defs>
+
+      {/* Odpad - ghost outline (renderowany jako pierwszy, pod panelem) */}
+      {showWaste && wastePathString && (
+        <polygon
+          points={wastePathString}
+          fill="rgba(255, 255, 255, 0.1)"
+          stroke="rgba(255, 255, 255, 0.4)"
+          strokeWidth={1}
+          strokeDasharray="4,4"
+        />
       )}
 
-      {/* Wypelnienie panelu */}
+      {/* Wypelnienie panelu (z opcjonalnym clip path) */}
       <rect
         x={x}
         y={y}
@@ -154,6 +195,7 @@ function PanelComponent({
         strokeDasharray={isPreview && !isDragging ? '5,5' : undefined}
         rx={2}
         ry={2}
+        clipPath={hasClip ? `url(#${clipPathId})` : undefined}
       />
 
       {/* Wymiary wewnatrz panelu */}

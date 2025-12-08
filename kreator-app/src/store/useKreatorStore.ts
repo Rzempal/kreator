@@ -1,4 +1,4 @@
-// src/store/useKreatorStore.ts v0.004 Dodano pan, canvasLocked, isDragging
+// src/store/useKreatorStore.ts v0.007 Dodano toolbarHint dla podpowiedzi przyciskow
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
@@ -14,6 +14,7 @@ import type {
   ViewMode,
   Addons,
   PriceSummary,
+  SavedProject,
 } from '@/types';
 import { generateId } from '@/lib/utils';
 import { calculatePriceSummary } from '@/lib/pricing';
@@ -78,6 +79,13 @@ const initialState: KreatorState = {
   colorToFabricMapping: {},
 
   priceSummary: null,
+
+  // Projekty
+  savedProjects: [],
+  currentProjectId: null,
+
+  // UI
+  toolbarHint: null,
 };
 
 // Store
@@ -355,27 +363,164 @@ export const useKreatorStore = create<KreatorStore>()(
 
       // ========== PROJEKT ==========
 
-      saveProject: () => {
+      saveProjectAs: (name) => {
         const state = get();
-        const projectData = {
+        const id = generateId('proj');
+        const now = new Date().toISOString();
+
+        const newProject: SavedProject = {
+          id,
+          name,
+          createdAt: now,
+          updatedAt: now,
           wall: state.wall,
           panels: state.panels,
           addons: state.addons,
           colorToFabricMapping: state.colorToFabricMapping,
-          savedAt: new Date().toISOString(),
         };
-        // Persist automatycznie zapisuje do localStorage
-        console.log('[Store] Projekt zapisany');
+
+        set((s) => ({
+          savedProjects: [...s.savedProjects, newProject],
+          currentProjectId: id,
+        }));
+
+        console.log('[Store] Zapisano nowy projekt:', name, id);
+        return id;
+      },
+
+      saveCurrentProject: () => {
+        const state = get();
+        if (!state.currentProjectId) {
+          console.warn('[Store] Brak aktywnego projektu do zapisania');
+          return;
+        }
+
+        const now = new Date().toISOString();
+
+        set((s) => ({
+          savedProjects: s.savedProjects.map((p) =>
+            p.id === s.currentProjectId
+              ? {
+                  ...p,
+                  updatedAt: now,
+                  wall: s.wall,
+                  panels: s.panels,
+                  addons: s.addons,
+                  colorToFabricMapping: s.colorToFabricMapping,
+                }
+              : p
+          ),
+        }));
+
+        console.log('[Store] Zaktualizowano projekt:', state.currentProjectId);
       },
 
       loadProject: (projectId) => {
-        // TODO: Implementacja wczytywania z localStorage
-        console.log('[Store] Wczytywanie projektu:', projectId);
+        const state = get();
+        const project = state.savedProjects.find((p) => p.id === projectId);
+
+        if (!project) {
+          console.error('[Store] Nie znaleziono projektu:', projectId);
+          return;
+        }
+
+        set({
+          wall: project.wall,
+          panels: project.panels,
+          addons: project.addons,
+          colorToFabricMapping: project.colorToFabricMapping,
+          currentProjectId: projectId,
+          selectedPanelId: null,
+          preview: { ...initialState.preview },
+          activePanelSize: null,
+        });
+
+        get().recalculatePrice();
+        console.log('[Store] Wczytano projekt:', project.name);
       },
 
-      resetProject: () => {
-        set(initialState);
-        console.log('[Store] Projekt zresetowany');
+      deleteProject: (projectId) => {
+        set((s) => ({
+          savedProjects: s.savedProjects.filter((p) => p.id !== projectId),
+          currentProjectId:
+            s.currentProjectId === projectId ? null : s.currentProjectId,
+        }));
+        console.log('[Store] Usunieto projekt:', projectId);
+      },
+
+      renameProject: (projectId, name) => {
+        set((s) => ({
+          savedProjects: s.savedProjects.map((p) =>
+            p.id === projectId ? { ...p, name, updatedAt: new Date().toISOString() } : p
+          ),
+        }));
+        console.log('[Store] Zmieniono nazwe projektu:', projectId, name);
+      },
+
+      newProject: () => {
+        set({
+          wall: initialState.wall,
+          panels: [],
+          addons: initialState.addons,
+          colorToFabricMapping: {},
+          currentProjectId: null,
+          selectedPanelId: null,
+          preview: { ...initialState.preview },
+          activePanelSize: null,
+          priceSummary: null,
+        });
+        console.log('[Store] Utworzono nowy projekt');
+      },
+
+      exportProjectToJSON: () => {
+        const state = get();
+        const exportData = {
+          version: '1.0',
+          exportedAt: new Date().toISOString(),
+          wall: state.wall,
+          panels: state.panels,
+          addons: state.addons,
+          colorToFabricMapping: state.colorToFabricMapping,
+        };
+        const json = JSON.stringify(exportData, null, 2);
+        console.log('[Store] Eksportowano projekt do JSON');
+        return json;
+      },
+
+      importProjectFromJSON: (json) => {
+        try {
+          const data = JSON.parse(json);
+
+          // Walidacja podstawowych pol
+          if (!data.wall || !data.panels || !Array.isArray(data.panels)) {
+            console.error('[Store] Nieprawidlowy format JSON');
+            return false;
+          }
+
+          set({
+            wall: data.wall,
+            panels: data.panels,
+            addons: data.addons ?? initialState.addons,
+            colorToFabricMapping: data.colorToFabricMapping ?? {},
+            currentProjectId: null, // Import tworzy nowy niezapisany projekt
+            selectedPanelId: null,
+            preview: { ...initialState.preview },
+            activePanelSize: null,
+          });
+
+          get().recalculatePrice();
+          console.log('[Store] Zaimportowano projekt z JSON');
+          return true;
+        } catch (error) {
+          console.error('[Store] Blad importu JSON:', error);
+          return false;
+        }
+      },
+
+      // ========== UI ==========
+
+      setToolbarHint: (hint) => {
+        set({ toolbarHint: hint });
       },
     }),
     {
@@ -386,6 +531,8 @@ export const useKreatorStore = create<KreatorStore>()(
         addons: state.addons,
         colorToFabricMapping: state.colorToFabricMapping,
         recentSizes: state.recentSizes,
+        savedProjects: state.savedProjects,
+        currentProjectId: state.currentProjectId,
       }),
       // Migracja: dodaj alignment do segmentow jesli brakuje
       onRehydrateStorage: () => (state) => {
@@ -412,3 +559,6 @@ export const useCanvasLocked = () => useKreatorStore((state) => state.canvasLock
 export const usePriceSummary = () => useKreatorStore((state) => state.priceSummary);
 export const useAddons = () => useKreatorStore((state) => state.addons);
 export const useRecentSizes = () => useKreatorStore((state) => state.recentSizes);
+export const useSavedProjects = () => useKreatorStore((state) => state.savedProjects);
+export const useCurrentProjectId = () => useKreatorStore((state) => state.currentProjectId);
+export const useToolbarHint = () => useKreatorStore((state) => state.toolbarHint);
