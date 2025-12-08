@@ -1,4 +1,4 @@
-// src/components/ui/Sidebar.tsx v0.003 Dodano sekcje Projekty do accordion
+// src/components/ui/Sidebar.tsx v0.004 Naprawiono scrollowanie content w accordion
 'use client';
 
 import { useState, useRef, ReactNode, useCallback } from 'react';
@@ -70,14 +70,14 @@ function AccordionSection({
         </svg>
       </button>
 
-      {/* Content - zwijana */}
+      {/* Content - zwijana z scrollowaniem */}
       <div
         className={cn(
-          'overflow-hidden transition-all duration-200',
-          isOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
+          'transition-all duration-200',
+          isOpen ? 'max-h-[60vh] opacity-100' : 'max-h-0 opacity-0 overflow-hidden'
         )}
       >
-        <div className="p-3 pt-0">{children}</div>
+        <div className="p-3 pt-0 max-h-[calc(60vh-20px)] overflow-y-auto">{children}</div>
       </div>
     </div>
   );
@@ -272,7 +272,7 @@ function ProjectsSection() {
       {savedProjects.length > 0 && (
         <div className="space-y-1">
           <div className="text-xs text-slate-400">Zapisane ({savedProjects.length}):</div>
-          <div className="max-h-40 overflow-y-auto space-y-1">
+          <div className="max-h-[30vh] overflow-y-auto space-y-1">
             {savedProjects.map((project) => (
               <div
                 key={project.id}

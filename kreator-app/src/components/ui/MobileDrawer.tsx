@@ -1,4 +1,4 @@
-// src/components/ui/MobileDrawer.tsx v0.003 Dodano zakladki Projekty i Rozmiary
+// src/components/ui/MobileDrawer.tsx v0.004 Naprawiono scrollowanie content
 'use client';
 
 import { useState, useRef, useCallback } from 'react';
@@ -169,7 +169,7 @@ function MobileProjectsSection() {
       {savedProjects.length > 0 && (
         <div className="space-y-1">
           <div className="text-xs text-slate-400">Zapisane ({savedProjects.length}):</div>
-          <div className="max-h-32 overflow-y-auto space-y-1">
+          <div className="max-h-[40vh] overflow-y-auto space-y-1">
             {savedProjects.map((project) => (
               <div
                 key={project.id}
@@ -285,14 +285,14 @@ export default function MobileDrawer() {
         className={cn(
           'fixed bottom-0 left-0 right-0 z-50 lg:hidden',
           'bg-slate-900 border-t border-slate-700 rounded-t-2xl',
-          'transition-transform duration-300 ease-out',
+          'transition-transform duration-300 ease-out flex flex-col',
           isOpen ? 'translate-y-0' : 'translate-y-[calc(100%-60px)]'
         )}
-        style={{ maxHeight: '70vh' }}
+        style={{ maxHeight: '80vh' }}
       >
         {/* Handle + Tabs */}
         <div
-          className="flex items-center justify-between px-2 py-3 cursor-pointer"
+          className="flex items-center justify-between px-2 py-3 cursor-pointer flex-shrink-0"
           onClick={() => setIsOpen(!isOpen)}
         >
           {/* Handle */}
@@ -334,8 +334,8 @@ export default function MobileDrawer() {
           </svg>
         </div>
 
-        {/* Content */}
-        <div className="px-4 pb-6 overflow-y-auto" style={{ maxHeight: 'calc(70vh - 60px)' }}>
+        {/* Content - scrollowalne */}
+        <div className="px-4 pb-6 overflow-y-auto flex-1 min-h-0">
           {activeTab === 'projects' && <MobileProjectsSection />}
           {activeTab === 'wall' && <WallConfig />}
           {activeTab === 'colors' && <ColorPicker />}
