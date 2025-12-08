@@ -1,4 +1,4 @@
-// src/components/canvas/Canvas.tsx v0.004 Nowy workflow paneli, pan, zoom wheel, gumka mobile
+// src/components/canvas/Canvas.tsx v0.005 Komunikaty przeniesione na gore canvas
 'use client';
 
 import { useRef, useState, useCallback, useEffect } from 'react';
@@ -447,33 +447,33 @@ export default function Canvas() {
         </g>
       </svg>
 
-      {/* Wskazowki dla uzytkownika */}
+      {/* Wskazowki dla uzytkownika (na gorze - blizej toolbar) */}
       {activePanelSize && !preview.locked && !preview.isDragging && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/70 text-white px-4 py-2 rounded-full text-sm">
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/70 text-white px-4 py-2 rounded-full text-sm">
           Dotknij aby umiescic panel {preview.width}x{preview.height}
         </div>
       )}
 
       {activePanelSize && preview.isDragging && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-cyan-600/90 text-white px-4 py-2 rounded-full text-sm">
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-cyan-600/90 text-white px-4 py-2 rounded-full text-sm">
           Przesun panel i pusc
         </div>
       )}
 
       {activePanelSize && preview.locked && !preview.isDragging && preview.status !== 'error' && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-emerald-600/90 text-white px-4 py-2 rounded-full text-sm">
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-emerald-600/90 text-white px-4 py-2 rounded-full text-sm">
           Dotknij panel aby przesunac lub dotknij poza nim aby dodac
         </div>
       )}
 
       {preview.status === 'error' && preview.visible && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-red-600/90 text-white px-4 py-2 rounded-full text-sm">
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-red-600/90 text-white px-4 py-2 rounded-full text-sm">
           Nie mozna umiescic panelu w tym miejscu
         </div>
       )}
 
       {preview.status === 'warning' && preview.visible && !preview.isDragging && preview.locked && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-amber-600/90 text-white px-4 py-2 rounded-full text-sm">
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-amber-600/90 text-white px-4 py-2 rounded-full text-sm">
           Panel czesciowo poza obszarem - dotknij poza nim aby dodac
         </div>
       )}
