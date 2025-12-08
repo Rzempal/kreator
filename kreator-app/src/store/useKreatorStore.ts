@@ -1,4 +1,4 @@
-// src/store/useKreatorStore.ts v0.006 Pelna implementacja zarzadzania projektami (localStorage + JSON)
+// src/store/useKreatorStore.ts v0.007 Dodano toolbarHint dla podpowiedzi przyciskow
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
@@ -83,6 +83,9 @@ const initialState: KreatorState = {
   // Projekty
   savedProjects: [],
   currentProjectId: null,
+
+  // UI
+  toolbarHint: null,
 };
 
 // Store
@@ -513,6 +516,12 @@ export const useKreatorStore = create<KreatorStore>()(
           return false;
         }
       },
+
+      // ========== UI ==========
+
+      setToolbarHint: (hint) => {
+        set({ toolbarHint: hint });
+      },
     }),
     {
       name: 'kreator-storage',
@@ -552,3 +561,4 @@ export const useAddons = () => useKreatorStore((state) => state.addons);
 export const useRecentSizes = () => useKreatorStore((state) => state.recentSizes);
 export const useSavedProjects = () => useKreatorStore((state) => state.savedProjects);
 export const useCurrentProjectId = () => useKreatorStore((state) => state.currentProjectId);
+export const useToolbarHint = () => useKreatorStore((state) => state.toolbarHint);

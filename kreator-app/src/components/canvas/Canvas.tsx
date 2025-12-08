@@ -1,8 +1,8 @@
-// src/components/canvas/Canvas.tsx v0.005 Komunikaty przeniesione na gore canvas
+// src/components/canvas/Canvas.tsx v0.006 Dodano wyswietlanie podpowiedzi toolbar
 'use client';
 
 import { useRef, useState, useCallback, useEffect } from 'react';
-import { useKreatorStore, usePanels, usePreview, useWall, useZoom, usePan, useCanvasLocked, useToolMode, useActiveColor } from '@/store/useKreatorStore';
+import { useKreatorStore, usePanels, usePreview, useWall, useZoom, usePan, useCanvasLocked, useToolMode, useActiveColor, useToolbarHint } from '@/store/useKreatorStore';
 import { findSnapPosition, checkCollisions, checkPanelFits } from '@/lib/geometry';
 import WallComponent from './Wall';
 import PanelComponent from './Panel';
@@ -26,6 +26,7 @@ export default function Canvas() {
   const canvasLocked = useCanvasLocked();
   const toolMode = useToolMode();
   const activeColorId = useActiveColor();
+  const toolbarHint = useToolbarHint();
 
   const {
     setPreview,
@@ -479,9 +480,16 @@ export default function Canvas() {
       )}
 
       {/* Info o trybie gumki */}
-      {toolMode === 'erase' && (
+      {toolMode === 'erase' && !toolbarHint && (
         <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-red-600/90 text-white px-4 py-2 rounded-full text-sm">
           Tryb gumki - dotknij panel aby go usunac
+        </div>
+      )}
+
+      {/* Podpowiedz z toolbar (najwyzszy priorytet) */}
+      {toolbarHint && (
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-slate-700/95 text-white px-4 py-2 rounded-full text-sm border border-slate-500 shadow-lg">
+          {toolbarHint}
         </div>
       )}
     </div>

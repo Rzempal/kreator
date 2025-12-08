@@ -1,10 +1,28 @@
-// src/components/ui/Toolbar.tsx v0.005 Usunieto przycisk Projekty (przeniesiony do Sidebar)
+// src/components/ui/Toolbar.tsx v0.006 Dodano podpowiedzi dla przyciskow (hover, touch, click)
 'use client';
 
+import { useRef, useCallback } from 'react';
 import { useKreatorStore, useRecentSizes, useToolMode, useZoom, useCanvasLocked } from '@/store/useKreatorStore';
 import { cn } from '@/lib/utils';
 
+// Podpowiedzi dla przyciskow
+const HINTS = {
+  zoomOut: 'Pomniejsz widok (Ctrl + scroll w dół)',
+  zoomIn: 'Powiększ widok (Ctrl + scroll w górę)',
+  resetView: 'Resetuj widok do 100% i wyśrodkuj',
+  lock: 'Zablokuj zoom i przesuwanie canvas',
+  unlock: 'Odblokuj zoom i przesuwanie canvas',
+  eraser: 'Tryb gumki - dotknij panel aby go usunąć',
+  eraserOff: 'Wyłącz tryb gumki',
+  undo: 'Cofnij ostatnio dodany panel',
+  clear: 'Usuń wszystkie panele z canvas',
+  size: (w: number, h: number) => `Wybierz panel ${w}×${h} cm - kliknij na canvas aby umieścić`,
+};
+
 export default function Toolbar() {
+  const longPressTimer = useRef<NodeJS.Timeout | null>(null);
+  const hintTimeout = useRef<NodeJS.Timeout | null>(null);
+
   const {
     activePanelSize,
     setActivePanelSize,
@@ -17,32 +35,94 @@ export default function Toolbar() {
     setZoom,
     resetPan,
     setCanvasLocked,
+    setToolbarHint,
   } = useKreatorStore();
   const recentSizes = useRecentSizes();
   const toolMode = useToolMode();
   const zoom = useZoom();
   const canvasLocked = useCanvasLocked();
 
+  // Pokaz podpowiedz na chwile po akcji
+  const showHintBriefly = useCallback((hint: string) => {
+    setToolbarHint(hint);
+    if (hintTimeout.current) clearTimeout(hintTimeout.current);
+    hintTimeout.current = setTimeout(() => setToolbarHint(null), 2000);
+  }, [setToolbarHint]);
+
+  // Handlery hover (desktop)
+  const onHover = useCallback((hint: string) => {
+    if (hintTimeout.current) clearTimeout(hintTimeout.current);
+    setToolbarHint(hint);
+  }, [setToolbarHint]);
+
+  const onLeave = useCallback(() => {
+    if (hintTimeout.current) clearTimeout(hintTimeout.current);
+    setToolbarHint(null);
+  }, [setToolbarHint]);
+
+  // Handlery touch (mobile) - long press
+  const onTouchStart = useCallback((hint: string) => {
+    longPressTimer.current = setTimeout(() => {
+      setToolbarHint(hint);
+    }, 500); // 500ms dla long press
+  }, [setToolbarHint]);
+
+  const onTouchEnd = useCallback(() => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+  }, []);
+
   const handleSizeClick = (width: number, height: number) => {
     // Toggle - jesli ten sam rozmiar, wylacz
     if (activePanelSize?.width === width && activePanelSize?.height === height) {
       setActivePanelSize(null);
+      onLeave();
     } else {
       setActivePanelSize({ width, height });
+      showHintBriefly(HINTS.size(width, height));
     }
   };
 
   const handleEraserClick = () => {
-    setToolMode(toolMode === 'erase' ? 'select' : 'erase');
+    const newMode = toolMode === 'erase' ? 'select' : 'erase';
+    setToolMode(newMode);
+    showHintBriefly(newMode === 'erase' ? HINTS.eraser : HINTS.eraserOff);
   };
 
   const handleLockToggle = () => {
-    setCanvasLocked(!canvasLocked);
+    const newLocked = !canvasLocked;
+    setCanvasLocked(newLocked);
+    showHintBriefly(newLocked ? HINTS.lock : HINTS.unlock);
   };
 
   const handleResetView = () => {
     setZoom(1);
     resetPan();
+    showHintBriefly(HINTS.resetView);
+  };
+
+  const handleZoomIn = () => {
+    zoomIn();
+    showHintBriefly(HINTS.zoomIn);
+  };
+
+  const handleZoomOut = () => {
+    zoomOut();
+    showHintBriefly(HINTS.zoomOut);
+  };
+
+  const handleUndo = () => {
+    undoLastPanel();
+    showHintBriefly(HINTS.undo);
+  };
+
+  const handleClear = () => {
+    if (panels.length > 0 && confirm('Czy na pewno chcesz usunąć wszystkie panele?')) {
+      clearPanels();
+      showHintBriefly(HINTS.clear);
+    }
   };
 
   return (
@@ -54,11 +134,16 @@ export default function Toolbar() {
             activePanelSize?.width === size.width &&
             activePanelSize?.height === size.height;
           const label = `${size.width}x${size.height}`;
+          const hint = HINTS.size(size.width, size.height);
 
           return (
             <button
               key={`${label}-${index}`}
               onClick={() => handleSizeClick(size.width, size.height)}
+              onMouseEnter={() => onHover(hint)}
+              onMouseLeave={onLeave}
+              onTouchStart={() => onTouchStart(hint)}
+              onTouchEnd={onTouchEnd}
               className={cn(
                 'px-3 py-2 rounded-lg text-sm font-medium transition-all',
                 'border border-slate-600 hover:border-cyan-500',
@@ -79,7 +164,11 @@ export default function Toolbar() {
       {/* Kontrolki Zoom */}
       <div className="flex items-center gap-1">
         <button
-          onClick={zoomOut}
+          onClick={handleZoomOut}
+          onMouseEnter={() => onHover(HINTS.zoomOut)}
+          onMouseLeave={onLeave}
+          onTouchStart={() => onTouchStart(HINTS.zoomOut)}
+          onTouchEnd={onTouchEnd}
           disabled={canvasLocked}
           className={cn(
             'p-2 rounded-lg transition-all',
@@ -88,7 +177,6 @@ export default function Toolbar() {
               ? 'opacity-50 cursor-not-allowed'
               : 'bg-slate-700 text-slate-200 hover:bg-slate-600'
           )}
-          title="Pomniejsz (Ctrl + scroll)"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
@@ -100,7 +188,11 @@ export default function Toolbar() {
         </span>
 
         <button
-          onClick={zoomIn}
+          onClick={handleZoomIn}
+          onMouseEnter={() => onHover(HINTS.zoomIn)}
+          onMouseLeave={onLeave}
+          onTouchStart={() => onTouchStart(HINTS.zoomIn)}
+          onTouchEnd={onTouchEnd}
           disabled={canvasLocked}
           className={cn(
             'p-2 rounded-lg transition-all',
@@ -109,7 +201,6 @@ export default function Toolbar() {
               ? 'opacity-50 cursor-not-allowed'
               : 'bg-slate-700 text-slate-200 hover:bg-slate-600'
           )}
-          title="Powieksz (Ctrl + scroll)"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -118,6 +209,10 @@ export default function Toolbar() {
 
         <button
           onClick={handleResetView}
+          onMouseEnter={() => onHover(HINTS.resetView)}
+          onMouseLeave={onLeave}
+          onTouchStart={() => onTouchStart(HINTS.resetView)}
+          onTouchEnd={onTouchEnd}
           disabled={canvasLocked}
           className={cn(
             'p-2 rounded-lg transition-all',
@@ -126,7 +221,6 @@ export default function Toolbar() {
               ? 'opacity-50 cursor-not-allowed'
               : 'bg-slate-700 text-slate-200 hover:bg-slate-600'
           )}
-          title="Resetuj widok"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
@@ -136,13 +230,16 @@ export default function Toolbar() {
         {/* Blokada canvas */}
         <button
           onClick={handleLockToggle}
+          onMouseEnter={() => onHover(canvasLocked ? HINTS.unlock : HINTS.lock)}
+          onMouseLeave={onLeave}
+          onTouchStart={() => onTouchStart(canvasLocked ? HINTS.unlock : HINTS.lock)}
+          onTouchEnd={onTouchEnd}
           className={cn(
             'p-2 rounded-lg transition-all border',
             canvasLocked
               ? 'bg-amber-600 border-amber-500 text-white'
               : 'bg-slate-700 border-slate-600 text-slate-200 hover:bg-slate-600 hover:border-amber-500'
           )}
-          title={canvasLocked ? 'Odblokuj zoom/pan' : 'Zablokuj zoom/pan'}
         >
           {canvasLocked ? (
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -161,18 +258,20 @@ export default function Toolbar() {
 
       {/* Akcje */}
       <div className="flex gap-2">
-        {/* Gumka - nowa ikona */}
+        {/* Gumka */}
         <button
           onClick={handleEraserClick}
+          onMouseEnter={() => onHover(toolMode === 'erase' ? HINTS.eraserOff : HINTS.eraser)}
+          onMouseLeave={onLeave}
+          onTouchStart={() => onTouchStart(toolMode === 'erase' ? HINTS.eraserOff : HINTS.eraser)}
+          onTouchEnd={onTouchEnd}
           className={cn(
             'p-2 rounded-lg transition-all border',
             toolMode === 'erase'
               ? 'bg-red-600 border-red-500 text-white'
               : 'bg-slate-700 border-slate-600 text-slate-200 hover:bg-slate-600 hover:border-red-500'
           )}
-          title="Gumka - dotknij panel aby go usunac"
         >
-          {/* Ikona gumki (eraser) */}
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
@@ -185,7 +284,11 @@ export default function Toolbar() {
 
         {/* Cofnij */}
         <button
-          onClick={undoLastPanel}
+          onClick={handleUndo}
+          onMouseEnter={() => onHover(HINTS.undo)}
+          onMouseLeave={onLeave}
+          onTouchStart={() => onTouchStart(HINTS.undo)}
+          onTouchEnd={onTouchEnd}
           disabled={panels.length === 0}
           className={cn(
             'p-2 rounded-lg transition-all',
@@ -194,7 +297,6 @@ export default function Toolbar() {
               ? 'opacity-50 cursor-not-allowed'
               : 'bg-slate-700 text-slate-200 hover:bg-slate-600'
           )}
-          title="Cofnij ostatni panel"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
@@ -203,11 +305,11 @@ export default function Toolbar() {
 
         {/* Wyczysc */}
         <button
-          onClick={() => {
-            if (panels.length > 0 && confirm('Czy na pewno chcesz usunac wszystkie panele?')) {
-              clearPanels();
-            }
-          }}
+          onClick={handleClear}
+          onMouseEnter={() => onHover(HINTS.clear)}
+          onMouseLeave={onLeave}
+          onTouchStart={() => onTouchStart(HINTS.clear)}
+          onTouchEnd={onTouchEnd}
           disabled={panels.length === 0}
           className={cn(
             'p-2 rounded-lg transition-all',
@@ -216,7 +318,6 @@ export default function Toolbar() {
               ? 'opacity-50 cursor-not-allowed'
               : 'bg-slate-700 text-slate-200 hover:bg-red-900/50'
           )}
-          title="Wyczysc wszystkie panele"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />

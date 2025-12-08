@@ -1,4 +1,4 @@
-// src/types/index.ts v0.004 Dodano SavedProject i akcje zarzadzania projektami
+// src/types/index.ts v0.005 Dodano toolbarHint dla podpowiedzi przyciskow
 
 // ============================================
 // WYMIARY I POZYCJE
@@ -189,6 +189,9 @@ export interface KreatorState {
   // Projekty
   savedProjects: SavedProject[];
   currentProjectId: string | null;
+
+  // UI
+  toolbarHint: string | null;  // Podpowiedz wyswietlana na canvas
 }
 
 // ============================================
@@ -248,6 +251,9 @@ export interface KreatorActions {
   newProject: () => void;                         // Nowy pusty projekt
   exportProjectToJSON: () => string;              // Eksport do JSON string
   importProjectFromJSON: (json: string) => boolean;  // Import z JSON, zwraca sukces
+
+  // UI
+  setToolbarHint: (hint: string | null) => void;  // Ustaw podpowiedz (lub null aby ukryc)
 }
 
 // ============================================
