@@ -1,4 +1,4 @@
-// src/components/canvas/Panel.tsx v0.002 Komponent panelu z obsługą tekstur tkanin
+// src/components/canvas/Panel.tsx v0.003 Dodano onTouchEnd i isDragging dla mobile
 'use client';
 
 import { memo, useMemo } from 'react';
@@ -11,7 +11,9 @@ interface PanelProps {
   scale: number;
   isSelected?: boolean;
   isPreview?: boolean;
+  isDragging?: boolean;
   onClick?: () => void;
+  onTouchEnd?: () => void;
 }
 
 // Kolory statusu
@@ -76,7 +78,9 @@ function PanelComponent({
   scale,
   isSelected = false,
   isPreview = false,
+  isDragging = false,
   onClick,
+  onTouchEnd,
 }: PanelProps) {
   const colorInfo = useMemo(() => getColorInfo(panel.colorId), [panel.colorId]);
 
@@ -101,11 +105,23 @@ function PanelComponent({
   // Unikalny ID dla patternu obrazka
   const patternId = `fabric-${panel.id}`;
 
+  // Obsługa touch end (dla gumki na mobile)
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (onTouchEnd) {
+      e.stopPropagation();
+      onTouchEnd();
+    }
+  };
+
   return (
     <g
       onClick={onClick}
+      onTouchEnd={handleTouchEnd}
       className={`cursor-pointer transition-opacity ${onClick ? 'hover:opacity-90' : ''}`}
-      style={{ opacity }}
+      style={{
+        opacity,
+        filter: isDragging ? 'drop-shadow(0 4px 8px rgba(0,0,0,0.4))' : 'none',
+      }}
     >
       {/* Definicja patternu dla obrazka tkaniny */}
       {colorInfo.type === 'image' && (
@@ -133,9 +149,9 @@ function PanelComponent({
         width={width}
         height={height}
         fill={colorInfo.type === 'image' ? `url(#${patternId})` : colorInfo.value}
-        stroke={isSelected ? '#3b82f6' : isPreview ? '#10b981' : '#000'}
-        strokeWidth={isSelected ? 3 : isPreview ? 2 : 1}
-        strokeDasharray={isPreview ? '5,5' : undefined}
+        stroke={isSelected ? '#3b82f6' : isDragging ? '#06b6d4' : isPreview ? '#10b981' : '#000'}
+        strokeWidth={isSelected ? 3 : isDragging ? 3 : isPreview ? 2 : 1}
+        strokeDasharray={isPreview && !isDragging ? '5,5' : undefined}
         rx={2}
         ry={2}
       />

@@ -1,4 +1,4 @@
-// src/store/useKreatorStore.ts v0.003 Zustand store dla Kreatora Paneli
+// src/store/useKreatorStore.ts v0.004 Dodano pan, canvasLocked, isDragging
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
@@ -9,6 +9,7 @@ import type {
   Panel,
   PanelPreview,
   Dimensions,
+  Position,
   ToolMode,
   ViewMode,
   Addons,
@@ -55,6 +56,7 @@ const initialState: KreatorState = {
     status: 'valid',
     visible: false,
     locked: false,
+    isDragging: false,
   },
   activePanelSize: null,
   recentSizes: DEFAULT_SIZES,
@@ -64,6 +66,8 @@ const initialState: KreatorState = {
 
   viewMode: 'frontal',
   zoom: 1,
+  pan: { x: 0, y: 0 },
+  canvasLocked: false,
 
   addons: {
     doubleFoam: false,
@@ -251,13 +255,25 @@ export const useKreatorStore = create<KreatorStore>()(
 
       lockPreview: () => {
         set((state) => ({
-          preview: { ...state.preview, locked: true },
+          preview: { ...state.preview, locked: true, isDragging: false },
         }));
       },
 
       unlockPreview: () => {
         set((state) => ({
-          preview: { ...state.preview, locked: false },
+          preview: { ...state.preview, locked: false, isDragging: false },
+        }));
+      },
+
+      startDragging: () => {
+        set((state) => ({
+          preview: { ...state.preview, isDragging: true, locked: false },
+        }));
+      },
+
+      stopDragging: () => {
+        set((state) => ({
+          preview: { ...state.preview, isDragging: false, locked: true },
         }));
       },
 
@@ -291,6 +307,19 @@ export const useKreatorStore = create<KreatorStore>()(
 
       zoomOut: () => {
         set((state) => ({ zoom: Math.max(0.5, state.zoom - 0.1) }));
+      },
+
+      setPan: (pan) => {
+        set({ pan });
+      },
+
+      resetPan: () => {
+        set({ pan: { x: 0, y: 0 } });
+      },
+
+      setCanvasLocked: (locked) => {
+        set({ canvasLocked: locked });
+        console.log('[Store] Canvas locked:', locked);
       },
 
       // ========== KONFIGURACJA ==========
@@ -378,6 +407,8 @@ export const usePreview = () => useKreatorStore((state) => state.preview);
 export const useToolMode = () => useKreatorStore((state) => state.toolMode);
 export const useActiveColor = () => useKreatorStore((state) => state.activeColorId);
 export const useZoom = () => useKreatorStore((state) => state.zoom);
+export const usePan = () => useKreatorStore((state) => state.pan);
+export const useCanvasLocked = () => useKreatorStore((state) => state.canvasLocked);
 export const usePriceSummary = () => useKreatorStore((state) => state.priceSummary);
 export const useAddons = () => useKreatorStore((state) => state.addons);
 export const useRecentSizes = () => useKreatorStore((state) => state.recentSizes);

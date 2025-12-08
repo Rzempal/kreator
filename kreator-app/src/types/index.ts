@@ -1,4 +1,4 @@
-// src/types/index.ts v0.002 Definicje typow dla Kreatora Paneli Tapicerowanych
+// src/types/index.ts v0.003 Dodano isDragging, pan, canvasLocked
 
 // ============================================
 // WYMIARY I POZYCJE
@@ -55,7 +55,8 @@ export interface Panel {
 
 export interface PanelPreview extends Omit<Panel, 'id' | 'fabricId'> {
   visible: boolean;
-  locked: boolean; // czy preview jest zamrozony po kliknieciu
+  locked: boolean;      // czy preview jest zamrozony (upuszczony, czeka na potwierdzenie)
+  isDragging: boolean;  // czy aktualnie przeciagamy preview
 }
 
 // ============================================
@@ -160,6 +161,8 @@ export interface KreatorState {
   // Widok
   viewMode: ViewMode;
   zoom: number;
+  pan: Position;          // przesuniecie widoku canvas
+  canvasLocked: boolean;  // blokada zoom/pan
 
   // Konfiguracja
   addons: Addons;
@@ -202,6 +205,13 @@ export interface KreatorActions {
   setZoom: (zoom: number) => void;
   zoomIn: () => void;
   zoomOut: () => void;
+  setPan: (pan: Position) => void;
+  resetPan: () => void;
+  setCanvasLocked: (locked: boolean) => void;
+
+  // Drag preview
+  startDragging: () => void;
+  stopDragging: () => void;
 
   // Konfiguracja
   setAddons: (addons: Partial<Addons>) => void;
