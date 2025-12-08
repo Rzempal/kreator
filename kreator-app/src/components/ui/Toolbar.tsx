@@ -1,10 +1,14 @@
-// src/components/ui/Toolbar.tsx v0.003 Nowa ikona gumki, kontrolki zoom, blokada canvas
+// src/components/ui/Toolbar.tsx v0.004 Dodano przycisk Projekty i integracje z ProjectManager
 'use client';
 
-import { useKreatorStore, useRecentSizes, useToolMode, useZoom, useCanvasLocked } from '@/store/useKreatorStore';
+import { useState } from 'react';
+import { useKreatorStore, useRecentSizes, useToolMode, useZoom, useCanvasLocked, useCurrentProjectId, useSavedProjects } from '@/store/useKreatorStore';
 import { cn } from '@/lib/utils';
+import ProjectManager from './ProjectManager';
 
 export default function Toolbar() {
+  const [isProjectManagerOpen, setIsProjectManagerOpen] = useState(false);
+
   const {
     activePanelSize,
     setActivePanelSize,
@@ -22,6 +26,11 @@ export default function Toolbar() {
   const toolMode = useToolMode();
   const zoom = useZoom();
   const canvasLocked = useCanvasLocked();
+  const currentProjectId = useCurrentProjectId();
+  const savedProjects = useSavedProjects();
+
+  // Znajdz nazwe aktywnego projektu
+  const currentProject = savedProjects.find(p => p.id === currentProjectId);
 
   const handleSizeClick = (width: number, height: number) => {
     // Toggle - jesli ten sam rozmiar, wylacz
@@ -226,10 +235,39 @@ export default function Toolbar() {
 
       {/* Licznik paneli */}
       {panels.length > 0 && (
-        <div className="ml-auto px-3 py-1 bg-slate-700 rounded-full text-sm text-slate-300">
+        <div className="px-3 py-1 bg-slate-700 rounded-full text-sm text-slate-300">
           {panels.length} {panels.length === 1 ? 'panel' : 'paneli'}
         </div>
       )}
+
+      {/* Separator */}
+      <div className="w-px h-8 bg-slate-600 mx-2 hidden sm:block" />
+
+      {/* Przycisk Projekty */}
+      <button
+        onClick={() => setIsProjectManagerOpen(true)}
+        className={cn(
+          'ml-auto flex items-center gap-2 px-3 py-2 rounded-lg transition-all',
+          'border hover:border-cyan-500',
+          currentProjectId
+            ? 'bg-cyan-900/50 border-cyan-700 text-cyan-300'
+            : 'bg-slate-700 border-slate-600 text-slate-200 hover:bg-slate-600'
+        )}
+        title="Zarzadzaj projektami"
+      >
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+        </svg>
+        <span className="text-sm font-medium hidden sm:inline">
+          {currentProject ? currentProject.name : 'Projekty'}
+        </span>
+      </button>
+
+      {/* Modal ProjectManager */}
+      <ProjectManager
+        isOpen={isProjectManagerOpen}
+        onClose={() => setIsProjectManagerOpen(false)}
+      />
     </div>
   );
 }
