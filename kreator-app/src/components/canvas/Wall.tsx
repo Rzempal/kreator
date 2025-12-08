@@ -1,4 +1,4 @@
-// src/components/canvas/Wall.tsx v0.004 Fix renderowania startHeight/endHeight dla kazdego segmentu
+// src/components/canvas/Wall.tsx v0.005 Przeniesiono wymiary szerokosci na dol sciany
 'use client';
 
 import { memo, useMemo, type ReactNode } from 'react';
@@ -123,39 +123,39 @@ function WallComponent({ wall, scale }: WallProps) {
       {/* Siatka pomocnicza */}
       <WallGrid wall={wall} scale={scale} />
 
-      {/* Wymiary zewnetrzne - szerokosc segmentow */}
+      {/* Wymiary zewnetrzne - szerokosc segmentow (na dole sciany) */}
       {dimensions.map((dim, i) => (
         <g key={`dim-${i}`}>
           {/* Linia wymiarowa */}
           <line
             x1={dim.x}
-            y1={-15}
+            y1={maxHeight * scale + 15}
             x2={dim.x + dim.width}
-            y2={-15}
+            y2={maxHeight * scale + 15}
             stroke="rgba(255, 255, 255, 0.5)"
             strokeWidth={1}
           />
           {/* Znaczniki koncow */}
           <line
             x1={dim.x}
-            y1={-20}
+            y1={maxHeight * scale + 10}
             x2={dim.x}
-            y2={-10}
+            y2={maxHeight * scale + 20}
             stroke="rgba(255, 255, 255, 0.5)"
             strokeWidth={1}
           />
           <line
             x1={dim.x + dim.width}
-            y1={-20}
+            y1={maxHeight * scale + 10}
             x2={dim.x + dim.width}
-            y2={-10}
+            y2={maxHeight * scale + 20}
             stroke="rgba(255, 255, 255, 0.5)"
             strokeWidth={1}
           />
           {/* Tekst wymiaru */}
           <text
             x={dim.x + dim.width / 2}
-            y={-25}
+            y={maxHeight * scale + 35}
             textAnchor="middle"
             fill="rgba(255, 255, 255, 0.7)"
             fontSize={11}

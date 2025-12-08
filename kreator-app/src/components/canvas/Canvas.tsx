@@ -1,8 +1,8 @@
-// src/components/canvas/Canvas.tsx v0.002 Glowny komponent workspace SVG
+// src/components/canvas/Canvas.tsx v0.005 Komunikaty przeniesione na gore canvas
 'use client';
 
 import { useRef, useState, useCallback, useEffect } from 'react';
-import { useKreatorStore, usePanels, usePreview, useWall, useZoom, useToolMode, useActiveColor } from '@/store/useKreatorStore';
+import { useKreatorStore, usePanels, usePreview, useWall, useZoom, usePan, useCanvasLocked, useToolMode, useActiveColor } from '@/store/useKreatorStore';
 import { findSnapPosition, checkCollisions, checkPanelFits } from '@/lib/geometry';
 import WallComponent from './Wall';
 import PanelComponent from './Panel';
@@ -13,13 +13,17 @@ const PADDING = 50; // px padding wokol sciany
 
 export default function Canvas() {
   const svgRef = useRef<SVGSVGElement>(null);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isPanning, setIsPanning] = useState(false);
+  const [panStart, setPanStart] = useState({ x: 0, y: 0 });
 
   // Store
   const wall = useWall();
   const panels = usePanels();
   const preview = usePreview();
   const zoom = useZoom();
+  const pan = usePan();
+  const canvasLocked = useCanvasLocked();
   const toolMode = useToolMode();
   const activeColorId = useActiveColor();
 
@@ -27,10 +31,16 @@ export default function Canvas() {
     setPreview,
     lockPreview,
     unlockPreview,
+    startDragging,
+    stopDragging,
     addPanel,
     removePanel,
     updatePanel,
     activePanelSize,
+    setZoom,
+    setPan,
+    zoomIn,
+    zoomOut,
   } = useKreatorStore();
 
   // Oblicz wymiary sciany
@@ -52,13 +62,13 @@ export default function Canvas() {
       const svgX = (clientX - rect.left) * (viewBoxWidth / rect.width);
       const svgY = (clientY - rect.top) * (viewBoxHeight / rect.height);
 
-      // Przeksztalc na koordynaty sciany (cm)
-      const wallX = (svgX - PADDING) / SCALE;
-      const wallY = (svgY - PADDING) / SCALE;
+      // Przeksztalc na koordynaty sciany (cm) z uwzglednieniem pan
+      const wallX = (svgX - PADDING - pan.x) / SCALE;
+      const wallY = (svgY - PADDING - pan.y) / SCALE;
 
       return { x: wallX, y: wallY };
     },
-    [viewBoxWidth, viewBoxHeight]
+    [viewBoxWidth, viewBoxHeight, pan]
   );
 
   // Oblicz status preview
@@ -76,13 +86,12 @@ export default function Canvas() {
     [panels, wall]
   );
 
-  // Ruch myszy
-  const handleMouseMove = useCallback(
-    (e: React.MouseEvent) => {
-      if (!activePanelSize || preview.locked) return;
+  // Aktualizuj pozycje preview
+  const updatePreviewPosition = useCallback(
+    (clientX: number, clientY: number) => {
+      if (!activePanelSize) return;
 
-      const coords = getWallCoords(e.clientX, e.clientY);
-      setMousePos(coords);
+      const coords = getWallCoords(clientX, clientY);
 
       // Snap
       const snapped = findSnapPosition(
@@ -109,56 +118,253 @@ export default function Canvas() {
         visible: true,
       });
     },
-    [activePanelSize, preview.locked, preview.width, preview.height, panels, wall, getWallCoords, getPreviewStatus, setPreview]
+    [activePanelSize, preview.width, preview.height, panels, wall, getWallCoords, getPreviewStatus, setPreview]
   );
 
-  // Klik na canvas
-  const handleClick = useCallback(
-    (e: React.MouseEvent) => {
-      // Tryb gumki - nie robimy nic (obslugiwane przez panel)
-      if (toolMode === 'erase') return;
+  // ========== MOUSE EVENTS ==========
 
-      // Jesli jest aktywny rozmiar panelu
-      if (activePanelSize && preview.visible) {
-        if (preview.locked) {
-          if (preview.status === 'error') {
-            // Klik gdy locked + error = odblokuj (anuluj)
-            unlockPreview();
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      // Prawy przycisk lub srodkowy = pan
+      if (e.button === 1 || e.button === 2) {
+        if (!canvasLocked) {
+          e.preventDefault();
+          setIsPanning(true);
+          setPanStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
+        }
+        return;
+      }
+
+      // Lewy przycisk
+      if (e.button === 0) {
+        // Tryb gumki - nic nie robimy (obslugiwane przez panel)
+        if (toolMode === 'erase') return;
+
+        // Jesli jest aktywny rozmiar panelu i preview widoczny
+        if (activePanelSize && preview.visible) {
+          // Jesli preview jest zablokowany (upuszczony) i klikamy POZA nim
+          if (preview.locked) {
+            // Sprawdz czy klik jest na preview
+            const coords = getWallCoords(e.clientX, e.clientY);
+            const isOnPreview =
+              coords.x >= preview.x &&
+              coords.x <= preview.x + preview.width &&
+              coords.y >= preview.y &&
+              coords.y <= preview.y + preview.height;
+
+            if (isOnPreview) {
+              // Klik NA preview = zacznij przeciagac
+              startDragging();
+            } else {
+              // Klik POZA preview = dodaj panel (jesli valid/warning)
+              if (preview.status !== 'error') {
+                addPanel({
+                  x: preview.x,
+                  y: preview.y,
+                  width: preview.width,
+                  height: preview.height,
+                  colorId: activeColorId,
+                });
+              }
+              unlockPreview();
+            }
+          } else if (preview.isDragging) {
+            // Pusc podczas przeciagania = zablokuj
+            stopDragging();
           } else {
-            // Klik gdy locked + valid/warning = dodaj panel
-            addPanel({
-              x: preview.x,
-              y: preview.y,
-              width: preview.width,
-              height: preview.height,
-              colorId: activeColorId,
-            });
-            // Odblokuj po dodaniu zeby mozna bylo dodac nastepny
-            unlockPreview();
-          }
-        } else {
-          // Pierwszy klik = lock preview (tylko jesli nie error)
-          if (preview.status !== 'error') {
-            lockPreview();
+            // Pierwszy klik = zacznij przeciagac (od razu)
+            if (preview.status !== 'error') {
+              startDragging();
+            }
           }
         }
       }
     },
-    [toolMode, activePanelSize, preview, activeColorId, addPanel, lockPreview, unlockPreview]
+    [canvasLocked, toolMode, activePanelSize, preview, activeColorId, pan, getWallCoords, startDragging, stopDragging, addPanel, unlockPreview]
   );
 
-  // Escape = anuluj/odblokuj
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent) => {
+      // Pan
+      if (isPanning && !canvasLocked) {
+        setPan({
+          x: e.clientX - panStart.x,
+          y: e.clientY - panStart.y,
+        });
+        return;
+      }
+
+      // Aktualizuj preview tylko gdy przeciagamy lub nie jest zablokowany
+      if (activePanelSize && (preview.isDragging || !preview.locked)) {
+        updatePreviewPosition(e.clientX, e.clientY);
+      }
+    },
+    [isPanning, canvasLocked, panStart, activePanelSize, preview.isDragging, preview.locked, setPan, updatePreviewPosition]
+  );
+
+  const handleMouseUp = useCallback(
+    (e: React.MouseEvent) => {
+      // Koniec pan
+      if (isPanning) {
+        setIsPanning(false);
+        return;
+      }
+
+      // Jesli przeciagamy preview, upusc go
+      if (preview.isDragging) {
+        stopDragging();
+      }
+    },
+    [isPanning, preview.isDragging, stopDragging]
+  );
+
+  // ========== TOUCH EVENTS ==========
+
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      e.preventDefault();
+
+      if (e.touches.length === 2 && !canvasLocked) {
+        // Dwa palce = rozpocznij pan
+        const touch = e.touches[0];
+        setIsPanning(true);
+        setPanStart({ x: touch.clientX - pan.x, y: touch.clientY - pan.y });
+        return;
+      }
+
+      if (e.touches.length === 1) {
+        const touch = e.touches[0];
+
+        // Tryb gumki - obslugiwane przez panel
+        if (toolMode === 'erase') return;
+
+        // Logika analogiczna do mouseDown
+        if (activePanelSize && preview.visible) {
+          if (preview.locked) {
+            const coords = getWallCoords(touch.clientX, touch.clientY);
+            const isOnPreview =
+              coords.x >= preview.x &&
+              coords.x <= preview.x + preview.width &&
+              coords.y >= preview.y &&
+              coords.y <= preview.y + preview.height;
+
+            if (isOnPreview) {
+              startDragging();
+            } else {
+              if (preview.status !== 'error') {
+                addPanel({
+                  x: preview.x,
+                  y: preview.y,
+                  width: preview.width,
+                  height: preview.height,
+                  colorId: activeColorId,
+                });
+              }
+              unlockPreview();
+            }
+          } else if (!preview.isDragging) {
+            if (preview.status !== 'error') {
+              startDragging();
+            }
+          }
+        }
+      }
+    },
+    [canvasLocked, toolMode, activePanelSize, preview, activeColorId, pan, getWallCoords, startDragging, addPanel, unlockPreview]
+  );
+
+  const handleTouchMove = useCallback(
+    (e: React.TouchEvent) => {
+      e.preventDefault();
+
+      if (e.touches.length === 2 && isPanning && !canvasLocked) {
+        const touch = e.touches[0];
+        setPan({
+          x: touch.clientX - panStart.x,
+          y: touch.clientY - panStart.y,
+        });
+        return;
+      }
+
+      if (e.touches.length === 1) {
+        const touch = e.touches[0];
+
+        if (isPanning && !canvasLocked) {
+          setPan({
+            x: touch.clientX - panStart.x,
+            y: touch.clientY - panStart.y,
+          });
+          return;
+        }
+
+        // Aktualizuj preview
+        if (activePanelSize && (preview.isDragging || !preview.locked)) {
+          updatePreviewPosition(touch.clientX, touch.clientY);
+        }
+      }
+    },
+    [isPanning, canvasLocked, panStart, activePanelSize, preview.isDragging, preview.locked, setPan, updatePreviewPosition]
+  );
+
+  const handleTouchEnd = useCallback(
+    (e: React.TouchEvent) => {
+      e.preventDefault();
+
+      if (isPanning) {
+        setIsPanning(false);
+        return;
+      }
+
+      // Jesli przeciagamy preview, upusc go
+      if (preview.isDragging) {
+        stopDragging();
+      }
+    },
+    [isPanning, preview.isDragging, stopDragging]
+  );
+
+  // ========== WHEEL (ZOOM) ==========
+
+  const handleWheel = useCallback(
+    (e: React.WheelEvent) => {
+      if (canvasLocked) return;
+
+      e.preventDefault();
+
+      // Ctrl + wheel = zoom
+      if (e.ctrlKey || e.metaKey) {
+        if (e.deltaY < 0) {
+          zoomIn();
+        } else {
+          zoomOut();
+        }
+      } else {
+        // Wheel bez ctrl = pan
+        setPan({
+          x: pan.x - e.deltaX,
+          y: pan.y - e.deltaY,
+        });
+      }
+    },
+    [canvasLocked, pan, setPan, zoomIn, zoomOut]
+  );
+
+  // ========== KEYBOARD ==========
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && preview.locked) {
-        unlockPreview();
+      if (e.key === 'Escape') {
+        if (preview.isDragging || preview.locked) {
+          unlockPreview();
+        }
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [preview.locked, unlockPreview]);
+  }, [preview.isDragging, preview.locked, unlockPreview]);
 
-  // Klik na panel
+  // ========== PANEL CLICK (GUMKA/PAINT) ==========
+
   const handlePanelClick = useCallback(
     (panelId: string) => {
       if (toolMode === 'erase') {
@@ -170,37 +376,36 @@ export default function Canvas() {
     [toolMode, activeColorId, removePanel, updatePanel]
   );
 
-  // Touch events
-  const handleTouchMove = useCallback(
-    (e: React.TouchEvent) => {
-      if (e.touches.length !== 1) return;
-      const touch = e.touches[0];
-      handleMouseMove({
-        clientX: touch.clientX,
-        clientY: touch.clientY,
-      } as React.MouseEvent);
-    },
-    [handleMouseMove]
-  );
+  // Disable context menu on canvas
+  const handleContextMenu = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+  }, []);
 
-  const handleTouchEnd = useCallback(
-    (e: React.TouchEvent) => {
-      handleClick({} as React.MouseEvent);
-    },
-    [handleClick]
-  );
+  // ========== RENDER ==========
 
   return (
-    <div className="relative w-full h-full overflow-auto bg-slate-900 rounded-xl">
+    <div
+      ref={containerRef}
+      className="relative w-full h-full overflow-hidden bg-slate-900 rounded-xl"
+      onContextMenu={handleContextMenu}
+    >
       <svg
         ref={svgRef}
         viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
-        className="w-full h-full min-h-[400px]"
-        style={{ transform: `scale(${zoom})`, transformOrigin: 'center' }}
+        className="w-full h-full min-h-[400px] touch-canvas"
+        style={{
+          transform: `scale(${zoom})`,
+          transformOrigin: 'center',
+          cursor: isPanning ? 'grabbing' : (activePanelSize ? 'crosshair' : 'default'),
+        }}
+        onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
-        onClick={handleClick}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+        onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
+        onWheel={handleWheel}
       >
         {/* Tlo */}
         <rect
@@ -211,8 +416,8 @@ export default function Canvas() {
           fill="transparent"
         />
 
-        {/* Grupa z transformacja (padding) */}
-        <g transform={`translate(${PADDING}, ${PADDING})`}>
+        {/* Grupa z transformacja (padding + pan) */}
+        <g transform={`translate(${PADDING + pan.x}, ${PADDING + pan.y})`}>
           {/* Sciana */}
           <WallComponent wall={wall} scale={SCALE} />
 
@@ -223,6 +428,7 @@ export default function Canvas() {
               panel={panel}
               scale={SCALE}
               onClick={() => handlePanelClick(panel.id)}
+              onTouchEnd={() => handlePanelClick(panel.id)}
             />
           ))}
 
@@ -235,33 +441,47 @@ export default function Canvas() {
               }}
               scale={SCALE}
               isPreview={true}
+              isDragging={preview.isDragging}
             />
           )}
         </g>
       </svg>
 
-      {/* Wskazowka dla uzytkownika */}
-      {activePanelSize && !preview.locked && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/70 text-white px-4 py-2 rounded-full text-sm">
-          Kliknij aby umiescic panel {preview.width}x{preview.height}
+      {/* Wskazowki dla uzytkownika (na gorze - blizej toolbar) */}
+      {activePanelSize && !preview.locked && !preview.isDragging && (
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/70 text-white px-4 py-2 rounded-full text-sm">
+          Dotknij aby umiescic panel {preview.width}x{preview.height}
         </div>
       )}
 
-      {activePanelSize && preview.locked && preview.status !== 'error' && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-emerald-600/90 text-white px-4 py-2 rounded-full text-sm">
-          Kliknij ponownie aby dodac panel
+      {activePanelSize && preview.isDragging && (
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-cyan-600/90 text-white px-4 py-2 rounded-full text-sm">
+          Przesun panel i pusc
+        </div>
+      )}
+
+      {activePanelSize && preview.locked && !preview.isDragging && preview.status !== 'error' && (
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-emerald-600/90 text-white px-4 py-2 rounded-full text-sm">
+          Dotknij panel aby przesunac lub dotknij poza nim aby dodac
         </div>
       )}
 
       {preview.status === 'error' && preview.visible && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-red-600/90 text-white px-4 py-2 rounded-full text-sm">
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-red-600/90 text-white px-4 py-2 rounded-full text-sm">
           Nie mozna umiescic panelu w tym miejscu
         </div>
       )}
 
-      {preview.status === 'warning' && preview.visible && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-amber-600/90 text-white px-4 py-2 rounded-full text-sm">
-          Panel czesciowo poza obszarem
+      {preview.status === 'warning' && preview.visible && !preview.isDragging && preview.locked && (
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-amber-600/90 text-white px-4 py-2 rounded-full text-sm">
+          Panel czesciowo poza obszarem - dotknij poza nim aby dodac
+        </div>
+      )}
+
+      {/* Info o trybie gumki */}
+      {toolMode === 'erase' && (
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-red-600/90 text-white px-4 py-2 rounded-full text-sm">
+          Tryb gumki - dotknij panel aby go usunac
         </div>
       )}
     </div>
