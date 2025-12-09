@@ -1,4 +1,4 @@
-// src/components/canvas/Canvas.tsx v0.008 Dynamiczny kolor tla canvy z canvasColor
+// src/components/canvas/Canvas.tsx v0.009 Przelacznik widoku frontalny/z gory
 'use client';
 
 import { useRef, useState, useCallback, useEffect, useMemo } from 'react';
@@ -6,6 +6,8 @@ import { useKreatorStore, usePanels, usePreview, useWall, useZoom, usePan, useCa
 import { findSnapPosition, checkCollisions, checkPanelFits, calculatePanelClipPath } from '@/lib/geometry';
 import WallComponent from './Wall';
 import PanelComponent from './Panel';
+import TopView from './TopView';
+import { cn } from '@/lib/utils';
 import type { PanelStatus, ClipPathResult } from '@/types';
 
 const SCALE = 2; // 1cm = 2px
@@ -16,6 +18,7 @@ export default function Canvas() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isPanning, setIsPanning] = useState(false);
   const [panStart, setPanStart] = useState({ x: 0, y: 0 });
+  const [viewType, setViewType] = useState<'frontal' | 'top'>('frontal');
 
   // Store
   const wall = useWall();
@@ -410,6 +413,32 @@ export default function Canvas() {
       style={{ backgroundColor: canvasColor }}
       onContextMenu={handleContextMenu}
     >
+      {/* Przelacznik widoku frontalny/z gory */}
+      <div className="absolute top-3 right-3 z-10 flex gap-1 bg-black/40 rounded-lg p-1">
+        <button
+          onClick={() => setViewType('frontal')}
+          className={cn(
+            'px-3 py-1.5 text-xs font-medium rounded-md transition-all',
+            viewType === 'frontal'
+              ? 'bg-cyan-600 text-white'
+              : 'text-slate-300 hover:bg-slate-700'
+          )}
+        >
+          Frontalny
+        </button>
+        <button
+          onClick={() => setViewType('top')}
+          className={cn(
+            'px-3 py-1.5 text-xs font-medium rounded-md transition-all',
+            viewType === 'top'
+              ? 'bg-cyan-600 text-white'
+              : 'text-slate-300 hover:bg-slate-700'
+          )}
+        >
+          Z góry
+        </button>
+      </div>
+
       <svg
         ref={svgRef}
         viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
@@ -439,40 +468,47 @@ export default function Canvas() {
 
         {/* Grupa z transformacja (padding + pan) */}
         <g transform={`translate(${PADDING + pan.x}, ${PADDING + pan.y})`}>
-          {/* Sciana */}
-          <WallComponent wall={wall} scale={SCALE} />
+          {viewType === 'frontal' ? (
+            <>
+              {/* Sciana */}
+              <WallComponent wall={wall} scale={SCALE} />
 
-          {/* Panele */}
-          {panels.map((panel) => {
-            const clipData = panelClipPaths[panel.id];
-            return (
-              <PanelComponent
-                key={panel.id}
-                panel={panel}
-                scale={SCALE}
-                onClick={() => handlePanelClick(panel.id)}
-                onTouchEnd={() => handlePanelClick(panel.id)}
-                clipPoints={clipData?.clipPoints}
-                wastePoints={clipData?.wastePoints}
-                showWaste={clipData?.hasClip}
-              />
-            );
-          })}
+              {/* Panele */}
+              {panels.map((panel) => {
+                const clipData = panelClipPaths[panel.id];
+                return (
+                  <PanelComponent
+                    key={panel.id}
+                    panel={panel}
+                    scale={SCALE}
+                    onClick={() => handlePanelClick(panel.id)}
+                    onTouchEnd={() => handlePanelClick(panel.id)}
+                    clipPoints={clipData?.clipPoints}
+                    wastePoints={clipData?.wastePoints}
+                    showWaste={clipData?.hasClip}
+                  />
+                );
+              })}
 
-          {/* Preview */}
-          {preview.visible && activePanelSize && (
-            <PanelComponent
-              panel={{
-                id: 'preview',
-                ...preview,
-              }}
-              scale={SCALE}
-              isPreview={true}
-              isDragging={preview.isDragging}
-              clipPoints={previewClipPath?.clipPoints}
-              wastePoints={previewClipPath?.wastePoints}
-              showWaste={previewClipPath?.hasClip}
-            />
+              {/* Preview */}
+              {preview.visible && activePanelSize && (
+                <PanelComponent
+                  panel={{
+                    id: 'preview',
+                    ...preview,
+                  }}
+                  scale={SCALE}
+                  isPreview={true}
+                  isDragging={preview.isDragging}
+                  clipPoints={previewClipPath?.clipPoints}
+                  wastePoints={previewClipPath?.wastePoints}
+                  showWaste={previewClipPath?.hasClip}
+                />
+              )}
+            </>
+          ) : (
+            /* Widok z gory */
+            <TopView wall={wall} scale={SCALE} />
           )}
         </g>
       </svg>

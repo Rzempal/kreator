@@ -1,4 +1,4 @@
-// src/components/ui/WallConfig.tsx v0.003 Konfiguracja sciany - tryb edycji z zapisem
+// src/components/ui/WallConfig.tsx v0.004 Przycisk Main i selektor kata dla segmentow
 'use client';
 
 import { useState } from 'react';
@@ -30,7 +30,7 @@ const DEFAULT_SEGMENT: SegmentFormData = {
 
 export default function WallConfig() {
   const wall = useWall();
-  const { addSegment, removeSegment, updateSegment, clearPanels } = useKreatorStore();
+  const { addSegment, removeSegment, updateSegment, setMasterSegment, clearPanels } = useKreatorStore();
 
   const [newSegment, setNewSegment] = useState<SegmentFormData>(DEFAULT_SEGMENT);
   const [isAdding, setIsAdding] = useState(false);
@@ -97,8 +97,15 @@ export default function WallConfig() {
             segment={segment}
             index={index}
             canDelete={wall.segments.length > 1}
+            isMaster={wall.masterSegmentId === segment.id}
+            isLast={index === wall.segments.length - 1}
             onSave={(data) => handleSaveSegment(segment.id, data)}
             onDelete={() => handleRemoveSegment(segment.id)}
+            onSetMaster={() => setMasterSegment(segment.id)}
+            onAngleChange={(angle) => {
+              updateSegment(segment.id, { angle });
+              clearPanels();
+            }}
           />
         ))}
       </div>
@@ -242,11 +249,15 @@ interface SegmentRowProps {
   segment: WallSegment;
   index: number;
   canDelete: boolean;
+  isMaster: boolean;
+  isLast: boolean;
   onSave: (data: SegmentFormData) => void;
   onDelete: () => void;
+  onSetMaster: () => void;
+  onAngleChange: (angle: 90 | 180 | 270) => void;
 }
 
-function SegmentRow({ segment, index, canDelete, onSave, onDelete }: SegmentRowProps) {
+function SegmentRow({ segment, index, canDelete, isMaster, isLast, onSave, onDelete, onSetMaster, onAngleChange }: SegmentRowProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState<SegmentFormData>({
     width: segment.width,
@@ -257,6 +268,7 @@ function SegmentRow({ segment, index, canDelete, onSave, onDelete }: SegmentRowP
 
   const isSloped = segment.startHeight !== segment.endHeight;
   const editIsSloped = editData.startHeight !== editData.endHeight;
+
 
   // Rozpocznij edycje
   const handleStartEdit = () => {
@@ -285,16 +297,34 @@ function SegmentRow({ segment, index, canDelete, onSave, onDelete }: SegmentRowP
     return (
       <div className={cn(
         'p-3 rounded-lg border transition-colors',
-        isSloped
-          ? 'bg-amber-900/20 border-amber-500/30'
-          : 'bg-slate-700/50 border-slate-600'
+        isMaster
+          ? 'bg-purple-900/30 border-purple-500/50'
+          : isSloped
+            ? 'bg-amber-900/20 border-amber-500/30'
+            : 'bg-slate-700/50 border-slate-600'
       )}>
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium text-slate-300">
+          <span className="text-sm font-medium text-slate-300 flex items-center gap-2">
             Segment {index + 1}
-            {isSloped && <span className="ml-2 text-xs text-amber-400">(skos)</span>}
+            {isMaster && <span className="text-xs bg-purple-500/30 text-purple-300 px-1.5 py-0.5 rounded">Main</span>}
+            {isSloped && <span className="text-xs text-amber-400">(skos)</span>}
           </span>
           <div className="flex gap-1">
+            {/* Przycisk Main */}
+            <button
+              onClick={onSetMaster}
+              className={cn(
+                'p-1 transition-colors',
+                isMaster
+                  ? 'text-purple-400'
+                  : 'text-slate-400 hover:text-purple-400'
+              )}
+              title={isMaster ? 'Segment główny' : 'Ustaw jako główny'}
+            >
+              <svg className="w-4 h-4" fill={isMaster ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+              </svg>
+            </button>
             <button
               onClick={handleStartEdit}
               className="p-1 text-slate-400 hover:text-cyan-400 transition-colors"
@@ -334,6 +364,29 @@ function SegmentRow({ segment, index, canDelete, onSave, onDelete }: SegmentRowP
           </div>
         </div>
 
+        {/* Selektor kata - tylko gdy nie ostatni segment */}
+        {!isLast && (
+          <div className="mt-2 pt-2 border-t border-slate-600/50">
+            <label className="text-xs text-slate-500 block mb-1">Kąt z następnym segmentem</label>
+            <div className="flex gap-1">
+              {([90, 180, 270] as const).map((angle) => (
+                <button
+                  key={angle}
+                  onClick={() => onAngleChange(angle)}
+                  className={cn(
+                    'flex-1 px-2 py-1 text-xs font-medium rounded transition-colors',
+                    segment.angle === angle
+                      ? 'bg-cyan-600 text-white'
+                      : 'bg-slate-600 text-slate-300 hover:bg-slate-500'
+                  )}
+                >
+                  {angle}°
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Info o wyrownaniu dla skosow */}
         {isSloped && (
           <div className="mt-2 pt-2 border-t border-slate-600/50 text-xs text-slate-400">
@@ -343,6 +396,7 @@ function SegmentRow({ segment, index, canDelete, onSave, onDelete }: SegmentRowP
       </div>
     );
   }
+
 
   // Tryb edycji
   return (
