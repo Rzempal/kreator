@@ -1,4 +1,4 @@
-// src/components/canvas/TopView.tsx v0.001 Widok z gory - rzut segmentow z katami
+// src/components/canvas/TopView.tsx v0.002 Wyrownianie Main segmentu z widokiem frontalnym
 'use client';
 
 import { useMemo } from 'react';
@@ -8,6 +8,8 @@ import { useCanvasColor, useAddons } from '@/store/useKreatorStore';
 interface TopViewProps {
     wall: WallType;
     scale: number;
+    totalWidth: number;      // szerokosc sciany z widoku frontalnego (cm)
+    alignToFrontal: boolean; // czy wyrownac Main segment z widokiem frontalnym
 }
 
 // Funkcja do obliczania jasnosci koloru
@@ -20,7 +22,7 @@ function isLightColor(hex: string): boolean {
     return luminance > 0.5;
 }
 
-export default function TopView({ wall, scale }: TopViewProps) {
+export default function TopView({ wall, scale, totalWidth, alignToFrontal }: TopViewProps) {
     const canvasColor = useCanvasColor();
     const addons = useAddons();
     const isLight = useMemo(() => isLightColor(canvasColor), [canvasColor]);
@@ -35,7 +37,13 @@ export default function TopView({ wall, scale }: TopViewProps) {
     const textColor = isLight ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.8)';
     const mainColor = '#a855f7'; // purple-500
 
+    // Znajdz index Main segmentu
+    const masterIndex = useMemo(() => {
+        return wall.segments.findIndex(seg => seg.id === wall.masterSegmentId);
+    }, [wall.segments, wall.masterSegmentId]);
+
     // Oblicz pozycje segmentow w widoku z gory
+    // Main segment jest wyrownany poziomo (kat = 0) i zaczyna sie na odpowiedniej pozycji X
     const segmentPositions = useMemo(() => {
         const positions: Array<{
             id: string;
@@ -48,44 +56,111 @@ export default function TopView({ wall, scale }: TopViewProps) {
             isMaster: boolean;
         }> = [];
 
-        let currentX = 50; // Start z paddingiem
-        let currentY = 100; // Srodek canvy
-        let currentAngle = 0; // Kat w stopniach (0 = w prawo)
+        // Najpierw oblicz skumulowane pozycje X w widoku frontalnym dla kazdego segmentu
+        const frontalPositions: number[] = [];
+        let cumX = 0;
+        for (const seg of wall.segments) {
+            frontalPositions.push(cumX);
+            cumX += seg.width;
+        }
 
-        for (let i = 0; i < wall.segments.length; i++) {
-            const segment = wall.segments[i];
-            const isMaster = wall.masterSegmentId === segment.id;
+        // Pozycja startowa Main segmentu (wyrownana z widokiem frontalnym)
+        const masterFrontalX = masterIndex >= 0 ? frontalPositions[masterIndex] * scale : 0;
 
-            // Oblicz punkt koncowy segmentu
-            const angleRad = (currentAngle * Math.PI) / 180;
-            const endX = currentX + segment.width * scale * Math.cos(angleRad);
-            const endY = currentY + segment.width * scale * Math.sin(angleRad);
+        // Srodek Y dla widoku z gory
+        const centerY = 50;
 
-            positions.push({
-                id: segment.id,
-                x1: currentX,
-                y1: currentY,
-                x2: endX,
-                y2: endY,
-                width: segment.width,
-                angle: currentAngle,
-                isMaster,
-            });
+        // Buduj pozycje od Main segmentu w obie strony
+        // Main segment jest poziomy (kat 0)
 
-            // Aktualizuj pozycje dla nastepnego segmentu
-            currentX = endX;
-            currentY = endY;
+        // Segmenty przed Main (od Main do poczatku)
+        let prevPositions: typeof positions = [];
+        if (masterIndex > 0) {
+            let x = masterFrontalX;
+            let y = centerY;
+            let angle = 180; // Kierunek w lewo
 
-            // Zmien kat dla nastepnego segmentu
-            if (i < wall.segments.length - 1) {
-                // 90 = skret w prawo (+90), 180 = prosto (0), 270 = skret w lewo (-90)
-                const turnAngle = segment.angle === 90 ? 90 : segment.angle === 270 ? -90 : 0;
-                currentAngle += turnAngle;
+            for (let i = masterIndex - 1; i >= 0; i--) {
+                const segment = wall.segments[i];
+                const angleRad = (angle * Math.PI) / 180;
+                const startX = x - segment.width * scale * Math.cos(angleRad);
+                const startY = y - segment.width * scale * Math.sin(angleRad);
+
+                prevPositions.unshift({
+                    id: segment.id,
+                    x1: startX,
+                    y1: startY,
+                    x2: x,
+                    y2: y,
+                    width: segment.width,
+                    angle,
+                    isMaster: false,
+                });
+
+                x = startX;
+                y = startY;
+
+                // Kat dla nastepnego segmentu (idziemy wstecz)
+                if (i > 0) {
+                    const prevSegment = wall.segments[i - 1];
+                    const turnAngle = prevSegment.angle === 90 ? -90 : prevSegment.angle === 270 ? 90 : 0;
+                    angle += turnAngle;
+                }
             }
         }
 
-        return positions;
-    }, [wall.segments, wall.masterSegmentId, scale]);
+        // Main segment (poziomy)
+        const masterSegment = wall.segments[masterIndex] || wall.segments[0];
+        if (masterSegment) {
+            const masterPos = {
+                id: masterSegment.id,
+                x1: masterFrontalX,
+                y1: centerY,
+                x2: masterFrontalX + masterSegment.width * scale,
+                y2: centerY,
+                width: masterSegment.width,
+                angle: 0,
+                isMaster: true,
+            };
+
+            // Segmenty po Main (od Main do konca)
+            let postPositions: typeof positions = [];
+            let x = masterPos.x2;
+            let y = centerY;
+            let angle = 0; // Kierunek w prawo
+
+            for (let i = masterIndex + 1; i < wall.segments.length; i++) {
+                // Kat polaczenia z poprzedniego segmentu
+                const prevSegment = wall.segments[i - 1];
+                const turnAngle = prevSegment.angle === 90 ? 90 : prevSegment.angle === 270 ? -90 : 0;
+                angle += turnAngle;
+
+                const segment = wall.segments[i];
+                const angleRad = (angle * Math.PI) / 180;
+                const endX = x + segment.width * scale * Math.cos(angleRad);
+                const endY = y + segment.width * scale * Math.sin(angleRad);
+
+                postPositions.push({
+                    id: segment.id,
+                    x1: x,
+                    y1: y,
+                    x2: endX,
+                    y2: endY,
+                    width: segment.width,
+                    angle,
+                    isMaster: false,
+                });
+
+                x = endX;
+                y = endY;
+            }
+
+            return [...prevPositions, masterPos, ...postPositions];
+        }
+
+        return prevPositions;
+    }, [wall.segments, wall.masterSegmentId, scale, masterIndex]);
+
 
     // Oblicz bounding box
     const bounds = useMemo(() => {

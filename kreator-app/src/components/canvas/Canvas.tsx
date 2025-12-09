@@ -1,4 +1,4 @@
-// src/components/canvas/Canvas.tsx v0.009 Przelacznik widoku frontalny/z gory
+// src/components/canvas/Canvas.tsx v0.010 Oba widoki jednoczesnie (frontalny + rzut z gory ponizej)
 'use client';
 
 import { useRef, useState, useCallback, useEffect, useMemo } from 'react';
@@ -18,7 +18,6 @@ export default function Canvas() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isPanning, setIsPanning] = useState(false);
   const [panStart, setPanStart] = useState({ x: 0, y: 0 });
-  const [viewType, setViewType] = useState<'frontal' | 'top'>('frontal');
 
   // Store
   const wall = useWall();
@@ -54,9 +53,10 @@ export default function Canvas() {
     ...wall.segments.flatMap((seg) => [seg.startHeight, seg.endHeight])
   );
 
-  // SVG viewBox
+  // SVG viewBox - dodatkowe miejsce na widok z gory
+  const TOP_VIEW_HEIGHT = 150; // wysokosc na widok z gory
   const viewBoxWidth = totalWidth * SCALE + PADDING * 2;
-  const viewBoxHeight = maxHeight * SCALE + PADDING * 2;
+  const viewBoxHeight = maxHeight * SCALE + PADDING * 2 + TOP_VIEW_HEIGHT;
 
   // Oblicz clip paths dla wszystkich paneli (dla skosow)
   const panelClipPaths = useMemo(() => {
@@ -413,32 +413,6 @@ export default function Canvas() {
       style={{ backgroundColor: canvasColor }}
       onContextMenu={handleContextMenu}
     >
-      {/* Przelacznik widoku frontalny/z gory */}
-      <div className="absolute top-3 right-3 z-10 flex gap-1 bg-black/40 rounded-lg p-1">
-        <button
-          onClick={() => setViewType('frontal')}
-          className={cn(
-            'px-3 py-1.5 text-xs font-medium rounded-md transition-all',
-            viewType === 'frontal'
-              ? 'bg-cyan-600 text-white'
-              : 'text-slate-300 hover:bg-slate-700'
-          )}
-        >
-          Frontalny
-        </button>
-        <button
-          onClick={() => setViewType('top')}
-          className={cn(
-            'px-3 py-1.5 text-xs font-medium rounded-md transition-all',
-            viewType === 'top'
-              ? 'bg-cyan-600 text-white'
-              : 'text-slate-300 hover:bg-slate-700'
-          )}
-        >
-          Z góry
-        </button>
-      </div>
-
       <svg
         ref={svgRef}
         viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
@@ -468,52 +442,55 @@ export default function Canvas() {
 
         {/* Grupa z transformacja (padding + pan) */}
         <g transform={`translate(${PADDING + pan.x}, ${PADDING + pan.y})`}>
-          {viewType === 'frontal' ? (
-            <>
-              {/* Sciana */}
-              <WallComponent wall={wall} scale={SCALE} />
+          {/* Widok frontalny */}
+          <WallComponent wall={wall} scale={SCALE} />
 
-              {/* Panele */}
-              {panels.map((panel) => {
-                const clipData = panelClipPaths[panel.id];
-                return (
-                  <PanelComponent
-                    key={panel.id}
-                    panel={panel}
-                    scale={SCALE}
-                    onClick={() => handlePanelClick(panel.id)}
-                    onTouchEnd={() => handlePanelClick(panel.id)}
-                    clipPoints={clipData?.clipPoints}
-                    wastePoints={clipData?.wastePoints}
-                    showWaste={clipData?.hasClip}
-                  />
-                );
-              })}
+          {/* Panele */}
+          {panels.map((panel) => {
+            const clipData = panelClipPaths[panel.id];
+            return (
+              <PanelComponent
+                key={panel.id}
+                panel={panel}
+                scale={SCALE}
+                onClick={() => handlePanelClick(panel.id)}
+                onTouchEnd={() => handlePanelClick(panel.id)}
+                clipPoints={clipData?.clipPoints}
+                wastePoints={clipData?.wastePoints}
+                showWaste={clipData?.hasClip}
+              />
+            );
+          })}
 
-              {/* Preview */}
-              {preview.visible && activePanelSize && (
-                <PanelComponent
-                  panel={{
-                    id: 'preview',
-                    ...preview,
-                  }}
-                  scale={SCALE}
-                  isPreview={true}
-                  isDragging={preview.isDragging}
-                  clipPoints={previewClipPath?.clipPoints}
-                  wastePoints={previewClipPath?.wastePoints}
-                  showWaste={previewClipPath?.hasClip}
-                />
-              )}
-            </>
-          ) : (
-            /* Widok z gory */
-            <TopView wall={wall} scale={SCALE} />
+          {/* Preview */}
+          {preview.visible && activePanelSize && (
+            <PanelComponent
+              panel={{
+                id: 'preview',
+                ...preview,
+              }}
+              scale={SCALE}
+              isPreview={true}
+              isDragging={preview.isDragging}
+              clipPoints={previewClipPath?.clipPoints}
+              wastePoints={previewClipPath?.wastePoints}
+              showWaste={previewClipPath?.hasClip}
+            />
           )}
+
+          {/* Widok z gory - ponizej widoku frontalnego */}
+          <g transform={`translate(0, ${maxHeight * SCALE + 50})`}>
+            <TopView
+              wall={wall}
+              scale={SCALE}
+              totalWidth={totalWidth}
+              alignToFrontal={true}
+            />
+          </g>
         </g>
       </svg>
 
-      {/* Wskazowki dla uzytkownika (na gorze - blizej toolbar) */}
+      {/* Wskazowki dla uzytkownika */}
       {activePanelSize && !preview.locked && !preview.isDragging && (
         <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/70 text-white px-4 py-2 rounded-full text-sm">
           Dotknij aby umiescic panel {preview.width}x{preview.height}
@@ -544,14 +521,12 @@ export default function Canvas() {
         </div>
       )}
 
-      {/* Info o trybie gumki */}
       {toolMode === 'erase' && !toolbarHint && (
         <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-red-600/90 text-white px-4 py-2 rounded-full text-sm">
           Tryb gumki - dotknij panel aby go usunac
         </div>
       )}
 
-      {/* Podpowiedz z toolbar (najwyzszy priorytet) */}
       {toolbarHint && (
         <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-slate-700/95 text-white px-4 py-2 rounded-full text-sm border border-slate-500 shadow-lg">
           {toolbarHint}
