@@ -1,4 +1,4 @@
-// src/types/index.ts v0.006 Dodano ClipPathResult dla skosów
+// src/types/index.ts v0.006 Dodano canvasColor dla koloru tla scianysów
 
 // ============================================
 // WYMIARY I POZYCJE
@@ -14,7 +14,7 @@ export interface Position {
   y: number; // cm od gornej krawedzi
 }
 
-export interface Rectangle extends Position, Dimensions {}
+export interface Rectangle extends Position, Dimensions { }
 
 // ============================================
 // SEGMENT SCIANY
@@ -179,6 +179,9 @@ export interface KreatorState {
   pan: Position;          // przesuniecie widoku canvas
   canvasLocked: boolean;  // blokada zoom/pan
 
+  // Kolor tla sciany
+  canvasColor: string;
+
   // Konfiguracja
   addons: Addons;
   colorToFabricMapping: Record<string, string>; // colorId -> fabricId
@@ -230,6 +233,9 @@ export interface KreatorActions {
   setPan: (pan: Position) => void;
   resetPan: () => void;
   setCanvasLocked: (locked: boolean) => void;
+
+  // Kolor tla sciany
+  setCanvasColor: (color: string) => void;
 
   // Drag preview
   startDragging: () => void;
