@@ -1,8 +1,9 @@
-// src/components/canvas/Wall.tsx v0.005 Przeniesiono wymiary szerokosci na dol sciany
+// src/components/canvas/Wall.tsx v0.006 Dynamiczny kolor tla sciany z canvasColor
 'use client';
 
 import { memo, useMemo, type ReactNode } from 'react';
 import type { Wall as WallType } from '@/types';
+import { useCanvasColor } from '@/store/useKreatorStore';
 
 interface WallProps {
   wall: WallType;
@@ -10,6 +11,9 @@ interface WallProps {
 }
 
 function WallComponent({ wall, scale }: WallProps) {
+  // Pobierz kolor canvas ze store
+  const canvasColor = useCanvasColor();
+
   // Normalizuj segmenty - upewnij sie ze alignment jest zdefiniowany
   const normalizedSegments = useMemo(() => {
     return wall.segments.map(seg => ({
@@ -115,7 +119,7 @@ function WallComponent({ wall, scale }: WallProps) {
       {/* Tlo sciany */}
       <path
         d={wallPath}
-        fill="rgba(255, 255, 255, 0.05)"
+        fill={canvasColor}
         stroke="rgba(255, 255, 255, 0.3)"
         strokeWidth={2}
       />

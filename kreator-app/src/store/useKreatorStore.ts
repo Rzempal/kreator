@@ -1,4 +1,4 @@
-// src/store/useKreatorStore.ts v0.007 Dodano toolbarHint dla podpowiedzi przyciskow
+// src/store/useKreatorStore.ts v0.008 Dodano canvasColor dla koloru tla sciany
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
@@ -69,6 +69,8 @@ const initialState: KreatorState = {
   zoom: 1,
   pan: { x: 0, y: 0 },
   canvasLocked: false,
+
+  canvasColor: '#1e293b', // slate-800 domyslny kolor
 
   addons: {
     doubleFoam: false,
@@ -250,12 +252,12 @@ export const useKreatorStore = create<KreatorStore>()(
             recentSizes: newRecentSizes,
             preview: size
               ? {
-                  ...state.preview,
-                  width: size.width,
-                  height: size.height,
-                  visible: true,
-                  locked: false,
-                }
+                ...state.preview,
+                width: size.width,
+                height: size.height,
+                visible: true,
+                locked: false,
+              }
               : { ...state.preview, visible: false },
           };
         });
@@ -330,6 +332,11 @@ export const useKreatorStore = create<KreatorStore>()(
         console.log('[Store] Canvas locked:', locked);
       },
 
+      setCanvasColor: (color) => {
+        set({ canvasColor: color });
+        console.log('[Store] Canvas color:', color);
+      },
+
       // ========== KONFIGURACJA ==========
 
       setAddons: (addons) => {
@@ -401,13 +408,13 @@ export const useKreatorStore = create<KreatorStore>()(
           savedProjects: s.savedProjects.map((p) =>
             p.id === s.currentProjectId
               ? {
-                  ...p,
-                  updatedAt: now,
-                  wall: s.wall,
-                  panels: s.panels,
-                  addons: s.addons,
-                  colorToFabricMapping: s.colorToFabricMapping,
-                }
+                ...p,
+                updatedAt: now,
+                wall: s.wall,
+                panels: s.panels,
+                addons: s.addons,
+                colorToFabricMapping: s.colorToFabricMapping,
+              }
               : p
           ),
         }));
@@ -562,3 +569,4 @@ export const useRecentSizes = () => useKreatorStore((state) => state.recentSizes
 export const useSavedProjects = () => useKreatorStore((state) => state.savedProjects);
 export const useCurrentProjectId = () => useKreatorStore((state) => state.currentProjectId);
 export const useToolbarHint = () => useKreatorStore((state) => state.toolbarHint);
+export const useCanvasColor = () => useKreatorStore((state) => state.canvasColor);
