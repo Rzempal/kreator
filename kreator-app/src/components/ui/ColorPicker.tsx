@@ -37,7 +37,7 @@ const CATEGORY_COLORS: Record<PriceCategory, string> = {
   exclusive: 'text-purple-400',
 };
 
-// Predefiniowane kolory sciany - szersza paleta
+// Predefiniowane kolory sciany - pelna paleta
 const CANVAS_COLORS = [
   // Ciemne
   { id: 'slate-900', hex: '#0f172a', name: 'Antracyt' },
@@ -55,11 +55,26 @@ const CANVAS_COLORS = [
   // Ciepłe
   { id: 'amber-100', hex: '#fef3c7', name: 'Waniliowy' },
   { id: 'amber-50', hex: '#fffbeb', name: 'Kremowy' },
-  { id: 'orange-50', hex: '#fff7ed', name: 'Brzoskwiniowy' },
+  { id: 'orange-100', hex: '#ffedd5', name: 'Brzoskwiniowy' },
+  { id: 'yellow-100', hex: '#fef9c3', name: 'Słoneczny' },
   // Chłodne
   { id: 'blue-50', hex: '#eff6ff', name: 'Lodowy błękit' },
-  { id: 'sky-100', hex: '#e0f2fe', name: 'Błękitny' },
-  { id: 'green-50', hex: '#f0fdf4', name: 'Miętowy' },
+  { id: 'sky-100', hex: '#e0f2fe', name: 'Błękitny jasny' },
+  { id: 'cyan-100', hex: '#cffafe', name: 'Turkusowy' },
+  { id: 'teal-100', hex: '#ccfbf1', name: 'Morski' },
+  { id: 'green-100', hex: '#dcfce7', name: 'Miętowy' },
+  // Pastelowe / Dziecięce
+  { id: 'violet-100', hex: '#ede9fe', name: 'Lawendowy jasny' },
+  { id: 'violet-200', hex: '#ddd6fe', name: 'Lawendowy' },
+  { id: 'purple-100', hex: '#f3e8ff', name: 'Wrzosowy' },
+  { id: 'fuchsia-100', hex: '#fae8ff', name: 'Orchidea' },
+  { id: 'pink-100', hex: '#fce7f3', name: 'Różowy jasny' },
+  { id: 'pink-200', hex: '#fbcfe8', name: 'Różowy' },
+  { id: 'rose-100', hex: '#ffe4e6', name: 'Pudrowy róż' },
+  // Intensywne pastelowe
+  { id: 'sky-200', hex: '#bae6fd', name: 'Błękitny' },
+  { id: 'green-200', hex: '#bbf7d0', name: 'Miętowy intensywny' },
+  { id: 'violet-300', hex: '#c4b5fd', name: 'Lawendowy intensywny' },
   // Biel
   { id: 'white', hex: '#ffffff', name: 'Biały' },
 ];
