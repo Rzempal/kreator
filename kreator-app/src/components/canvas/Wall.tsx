@@ -1,8 +1,21 @@
-// src/components/canvas/Wall.tsx v0.007 Przywrocony przezroczysty kolor segmentu (canvasColor jest na kontenerze)
+// src/components/canvas/Wall.tsx v0.008 Adaptive kolory linii dla jasnych/ciemnych tel
 'use client';
 
 import { memo, useMemo, type ReactNode } from 'react';
 import type { Wall as WallType } from '@/types';
+import { useCanvasColor } from '@/store/useKreatorStore';
+
+// Funkcja do obliczania jasnosci koloru (0-1, gdzie > 0.5 to jasny kolor)
+function isLightColor(hex: string): boolean {
+  // Usun # jesli jest
+  const color = hex.replace('#', '');
+  const r = parseInt(color.substring(0, 2), 16);
+  const g = parseInt(color.substring(2, 4), 16);
+  const b = parseInt(color.substring(4, 6), 16);
+  // Wzor na perceived luminance
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  return luminance > 0.5;
+}
 
 interface WallProps {
   wall: WallType;
@@ -10,6 +23,17 @@ interface WallProps {
 }
 
 function WallComponent({ wall, scale }: WallProps) {
+  // Pobierz kolor canvas i oblicz czy jest jasny
+  const canvasColor = useCanvasColor();
+  const isLight = useMemo(() => isLightColor(canvasColor), [canvasColor]);
+
+  // Kolory adaptacyjne - ciemne dla jasnych tel, jasne dla ciemnych tel
+  const strokeColor = isLight ? 'rgba(0, 0, 0, 0.3)' : 'rgba(255, 255, 255, 0.3)';
+  const strokeColorMedium = isLight ? 'rgba(0, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.5)';
+  const textColor = isLight ? 'rgba(0, 0, 0, 0.7)' : 'rgba(255, 255, 255, 0.7)';
+  const gridColor = isLight ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.1)';
+  const fillColor = isLight ? 'rgba(0, 0, 0, 0.03)' : 'rgba(255, 255, 255, 0.05)';
+
   // Normalizuj segmenty - upewnij sie ze alignment jest zdefiniowany
   const normalizedSegments = useMemo(() => {
     return wall.segments.map(seg => ({
@@ -115,13 +139,13 @@ function WallComponent({ wall, scale }: WallProps) {
       {/* Tlo sciany */}
       <path
         d={wallPath}
-        fill="rgba(255, 255, 255, 0.05)"
-        stroke="rgba(255, 255, 255, 0.3)"
+        fill={fillColor}
+        stroke={strokeColor}
         strokeWidth={2}
       />
 
       {/* Siatka pomocnicza */}
-      <WallGrid wall={wall} scale={scale} />
+      <WallGrid wall={wall} scale={scale} gridColor={gridColor} />
 
       {/* Wymiary zewnetrzne - szerokosc segmentow (na dole sciany) */}
       {dimensions.map((dim, i) => (
@@ -132,7 +156,7 @@ function WallComponent({ wall, scale }: WallProps) {
             y1={maxHeight * scale + 15}
             x2={dim.x + dim.width}
             y2={maxHeight * scale + 15}
-            stroke="rgba(255, 255, 255, 0.5)"
+            stroke={strokeColorMedium}
             strokeWidth={1}
           />
           {/* Znaczniki koncow */}
@@ -141,7 +165,7 @@ function WallComponent({ wall, scale }: WallProps) {
             y1={maxHeight * scale + 10}
             x2={dim.x}
             y2={maxHeight * scale + 20}
-            stroke="rgba(255, 255, 255, 0.5)"
+            stroke={strokeColorMedium}
             strokeWidth={1}
           />
           <line
@@ -149,7 +173,7 @@ function WallComponent({ wall, scale }: WallProps) {
             y1={maxHeight * scale + 10}
             x2={dim.x + dim.width}
             y2={maxHeight * scale + 20}
-            stroke="rgba(255, 255, 255, 0.5)"
+            stroke={strokeColorMedium}
             strokeWidth={1}
           />
           {/* Tekst wymiaru */}
@@ -157,7 +181,7 @@ function WallComponent({ wall, scale }: WallProps) {
             x={dim.x + dim.width / 2}
             y={maxHeight * scale + 35}
             textAnchor="middle"
-            fill="rgba(255, 255, 255, 0.7)"
+            fill={textColor}
             fontSize={11}
             fontFamily="sans-serif"
           >
@@ -170,7 +194,11 @@ function WallComponent({ wall, scale }: WallProps) {
 }
 
 // Siatka pomocnicza
-function WallGrid({ wall, scale }: WallProps) {
+interface WallGridProps extends WallProps {
+  gridColor: string;
+}
+
+function WallGrid({ wall, scale, gridColor }: WallGridProps) {
   const totalWidth = wall.segments.reduce((sum, seg) => sum + seg.width, 0);
   const maxHeight = Math.max(
     ...wall.segments.flatMap((seg) => [seg.startHeight, seg.endHeight])
@@ -192,7 +220,7 @@ function WallGrid({ wall, scale }: WallProps) {
         y1={offsetY}
         x2={x * scale}
         y2={maxHeight * scale}
-        stroke="rgba(255, 255, 255, 0.1)"
+        stroke={gridColor}
         strokeWidth={1}
         strokeDasharray="2,4"
       />
@@ -208,7 +236,7 @@ function WallGrid({ wall, scale }: WallProps) {
         y1={y * scale}
         x2={totalWidth * scale}
         y2={y * scale}
-        stroke="rgba(255, 255, 255, 0.1)"
+        stroke={gridColor}
         strokeWidth={1}
         strokeDasharray="2,4"
       />

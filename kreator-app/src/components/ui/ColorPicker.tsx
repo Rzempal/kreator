@@ -37,13 +37,30 @@ const CATEGORY_COLORS: Record<PriceCategory, string> = {
   exclusive: 'text-purple-400',
 };
 
-// Predefiniowane kolory sciany
+// Predefiniowane kolory sciany - szersza paleta
 const CANVAS_COLORS = [
+  // Ciemne
+  { id: 'slate-900', hex: '#0f172a', name: 'Antracyt' },
   { id: 'slate-800', hex: '#1e293b', name: 'Ciemny grafitowy' },
-  { id: 'slate-600', hex: '#475569', name: 'Grafitowy' },
-  { id: 'neutral-100', hex: '#f5f5f5', name: 'Jasny szary' },
-  { id: 'stone-300', hex: '#d6d3d1', name: 'Beżowy' },
+  { id: 'slate-700', hex: '#334155', name: 'Grafitowy' },
+  { id: 'gray-600', hex: '#4b5563', name: 'Szary ciemny' },
+  // Srednie
+  { id: 'gray-400', hex: '#9ca3af', name: 'Szary' },
+  { id: 'stone-400', hex: '#a8a29e', name: 'Kamienny' },
+  { id: 'zinc-300', hex: '#d4d4d8', name: 'Cynkowy' },
+  // Jasne neutralne
+  { id: 'neutral-200', hex: '#e5e5e5', name: 'Jasny szary' },
+  { id: 'stone-200', hex: '#e7e5e4', name: 'Piaskowy' },
+  { id: 'neutral-100', hex: '#f5f5f5', name: 'Platynowy' },
+  // Ciepłe
+  { id: 'amber-100', hex: '#fef3c7', name: 'Waniliowy' },
   { id: 'amber-50', hex: '#fffbeb', name: 'Kremowy' },
+  { id: 'orange-50', hex: '#fff7ed', name: 'Brzoskwiniowy' },
+  // Chłodne
+  { id: 'blue-50', hex: '#eff6ff', name: 'Lodowy błękit' },
+  { id: 'sky-100', hex: '#e0f2fe', name: 'Błękitny' },
+  { id: 'green-50', hex: '#f0fdf4', name: 'Miętowy' },
+  // Biel
   { id: 'white', hex: '#ffffff', name: 'Biały' },
 ];
 
