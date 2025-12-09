@@ -1,8 +1,8 @@
-// src/components/canvas/Canvas.tsx v0.007 Dodano obliczanie clip path dla skosow
+// src/components/canvas/Canvas.tsx v0.008 Dynamiczny kolor tla canvy z canvasColor
 'use client';
 
 import { useRef, useState, useCallback, useEffect, useMemo } from 'react';
-import { useKreatorStore, usePanels, usePreview, useWall, useZoom, usePan, useCanvasLocked, useToolMode, useActiveColor, useToolbarHint } from '@/store/useKreatorStore';
+import { useKreatorStore, usePanels, usePreview, useWall, useZoom, usePan, useCanvasLocked, useToolMode, useActiveColor, useToolbarHint, useCanvasColor } from '@/store/useKreatorStore';
 import { findSnapPosition, checkCollisions, checkPanelFits, calculatePanelClipPath } from '@/lib/geometry';
 import WallComponent from './Wall';
 import PanelComponent from './Panel';
@@ -27,6 +27,7 @@ export default function Canvas() {
   const toolMode = useToolMode();
   const activeColorId = useActiveColor();
   const toolbarHint = useToolbarHint();
+  const canvasColor = useCanvasColor();
 
   const {
     setPreview,
@@ -405,7 +406,8 @@ export default function Canvas() {
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-full overflow-hidden bg-slate-900 rounded-xl"
+      className="relative w-full h-full overflow-hidden rounded-xl"
+      style={{ backgroundColor: canvasColor }}
       onContextMenu={handleContextMenu}
     >
       <svg

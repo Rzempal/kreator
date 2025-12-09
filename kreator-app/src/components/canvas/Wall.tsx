@@ -1,9 +1,8 @@
-// src/components/canvas/Wall.tsx v0.006 Dynamiczny kolor tla sciany z canvasColor
+// src/components/canvas/Wall.tsx v0.007 Przywrocony przezroczysty kolor segmentu (canvasColor jest na kontenerze)
 'use client';
 
 import { memo, useMemo, type ReactNode } from 'react';
 import type { Wall as WallType } from '@/types';
-import { useCanvasColor } from '@/store/useKreatorStore';
 
 interface WallProps {
   wall: WallType;
@@ -11,9 +10,6 @@ interface WallProps {
 }
 
 function WallComponent({ wall, scale }: WallProps) {
-  // Pobierz kolor canvas ze store
-  const canvasColor = useCanvasColor();
-
   // Normalizuj segmenty - upewnij sie ze alignment jest zdefiniowany
   const normalizedSegments = useMemo(() => {
     return wall.segments.map(seg => ({
@@ -119,7 +115,7 @@ function WallComponent({ wall, scale }: WallProps) {
       {/* Tlo sciany */}
       <path
         d={wallPath}
-        fill={canvasColor}
+        fill="rgba(255, 255, 255, 0.05)"
         stroke="rgba(255, 255, 255, 0.3)"
         strokeWidth={2}
       />
