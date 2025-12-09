@@ -1,0 +1,182 @@
+[
+  {
+    "type": "Long",
+    "subtype": "Prostokątne",
+    "width_cm": 10,
+    "lengths_cm": [50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260]
+  },
+  {
+    "type": "Long",
+    "subtype": "Prostokątne",
+    "width_cm": 15,
+    "lengths_cm": [50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260]
+  },
+  {
+    "type": "Long",
+    "subtype": "Prostokątne",
+    "width_cm": 20,
+    "lengths_cm": [50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260]
+  },
+  {
+    "type": "Long",
+    "subtype": "Prostokątne",
+    "width_cm": 30,
+    "lengths_cm": [50, 60, 70, 80, 90, 100, 110, 120]
+  },
+  {
+    "type": "Long",
+    "subtype": "Prostokątne",
+    "width_cm": 40,
+    "lengths_cm": [40, 50, 60, 70, 80, 90, 100, 110, 120]
+  },
+  {
+    "type": "Long",
+    "subtype": "Prostokątne",
+    "width_cm": 50,
+    "lengths_cm": [50, 60, 70, 80, 90, 100, 110, 120]
+  },
+  {
+    "type": "Long",
+    "subtype": "Prostokątne",
+    "width_cm": 60,
+    "lengths_cm": [50, 60, 70, 80, 90, 100, 110, 120]
+  },
+  {
+    "type": "Klasyczne",
+    "subtype": "Kwadraty/Prostokąty",
+    "width_cm": 20,
+    "lengths_cm": [20, 30, 40]
+  },
+  {
+    "type": "Klasyczne",
+    "subtype": "Kwadraty/Prostokąty",
+    "width_cm": 30,
+    "lengths_cm": [30, 40, 50, 60, 70, 80, 90, 100, 120]
+  },
+  {
+    "type": "Klasyczne",
+    "subtype": "Kwadraty/Prostokąty",
+    "width_cm": 40,
+    "lengths_cm": [40, 50, 60, 70, 80, 90, 100, 110, 120]
+  },
+  {
+    "type": "Klasyczne",
+    "subtype": "Kwadraty/Prostokąty",
+    "width_cm": 50,
+    "lengths_cm": [50, 60, 70, 80, 90, 100, 110, 120]
+  },
+  {
+    "type": "Klasyczne",
+    "subtype": "Kwadraty/Prostokąty",
+    "width_cm": 60,
+    "lengths_cm": [50, 60, 70, 80, 90, 100, 110, 120]
+  },
+  {
+    "type": "Płotek",
+    "subtype": "Standard",
+    "width_cm": 15,
+    "lengths_cm": [50, 60, 70, 80, 90, 100, 110, 120]
+  },
+  {
+    "type": "Płotek",
+    "subtype": "Standard",
+    "width_cm": 20,
+    "lengths_cm": [50, 60, 70, 80, 90, 100, 110, 120]
+  },
+  {
+    "type": "Płotek",
+    "subtype": "Standard",
+    "width_cm": 25,
+    "lengths_cm": [50, 60, 70, 80, 90, 100, 110, 120]
+  },
+  {
+    "type": "Płotek",
+    "subtype": "Standard",
+    "width_cm": 30,
+    "lengths_cm": [50, 60, 70, 80, 90, 100, 110, 120]
+  },
+  {
+    "type": "Trójkąt",
+    "subtype": "S",
+    "dimension_cm": 30,
+    "variants": ["T-G", "T-D", "T1-GL", "T1-GP", "T1-DL", "T1-DP"]
+  },
+  {
+    "type": "Trójkąt",
+    "subtype": "M",
+    "dimension_cm": 40,
+    "variants": ["T-G", "T-D", "T1-GL", "T1-GP", "T1-DL", "T1-DP"]
+  },
+  {
+    "type": "Trójkąt",
+    "subtype": "L",
+    "dimension_cm": 50,
+    "variants": ["T-G", "T-D", "T1-GL", "T1-GP", "T1-DL", "T1-DP"]
+  },
+  {
+    "type": "Heksagon",
+    "subtype": "S",
+    "dimension_cm": 30,
+    "variants": ["Pełny", "Połówki"]
+  },
+  {
+    "type": "Heksagon",
+    "subtype": "M",
+    "dimension_cm": 40,
+    "variants": ["Pełny", "Połówki"]
+  },
+  {
+    "type": "Heksagon",
+    "subtype": "L",
+    "dimension_cm": 50,
+    "variants": ["Pełny", "Połówki"]
+  },
+  {
+    "type": "Heksagon",
+    "subtype": "XL",
+    "dimension_cm": 60,
+    "variants": ["Pełny", "Połówki"]
+  },
+  {
+    "type": "Romb",
+    "subtype": "S",
+    "dimension_cm": 40,
+    "variants": ["R1-G", "R1-D", "R1-L", "R1-P", "R2-GL", "R2-GP", "R2-DL", "R2-DP"]
+  },
+  {
+    "type": "Romb",
+    "subtype": "M",
+    "dimension_cm": 50,
+    "variants": ["R1-G", "R1-D", "R1-L", "R1-P", "R2-GL", "R2-GP", "R2-DL", "R2-DP"]
+  },
+  {
+    "type": "Romb",
+    "subtype": "L",
+    "dimension_cm": 70,
+    "variants": ["R1-G", "R1-D", "R1-L", "R1-P", "R2-GL", "R2-GP", "R2-DL", "R2-DP"]
+  },
+  {
+    "type": "Romb",
+    "subtype": "XL",
+    "dimension_cm": 90,
+    "variants": ["R1-G", "R1-D", "R1-L", "R1-P", "R2-GL", "R2-GP", "R2-DL", "R2-DP"]
+  },
+  {
+    "type": "Jodełka",
+    "subtype": "M",
+    "dimension_cm": 30,
+    "variants": ["Lewy", "Prawy", "1/2 LG", "1/2 PG", "1/2 LD", "1/2 PD"]
+  },
+  {
+    "type": "Jodełka",
+    "subtype": "L",
+    "dimension_cm": 40,
+    "variants": ["Lewy", "Prawy", "1/2 LG", "1/2 PG", "1/2 LD", "1/2 PD"]
+  },
+  {
+    "type": "Jodełka",
+    "subtype": "XL",
+    "dimension_cm": 50,
+    "variants": ["Lewy", "Prawy", "1/2 LG", "1/2 PG", "1/2 LD", "1/2 PD"]
+  }
+]

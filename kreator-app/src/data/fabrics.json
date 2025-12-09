@@ -1,9 +1,9 @@
 {
   "_meta": {
     "file": "fabrics.json",
-    "version": "v0.002",
+    "version": "v0.003",
     "description": "Kolekcje tkanin z kategoriami cenowymi - wygenerowano automatycznie z fabricImages.js",
-    "generatedAt": "2025-12-06T21:12:27.989Z"
+    "generatedAt": "2025-12-09T08:13:00.000Z"
   },
   "categories": {
     "standard": [
@@ -33,7 +33,8 @@
       "PRESTON",
       "RIO",
       "RIVIERA",
-      "RODOS"
+      "RODOS",
+      "FLOWER"
     ],
     "exclusive": [
       "NOW_OR_NEVER"
@@ -3127,6 +3128,41 @@
           "id": "now-or-never-92-ciemny-szary",
           "name": "NOW_OR_NEVER 92 - ciemny szary",
           "image": "https://rasek.pl/public/upload/sellasist_cache/thumb_e771a052cc116d64bf243e58c4bceb30-jpg.webp"
+        }
+      ]
+    },
+    "FLOWER": {
+      "category": "premium",
+      "colors": [
+        {
+          "id": "flower-hard-01",
+          "name": "FLOWER HARD 01 - niebieski morski",
+          "image": "/images/fabrics/flower/flower-hard-01.jpg"
+        },
+        {
+          "id": "flower-hard-02",
+          "name": "FLOWER HARD 02 - ceglasty",
+          "image": "/images/fabrics/flower/flower-hard-02.jpg"
+        },
+        {
+          "id": "flower-hard-03",
+          "name": "FLOWER HARD 03 - fioletowy",
+          "image": "/images/fabrics/flower/flower-hard-03.jpg"
+        },
+        {
+          "id": "flower-soft-01",
+          "name": "FLOWER SOFT 01 - niebieski morski",
+          "image": "/images/fabrics/flower/flower-soft-01.jpg"
+        },
+        {
+          "id": "flower-soft-02",
+          "name": "FLOWER SOFT 02 - ceglasty",
+          "image": "/images/fabrics/flower/flower-soft-02.jpg"
+        },
+        {
+          "id": "flower-soft-03",
+          "name": "FLOWER SOFT 03 - fioletowy",
+          "image": "/images/fabrics/flower/flower-soft-03.jpg"
         }
       ]
     }
