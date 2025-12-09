@@ -1,4 +1,4 @@
-// src/store/useKreatorStore.ts v0.003 Zustand store dla Kreatora Paneli
+// src/store/useKreatorStore.ts v0.004 Zustand store dla Kreatora Paneli - dodano canvasColor
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
@@ -64,6 +64,8 @@ const initialState: KreatorState = {
 
   viewMode: 'frontal',
   zoom: 1,
+
+  canvasColor: '#1e293b', // slate-800 domyslny kolor
 
   addons: {
     doubleFoam: false,
@@ -238,12 +240,12 @@ export const useKreatorStore = create<KreatorStore>()(
             recentSizes: newRecentSizes,
             preview: size
               ? {
-                  ...state.preview,
-                  width: size.width,
-                  height: size.height,
-                  visible: true,
-                  locked: false,
-                }
+                ...state.preview,
+                width: size.width,
+                height: size.height,
+                visible: true,
+                locked: false,
+              }
               : { ...state.preview, visible: false },
           };
         });
@@ -291,6 +293,11 @@ export const useKreatorStore = create<KreatorStore>()(
 
       zoomOut: () => {
         set((state) => ({ zoom: Math.max(0.5, state.zoom - 0.1) }));
+      },
+
+      setCanvasColor: (color) => {
+        set({ canvasColor: color });
+        console.log('[Store] Kolor canvas:', color);
       },
 
       // ========== KONFIGURACJA ==========
@@ -357,6 +364,7 @@ export const useKreatorStore = create<KreatorStore>()(
         addons: state.addons,
         colorToFabricMapping: state.colorToFabricMapping,
         recentSizes: state.recentSizes,
+        canvasColor: state.canvasColor,
       }),
       // Migracja: dodaj alignment do segmentow jesli brakuje
       onRehydrateStorage: () => (state) => {
@@ -381,3 +389,4 @@ export const useZoom = () => useKreatorStore((state) => state.zoom);
 export const usePriceSummary = () => useKreatorStore((state) => state.priceSummary);
 export const useAddons = () => useKreatorStore((state) => state.addons);
 export const useRecentSizes = () => useKreatorStore((state) => state.recentSizes);
+export const useCanvasColor = () => useKreatorStore((state) => state.canvasColor);

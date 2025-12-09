@@ -1,4 +1,4 @@
-// src/types/index.ts v0.002 Definicje typow dla Kreatora Paneli Tapicerowanych
+// src/types/index.ts v0.003 Definicje typow dla Kreatora Paneli Tapicerowanych - dodano canvasColor
 
 // ============================================
 // WYMIARY I POZYCJE
@@ -161,6 +161,9 @@ export interface KreatorState {
   viewMode: ViewMode;
   zoom: number;
 
+  // Kolor tla sciany (canvas)
+  canvasColor: string;
+
   // Konfiguracja
   addons: Addons;
   colorToFabricMapping: Record<string, string>; // colorId -> fabricId
@@ -202,6 +205,9 @@ export interface KreatorActions {
   setZoom: (zoom: number) => void;
   zoomIn: () => void;
   zoomOut: () => void;
+
+  // Kolor tla sciany
+  setCanvasColor: (color: string) => void;
 
   // Konfiguracja
   setAddons: (addons: Partial<Addons>) => void;

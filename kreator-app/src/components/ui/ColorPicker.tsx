@@ -1,8 +1,8 @@
-// src/components/ui/ColorPicker.tsx v0.004 Rozbudowana paleta tkanin z kolekcjami
+// src/components/ui/ColorPicker.tsx v0.005 Rozbudowana paleta tkanin z kolekcjami + wybor koloru sciany
 'use client';
 
 import { useState, useMemo } from 'react';
-import { useKreatorStore, useActiveColor, useToolMode } from '@/store/useKreatorStore';
+import { useKreatorStore, useActiveColor, useToolMode, useCanvasColor } from '@/store/useKreatorStore';
 import { cn } from '@/lib/utils';
 import fabricsData from '@/data/fabrics.json';
 import type { PriceCategory } from '@/types';
@@ -37,10 +37,21 @@ const CATEGORY_COLORS: Record<PriceCategory, string> = {
   exclusive: 'text-purple-400',
 };
 
+// Predefiniowane kolory sciany
+const CANVAS_COLORS = [
+  { id: 'slate-800', hex: '#1e293b', name: 'Ciemny grafitowy' },
+  { id: 'slate-600', hex: '#475569', name: 'Grafitowy' },
+  { id: 'neutral-100', hex: '#f5f5f5', name: 'Jasny szary' },
+  { id: 'stone-300', hex: '#d6d3d1', name: 'Bezowy' },
+  { id: 'amber-50', hex: '#fffbeb', name: 'Kremowy' },
+  { id: 'white', hex: '#ffffff', name: 'Bialy' },
+];
+
 export default function ColorPicker() {
   const activeColorId = useActiveColor();
   const toolMode = useToolMode();
-  const { setActiveColor, setToolMode } = useKreatorStore();
+  const canvasColor = useCanvasColor();
+  const { setActiveColor, setToolMode, setCanvasColor } = useKreatorStore();
 
   // Stan wyboru kolekcji
   const [selectedCategory, setSelectedCategory] = useState<PriceCategory>('standard');
@@ -81,6 +92,27 @@ export default function ColorPicker() {
 
   return (
     <div className="flex flex-col gap-3">
+      {/* Sekcja: Kolor sciany */}
+      <div className="pb-3 border-b border-slate-700">
+        <div className="text-xs text-slate-400 mb-2 font-medium">Kolor ściany</div>
+        <div className="flex gap-1.5 flex-wrap">
+          {CANVAS_COLORS.map((color) => (
+            <button
+              key={color.id}
+              onClick={() => setCanvasColor(color.hex)}
+              className={cn(
+                'w-7 h-7 rounded-md border-2 transition-all hover:scale-110',
+                canvasColor === color.hex
+                  ? 'border-cyan-400 ring-2 ring-cyan-400/50'
+                  : 'border-slate-600 hover:border-slate-400'
+              )}
+              style={{ backgroundColor: color.hex }}
+              title={color.name}
+            />
+          ))}
+        </div>
+      </div>
+
       {/* Kategorie - tabs */}
       <div className="flex gap-1">
         {(Object.keys(categories) as PriceCategory[]).map((cat) => (

@@ -1,15 +1,19 @@
-// src/components/canvas/Wall.tsx v0.004 Fix renderowania startHeight/endHeight dla kazdego segmentu
+// src/components/canvas/Wall.tsx v0.005 Dynamiczny kolor tla sciany z canvasColor
 'use client';
 
 import { memo, useMemo, type ReactNode } from 'react';
 import type { Wall as WallType } from '@/types';
+import { useCanvasColor } from '@/store/useKreatorStore';
 
 interface WallProps {
   wall: WallType;
   scale: number;
 }
 
-function WallComponent({ wall, scale }: WallProps) {
+export default function WallComponent({ wall, scale }: WallProps) {
+  // Pobierz kolor canvas ze store
+  const canvasColor = useCanvasColor();
+
   // Normalizuj segmenty - upewnij sie ze alignment jest zdefiniowany
   const normalizedSegments = useMemo(() => {
     return wall.segments.map(seg => ({
@@ -115,7 +119,7 @@ function WallComponent({ wall, scale }: WallProps) {
       {/* Tlo sciany */}
       <path
         d={wallPath}
-        fill="rgba(255, 255, 255, 0.05)"
+        fill={canvasColor}
         stroke="rgba(255, 255, 255, 0.3)"
         strokeWidth={2}
       />
@@ -217,6 +221,3 @@ function WallGrid({ wall, scale }: WallProps) {
 
   return <g className="wall-grid">{lines}</g>;
 }
-
-// Tymczasowo bez memo dla debugowania
-export default WallComponent;
