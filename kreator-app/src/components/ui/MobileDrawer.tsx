@@ -266,7 +266,7 @@ export default function MobileDrawer() {
     { id: 'projects', label: currentProject ? 'Projekt' : 'Projekty', color: 'bg-amber-600' },
     { id: 'wall', label: 'Sciana', color: 'bg-purple-600' },
     { id: 'colors', label: 'Kolory', color: 'bg-cyan-600' },
-    { id: 'sizes', label: 'Rozmiary', color: 'bg-indigo-600' },
+    { id: 'sizes', label: 'Panele', color: 'bg-indigo-600' },
     { id: 'price', label: 'Wycena', color: 'bg-emerald-600' },
   ];
 

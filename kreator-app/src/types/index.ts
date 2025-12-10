@@ -1,4 +1,4 @@
-// src/types/index.ts v0.006 Dodano canvasColor dla koloru tla scianysów
+// src/types/index.ts v0.007 Dodano onboarding
 
 // ============================================
 // WYMIARY I POZYCJE
@@ -195,6 +195,10 @@ export interface KreatorState {
 
   // UI
   toolbarHint: string | null;  // Podpowiedz wyswietlana na canvas
+
+  // Onboarding
+  showOnboarding: boolean;     // Czy pokazywac onboarding
+  onboardingStep: number;      // Aktualny krok (0-5)
 }
 
 // ============================================
@@ -260,6 +264,11 @@ export interface KreatorActions {
 
   // UI
   setToolbarHint: (hint: string | null) => void;  // Ustaw podpowiedz (lub null aby ukryc)
+
+  // Onboarding
+  startOnboarding: () => void;      // Rozpocznij onboarding
+  nextOnboardingStep: () => void;   // Nastepny krok
+  skipOnboarding: () => void;       // Pomin onboarding
 }
 
 // ============================================

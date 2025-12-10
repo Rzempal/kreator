@@ -1,4 +1,4 @@
-// src/store/useKreatorStore.ts v0.008 Dodano canvasColor dla koloru tla sciany
+// src/store/useKreatorStore.ts v0.009 Dodano onboarding
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
@@ -88,6 +88,10 @@ const initialState: KreatorState = {
 
   // UI
   toolbarHint: null,
+
+  // Onboarding
+  showOnboarding: false,
+  onboardingStep: 0,
 };
 
 // Store
@@ -528,6 +532,31 @@ export const useKreatorStore = create<KreatorStore>()(
 
       setToolbarHint: (hint) => {
         set({ toolbarHint: hint });
+      },
+
+      // ========== ONBOARDING ==========
+
+      startOnboarding: () => {
+        set({ showOnboarding: true, onboardingStep: 0 });
+        console.log('[Store] Onboarding started');
+      },
+
+      nextOnboardingStep: () => {
+        const step = get().onboardingStep;
+        if (step < 5) {
+          set({ onboardingStep: step + 1 });
+        } else {
+          set({ showOnboarding: false, onboardingStep: 0 });
+          // Zapisz ze uzytkownik widzial onboarding
+          localStorage.setItem('kreator-onboarding-seen', 'true');
+          console.log('[Store] Onboarding completed');
+        }
+      },
+
+      skipOnboarding: () => {
+        set({ showOnboarding: false, onboardingStep: 0 });
+        localStorage.setItem('kreator-onboarding-seen', 'true');
+        console.log('[Store] Onboarding skipped');
       },
     }),
     {

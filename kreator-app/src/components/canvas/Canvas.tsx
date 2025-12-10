@@ -412,6 +412,7 @@ export default function Canvas() {
       className="relative w-full h-full overflow-hidden rounded-xl"
       style={{ backgroundColor: canvasColor }}
       onContextMenu={handleContextMenu}
+      data-onboarding="canvas"
     >
       <svg
         ref={svgRef}
