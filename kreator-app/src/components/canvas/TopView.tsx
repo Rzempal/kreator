@@ -70,96 +70,110 @@ export default function TopView({ wall, scale, totalWidth, alignToFrontal }: Top
         // Srodek Y dla widoku z gory
         const centerY = 50;
 
-        // Buduj pozycje od Main segmentu w obie strony
-        // Main segment jest poziomy (kat 0)
+        // Main segment (poziomy) - oblicz najpierw
+        const masterSegment = wall.segments[masterIndex] || wall.segments[0];
+        const effectiveMasterIndex = masterIndex >= 0 ? masterIndex : 0;
 
-        // Segmenty przed Main (od Main do poczatku)
+        if (!masterSegment) {
+            return positions;
+        }
+
+        const masterPos = {
+            id: masterSegment.id,
+            x1: masterFrontalX,
+            y1: centerY,
+            x2: masterFrontalX + masterSegment.width * scale,
+            y2: centerY,
+            width: masterSegment.width,
+            angle: 0,
+            isMaster: true,
+        };
+
+        // Segmenty przed Main (od Main-1 do 0, idac w lewo)
         let prevPositions: typeof positions = [];
-        if (masterIndex > 0) {
-            let x = masterFrontalX;
-            let y = centerY;
-            let angle = 180; // Kierunek w lewo
+        if (effectiveMasterIndex > 0) {
+            // Punkt startowy = poczatek Main segmentu
+            let endX = masterFrontalX;
+            let endY = centerY;
+            // Kumuluj katy od segmentu tuż przed Main do segmentu 0
+            let currentAngle = 0; // Zaczynamy od poziomego (Main jest poziomy)
 
-            for (let i = masterIndex - 1; i >= 0; i--) {
+            for (let i = effectiveMasterIndex - 1; i >= 0; i--) {
                 const segment = wall.segments[i];
-                const angleRad = (angle * Math.PI) / 180;
-                const startX = x - segment.width * scale * Math.cos(angleRad);
-                const startY = y - segment.width * scale * Math.sin(angleRad);
+
+                // Kat polaczenia tego segmentu z nastepnym (czyli z i+1)
+                // segment.angle mowi jak ten segment laczy sie z nastepnym
+                const connectionAngle = segment.angle;
+                // Dla ruchu wstecz: 90 = skret w lewo (od perspektywy idacego wstecz), 270 = skret w prawo
+                const turnAngle = connectionAngle === 90 ? -90 : connectionAngle === 270 ? 90 : 0;
+                currentAngle += turnAngle;
+
+                // Oblicz punkt poczatkowy tego segmentu (idziemy wstecz)
+                // endX, endY to punkt gdzie ten segment KONCZY sie (czyli poczatek nastepnego)
+                // startX, startY to punkt gdzie ten segment ZACZYNA sie
+                const angleRad = (currentAngle * Math.PI) / 180;
+                const dx = segment.width * scale * Math.cos(angleRad);
+                const dy = segment.width * scale * Math.sin(angleRad);
+
+                // Segment konczy sie na endX, endY i zaczyna sie segment.width wczesniej
+                // Idac w kierunku ujemnym X
+                const startX = endX - dx;
+                const startY = endY - dy;
 
                 prevPositions.unshift({
                     id: segment.id,
                     x1: startX,
                     y1: startY,
-                    x2: x,
-                    y2: y,
-                    width: segment.width,
-                    angle,
-                    isMaster: false,
-                });
-
-                x = startX;
-                y = startY;
-
-                // Kat dla nastepnego segmentu (idziemy wstecz)
-                if (i > 0) {
-                    const prevSegment = wall.segments[i - 1];
-                    const turnAngle = prevSegment.angle === 90 ? -90 : prevSegment.angle === 270 ? 90 : 0;
-                    angle += turnAngle;
-                }
-            }
-        }
-
-        // Main segment (poziomy)
-        const masterSegment = wall.segments[masterIndex] || wall.segments[0];
-        if (masterSegment) {
-            const masterPos = {
-                id: masterSegment.id,
-                x1: masterFrontalX,
-                y1: centerY,
-                x2: masterFrontalX + masterSegment.width * scale,
-                y2: centerY,
-                width: masterSegment.width,
-                angle: 0,
-                isMaster: true,
-            };
-
-            // Segmenty po Main (od Main do konca)
-            let postPositions: typeof positions = [];
-            let x = masterPos.x2;
-            let y = centerY;
-            let angle = 0; // Kierunek w prawo
-
-            for (let i = masterIndex + 1; i < wall.segments.length; i++) {
-                // Kat polaczenia z poprzedniego segmentu
-                const prevSegment = wall.segments[i - 1];
-                const turnAngle = prevSegment.angle === 90 ? 90 : prevSegment.angle === 270 ? -90 : 0;
-                angle += turnAngle;
-
-                const segment = wall.segments[i];
-                const angleRad = (angle * Math.PI) / 180;
-                const endX = x + segment.width * scale * Math.cos(angleRad);
-                const endY = y + segment.width * scale * Math.sin(angleRad);
-
-                postPositions.push({
-                    id: segment.id,
-                    x1: x,
-                    y1: y,
                     x2: endX,
                     y2: endY,
                     width: segment.width,
-                    angle,
+                    angle: currentAngle,
                     isMaster: false,
                 });
 
-                x = endX;
-                y = endY;
+                // Przesun punkt koncowy dla nastepnego segmentu
+                endX = startX;
+                endY = startY;
             }
-
-            return [...prevPositions, masterPos, ...postPositions];
         }
 
-        return prevPositions;
+        // Segmenty po Main (od Main+1 do konca)
+        let postPositions: typeof positions = [];
+        {
+            let startX = masterPos.x2;
+            let startY = centerY;
+            let currentAngle = 0;
+
+            for (let i = effectiveMasterIndex + 1; i < wall.segments.length; i++) {
+                // Kat polaczenia z poprzedniego segmentu
+                const prevSegment = wall.segments[i - 1];
+                const turnAngle = prevSegment.angle === 90 ? 90 : prevSegment.angle === 270 ? -90 : 0;
+                currentAngle += turnAngle;
+
+                const segment = wall.segments[i];
+                const angleRad = (currentAngle * Math.PI) / 180;
+                const endX = startX + segment.width * scale * Math.cos(angleRad);
+                const endY = startY + segment.width * scale * Math.sin(angleRad);
+
+                postPositions.push({
+                    id: segment.id,
+                    x1: startX,
+                    y1: startY,
+                    x2: endX,
+                    y2: endY,
+                    width: segment.width,
+                    angle: currentAngle,
+                    isMaster: false,
+                });
+
+                startX = endX;
+                startY = endY;
+            }
+        }
+
+        return [...prevPositions, masterPos, ...postPositions];
     }, [wall.segments, wall.masterSegmentId, scale, masterIndex]);
+
 
 
     // Oblicz bounding box
