@@ -295,6 +295,9 @@ export default function Toolbar() {
           </svg>
         </button>
 
+        {/* Etykieta */}
+        <span className="text-xs text-slate-500 hidden sm:block">Gumka</span>
+
         {/* Gumka tkanin */}
         <button
           onClick={handleEraseFabricClick}
