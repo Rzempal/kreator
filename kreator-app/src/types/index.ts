@@ -1,4 +1,4 @@
-// src/types/index.ts v0.007 Dodano onboarding
+// src/types/index.ts v0.008 Dodano showTopView
 
 // ============================================
 // WYMIARY I POZYCJE
@@ -199,6 +199,9 @@ export interface KreatorState {
   // Onboarding
   showOnboarding: boolean;     // Czy pokazywac onboarding
   onboardingStep: number;      // Aktualny krok (0-5)
+
+  // Widok z gory
+  showTopView: boolean;        // Czy pokazywac widok z gory i selektory katow
 }
 
 // ============================================
@@ -269,6 +272,9 @@ export interface KreatorActions {
   startOnboarding: () => void;      // Rozpocznij onboarding
   nextOnboardingStep: () => void;   // Nastepny krok
   skipOnboarding: () => void;       // Pomin onboarding
+
+  // Widok z gory
+  setShowTopView: (show: boolean) => void;  // Przelacz widok z gory
 }
 
 // ============================================

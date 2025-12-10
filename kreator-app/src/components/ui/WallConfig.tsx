@@ -1,4 +1,4 @@
-// src/components/ui/WallConfig.tsx v0.004 Przycisk Main i selektor kata dla segmentow
+// src/components/ui/WallConfig.tsx v0.005 Toggle widoku z gory
 'use client';
 
 import { useState } from 'react';
@@ -30,7 +30,7 @@ const DEFAULT_SEGMENT: SegmentFormData = {
 
 export default function WallConfig() {
   const wall = useWall();
-  const { addSegment, removeSegment, updateSegment, setMasterSegment, clearPanels } = useKreatorStore();
+  const { addSegment, removeSegment, updateSegment, setMasterSegment, clearPanels, showTopView, setShowTopView } = useKreatorStore();
 
   const [newSegment, setNewSegment] = useState<SegmentFormData>(DEFAULT_SEGMENT);
   const [isAdding, setIsAdding] = useState(false);
@@ -190,6 +190,23 @@ export default function WallConfig() {
       <div className="text-xs text-slate-500">
         Rozne wysokosci lewa/prawa tworza skos.
       </div>
+
+      {/* Toggle widoku z gory */}
+      <label className="flex items-center gap-3 cursor-pointer group">
+        <div className="relative">
+          <input
+            type="checkbox"
+            checked={showTopView}
+            onChange={(e) => setShowTopView(e.target.checked)}
+            className="sr-only peer"
+          />
+          <div className="w-10 h-5 bg-slate-700 rounded-full peer peer-checked:bg-cyan-600 transition-colors" />
+          <div className="absolute left-0.5 top-0.5 w-4 h-4 bg-slate-400 rounded-full peer-checked:translate-x-5 peer-checked:bg-white transition-all" />
+        </div>
+        <span className="text-sm text-slate-300 group-hover:text-slate-200">
+          Widok z gory (uklad katowy)
+        </span>
+      </label>
     </div>
   );
 }
@@ -258,6 +275,7 @@ interface SegmentRowProps {
 }
 
 function SegmentRow({ segment, index, canDelete, isMaster, isLast, onSave, onDelete, onSetMaster, onAngleChange }: SegmentRowProps) {
+  const showTopView = useKreatorStore((state) => state.showTopView);
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState<SegmentFormData>({
     width: segment.width,
@@ -364,8 +382,8 @@ function SegmentRow({ segment, index, canDelete, isMaster, isLast, onSave, onDel
           </div>
         </div>
 
-        {/* Selektor kata - tylko gdy nie ostatni segment */}
-        {!isLast && (
+        {/* Selektor kata - tylko gdy widok z gory aktywny i nie ostatni segment */}
+        {showTopView && !isLast && (
           <div className="mt-2 pt-2 border-t border-slate-600/50">
             <label className="text-xs text-slate-500 block mb-1">Kąt z następnym segmentem</label>
             <div className="flex gap-1">

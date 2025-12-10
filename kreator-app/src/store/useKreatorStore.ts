@@ -1,4 +1,4 @@
-// src/store/useKreatorStore.ts v0.009 Dodano onboarding
+// src/store/useKreatorStore.ts v0.010 Dodano showTopView toggle
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
@@ -92,6 +92,9 @@ const initialState: KreatorState = {
   // Onboarding
   showOnboarding: false,
   onboardingStep: 0,
+
+  // Widok z gory
+  showTopView: false,
 };
 
 // Store
@@ -557,6 +560,13 @@ export const useKreatorStore = create<KreatorStore>()(
         set({ showOnboarding: false, onboardingStep: 0 });
         localStorage.setItem('kreator-onboarding-seen', 'true');
         console.log('[Store] Onboarding skipped');
+      },
+
+      // ========== WIDOK Z GORY ==========
+
+      setShowTopView: (show) => {
+        set({ showTopView: show });
+        console.log('[Store] showTopView:', show);
       },
     }),
     {

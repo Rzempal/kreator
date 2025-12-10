@@ -1,4 +1,4 @@
-// src/components/canvas/Canvas.tsx v0.010 Oba widoki jednoczesnie (frontalny + rzut z gory ponizej)
+// src/components/canvas/Canvas.tsx v0.011 Toggle widoku z gory
 'use client';
 
 import { useRef, useState, useCallback, useEffect, useMemo } from 'react';
@@ -45,6 +45,7 @@ export default function Canvas() {
     setPan,
     zoomIn,
     zoomOut,
+    showTopView,
   } = useKreatorStore();
 
   // Oblicz wymiary sciany
@@ -53,8 +54,8 @@ export default function Canvas() {
     ...wall.segments.flatMap((seg) => [seg.startHeight, seg.endHeight])
   );
 
-  // SVG viewBox - dodatkowe miejsce na widok z gory
-  const TOP_VIEW_HEIGHT = 150; // wysokosc na widok z gory
+  // SVG viewBox - dodatkowe miejsce na widok z gory tylko gdy aktywny
+  const TOP_VIEW_HEIGHT = showTopView ? 150 : 0;
   const viewBoxWidth = totalWidth * SCALE + PADDING * 2;
   const viewBoxHeight = maxHeight * SCALE + PADDING * 2 + TOP_VIEW_HEIGHT;
 
@@ -480,14 +481,16 @@ export default function Canvas() {
           )}
 
           {/* Widok z gory - ponizej widoku frontalnego */}
-          <g transform={`translate(0, ${maxHeight * SCALE + 50})`}>
-            <TopView
-              wall={wall}
-              scale={SCALE}
-              totalWidth={totalWidth}
-              alignToFrontal={true}
-            />
-          </g>
+          {showTopView && (
+            <g transform={`translate(0, ${maxHeight * SCALE + 50})`}>
+              <TopView
+                wall={wall}
+                scale={SCALE}
+                totalWidth={totalWidth}
+                alignToFrontal={true}
+              />
+            </g>
+          )}
         </g>
       </svg>
 
