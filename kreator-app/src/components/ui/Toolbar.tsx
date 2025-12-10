@@ -1,4 +1,4 @@
-// src/components/ui/Toolbar.tsx v0.006 Dodano podpowiedzi dla przyciskow (hover, touch, click)
+// src/components/ui/Toolbar.tsx v0.007 Dodano przycisk pomocy dla onboardingu
 'use client';
 
 import { useRef, useCallback } from 'react';
@@ -17,6 +17,7 @@ const HINTS = {
   undo: 'Cofnij ostatnio dodany panel',
   clear: 'Usuń wszystkie panele z canvas',
   size: (w: number, h: number) => `Wybierz panel ${w}×${h} cm - kliknij na canvas aby umieścić`,
+  help: 'Pokaż przewodnik po aplikacji',
 };
 
 export default function Toolbar() {
@@ -36,6 +37,7 @@ export default function Toolbar() {
     resetPan,
     setCanvasLocked,
     setToolbarHint,
+    startOnboarding,
   } = useKreatorStore();
   const recentSizes = useRecentSizes();
   const toolMode = useToolMode();
@@ -125,10 +127,15 @@ export default function Toolbar() {
     }
   };
 
+  const handleHelp = () => {
+    startOnboarding();
+    showHintBriefly(HINTS.help);
+  };
+
   return (
     <div className="flex flex-wrap items-center gap-2 p-3 bg-slate-800/80 backdrop-blur-md rounded-xl border border-slate-700">
       {/* Historia rozmiarow paneli */}
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2" data-onboarding="toolbar">
         {recentSizes.map((size, index) => {
           const isActive =
             activePanelSize?.width === size.width &&
@@ -327,10 +334,28 @@ export default function Toolbar() {
 
       {/* Licznik paneli */}
       {panels.length > 0 && (
-        <div className="ml-auto px-3 py-1 bg-slate-700 rounded-full text-sm text-slate-300">
+        <div className="px-3 py-1 bg-slate-700 rounded-full text-sm text-slate-300">
           {panels.length} {panels.length === 1 ? 'panel' : 'paneli'}
         </div>
       )}
+
+      {/* Przycisk pomocy */}
+      <button
+        onClick={handleHelp}
+        onMouseEnter={() => onHover(HINTS.help)}
+        onMouseLeave={onLeave}
+        onTouchStart={() => onTouchStart(HINTS.help)}
+        onTouchEnd={onTouchEnd}
+        className={cn(
+          'ml-auto p-2 rounded-lg transition-all',
+          'border border-slate-600 hover:border-cyan-500',
+          'bg-slate-700 text-slate-200 hover:bg-slate-600'
+        )}
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </button>
     </div>
   );
 }

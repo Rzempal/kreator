@@ -1,10 +1,13 @@
-// src/app/page.tsx v0.003 Glowna strona Kreatora Paneli Tapicerowanych
+// src/app/page.tsx v0.004 Dodano onboarding
 'use client';
 
+import { useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import Toolbar from '@/components/ui/Toolbar';
 import Sidebar from '@/components/ui/Sidebar';
 import MobileDrawer from '@/components/ui/MobileDrawer';
+import Onboarding from '@/components/ui/Onboarding';
+import { useKreatorStore } from '@/store/useKreatorStore';
 
 // Dynamic import dla Canvas (wymaga window)
 const Canvas = dynamic(() => import('@/components/canvas/Canvas'), {
@@ -17,6 +20,20 @@ const Canvas = dynamic(() => import('@/components/canvas/Canvas'), {
 });
 
 export default function KreatorPage() {
+  const { startOnboarding, showOnboarding } = useKreatorStore();
+
+  // Sprawdz czy uzytkownik widzial juz onboarding
+  useEffect(() => {
+    const hasSeenOnboarding = localStorage.getItem('kreator-onboarding-seen');
+    if (!hasSeenOnboarding && !showOnboarding) {
+      // Opóźnij start aby komponenty zdążyły się wyrenderować
+      const timeout = setTimeout(() => {
+        startOnboarding();
+      }, 500);
+      return () => clearTimeout(timeout);
+    }
+  }, [startOnboarding, showOnboarding]);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900">
       {/* Animated background blobs */}
@@ -60,6 +77,10 @@ export default function KreatorPage() {
 
       {/* Mobile drawer */}
       <MobileDrawer />
+
+      {/* Onboarding overlay */}
+      <Onboarding />
     </div>
   );
 }
+

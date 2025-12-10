@@ -1,4 +1,4 @@
-// src/components/canvas/Canvas.tsx v0.008 Dynamiczny kolor tla canvy z canvasColor
+// src/components/canvas/Canvas.tsx v0.010 Oba widoki jednoczesnie (frontalny + rzut z gory ponizej)
 'use client';
 
 import { useRef, useState, useCallback, useEffect, useMemo } from 'react';
@@ -6,6 +6,8 @@ import { useKreatorStore, usePanels, usePreview, useWall, useZoom, usePan, useCa
 import { findSnapPosition, checkCollisions, checkPanelFits, calculatePanelClipPath } from '@/lib/geometry';
 import WallComponent from './Wall';
 import PanelComponent from './Panel';
+import TopView from './TopView';
+import { cn } from '@/lib/utils';
 import type { PanelStatus, ClipPathResult } from '@/types';
 
 const SCALE = 2; // 1cm = 2px
@@ -51,9 +53,10 @@ export default function Canvas() {
     ...wall.segments.flatMap((seg) => [seg.startHeight, seg.endHeight])
   );
 
-  // SVG viewBox
+  // SVG viewBox - dodatkowe miejsce na widok z gory
+  const TOP_VIEW_HEIGHT = 150; // wysokosc na widok z gory
   const viewBoxWidth = totalWidth * SCALE + PADDING * 2;
-  const viewBoxHeight = maxHeight * SCALE + PADDING * 2;
+  const viewBoxHeight = maxHeight * SCALE + PADDING * 2 + TOP_VIEW_HEIGHT;
 
   // Oblicz clip paths dla wszystkich paneli (dla skosow)
   const panelClipPaths = useMemo(() => {
@@ -409,6 +412,7 @@ export default function Canvas() {
       className="relative w-full h-full overflow-hidden rounded-xl"
       style={{ backgroundColor: canvasColor }}
       onContextMenu={handleContextMenu}
+      data-onboarding="canvas"
     >
       <svg
         ref={svgRef}
@@ -439,7 +443,7 @@ export default function Canvas() {
 
         {/* Grupa z transformacja (padding + pan) */}
         <g transform={`translate(${PADDING + pan.x}, ${PADDING + pan.y})`}>
-          {/* Sciana */}
+          {/* Widok frontalny */}
           <WallComponent wall={wall} scale={SCALE} />
 
           {/* Panele */}
@@ -474,10 +478,20 @@ export default function Canvas() {
               showWaste={previewClipPath?.hasClip}
             />
           )}
+
+          {/* Widok z gory - ponizej widoku frontalnego */}
+          <g transform={`translate(0, ${maxHeight * SCALE + 50})`}>
+            <TopView
+              wall={wall}
+              scale={SCALE}
+              totalWidth={totalWidth}
+              alignToFrontal={true}
+            />
+          </g>
         </g>
       </svg>
 
-      {/* Wskazowki dla uzytkownika (na gorze - blizej toolbar) */}
+      {/* Wskazowki dla uzytkownika */}
       {activePanelSize && !preview.locked && !preview.isDragging && (
         <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/70 text-white px-4 py-2 rounded-full text-sm">
           Dotknij aby umiescic panel {preview.width}x{preview.height}
@@ -508,14 +522,12 @@ export default function Canvas() {
         </div>
       )}
 
-      {/* Info o trybie gumki */}
       {toolMode === 'erase' && !toolbarHint && (
         <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-red-600/90 text-white px-4 py-2 rounded-full text-sm">
           Tryb gumki - dotknij panel aby go usunac
         </div>
       )}
 
-      {/* Podpowiedz z toolbar (najwyzszy priorytet) */}
       {toolbarHint && (
         <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-slate-700/95 text-white px-4 py-2 rounded-full text-sm border border-slate-500 shadow-lg">
           {toolbarHint}

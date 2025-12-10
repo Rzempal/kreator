@@ -1,7 +1,7 @@
-// src/components/ui/Sidebar.tsx v0.004 Naprawiono scrollowanie content w accordion
+// src/components/ui/Sidebar.tsx v0.006 Zwijanie menu przy onboardingu
 'use client';
 
-import { useState, useRef, ReactNode, useCallback } from 'react';
+import { useState, useRef, ReactNode, useCallback, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { useKreatorStore, useSavedProjects, useCurrentProjectId } from '@/store/useKreatorStore';
 import WallConfig from './WallConfig';
@@ -17,6 +17,7 @@ interface AccordionSectionProps {
   onToggle: () => void;
   children: ReactNode;
   badge?: string | number;
+  dataOnboarding?: string;
 }
 
 function AccordionSection({
@@ -26,9 +27,13 @@ function AccordionSection({
   onToggle,
   children,
   badge,
+  dataOnboarding,
 }: AccordionSectionProps) {
   return (
-    <div className="border border-slate-700 rounded-xl overflow-hidden bg-slate-800/50">
+    <div
+      className="border border-slate-700 rounded-xl overflow-hidden bg-slate-800/50"
+      data-onboarding={dataOnboarding}
+    >
       {/* Header - zawsze widoczny */}
       <button
         onClick={onToggle}
@@ -361,6 +366,15 @@ export default function Sidebar() {
   // Domyslnie otwarta sekcja tkanin
   const [openSection, setOpenSection] = useState<SectionId | null>('fabric');
 
+  // Zwin wszystkie sekcje gdy onboarding sie uruchamia
+  const showOnboarding = useKreatorStore((state) => state.showOnboarding);
+
+  useEffect(() => {
+    if (showOnboarding) {
+      setOpenSection(null);
+    }
+  }, [showOnboarding]);
+
   const toggleSection = (id: SectionId) => {
     setOpenSection((prev) => (prev === id ? null : id));
   };
@@ -390,6 +404,7 @@ export default function Sidebar() {
         icon={icons.wall}
         isOpen={openSection === 'wall'}
         onToggle={() => toggleSection('wall')}
+        dataOnboarding="wall"
       >
         <WallConfig />
       </AccordionSection>
@@ -401,17 +416,19 @@ export default function Sidebar() {
         icon={icons.fabric}
         isOpen={openSection === 'fabric'}
         onToggle={() => toggleSection('fabric')}
+        dataOnboarding="fabric"
       >
         <ColorPicker />
       </AccordionSection>
 
-      {/* Rozmiary */}
+      {/* Panele */}
       <AccordionSection
         id="size"
-        title="Rozmiary"
+        title="Panele"
         icon={icons.size}
         isOpen={openSection === 'size'}
         onToggle={() => toggleSection('size')}
+        dataOnboarding="panels"
       >
         <SizePicker />
       </AccordionSection>
@@ -423,6 +440,7 @@ export default function Sidebar() {
         icon={icons.price}
         isOpen={openSection === 'price'}
         onToggle={() => toggleSection('price')}
+        dataOnboarding="price"
       >
         <PriceSummary />
       </AccordionSection>
