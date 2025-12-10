@@ -1,4 +1,4 @@
-// src/components/ui/Toolbar.tsx v0.007 Dodano przycisk pomocy dla onboardingu
+// src/components/ui/Toolbar.tsx v0.008 Dwa przyciski gumki: panel i tkanina
 'use client';
 
 import { useRef, useCallback } from 'react';
@@ -12,8 +12,10 @@ const HINTS = {
   resetView: 'Resetuj widok do 100% i wyśrodkuj',
   lock: 'Zablokuj zoom i przesuwanie canvas',
   unlock: 'Odblokuj zoom i przesuwanie canvas',
-  eraser: 'Tryb gumki - dotknij panel aby go usunąć',
-  eraserOff: 'Wyłącz tryb gumki',
+  erasePanel: 'Gumka paneli - kliknij panel aby go usunąć',
+  erasePanelOff: 'Wyłącz gumkę paneli',
+  eraseFabric: 'Gumka tkanin - kliknij panel aby usunąć tkaninę',
+  eraseFabricOff: 'Wyłącz gumkę tkanin',
   undo: 'Cofnij ostatnio dodany panel',
   clear: 'Usuń wszystkie panele z canvas',
   size: (w: number, h: number) => `Wybierz panel ${w}×${h} cm - kliknij na canvas aby umieścić`,
@@ -87,10 +89,16 @@ export default function Toolbar() {
     }
   };
 
-  const handleEraserClick = () => {
-    const newMode = toolMode === 'erase' ? 'select' : 'erase';
+  const handleErasePanelClick = () => {
+    const newMode = toolMode === 'erasePanel' ? 'select' : 'erasePanel';
     setToolMode(newMode);
-    showHintBriefly(newMode === 'erase' ? HINTS.eraser : HINTS.eraserOff);
+    showHintBriefly(newMode === 'erasePanel' ? HINTS.erasePanel : HINTS.erasePanelOff);
+  };
+
+  const handleEraseFabricClick = () => {
+    const newMode = toolMode === 'eraseFabric' ? 'select' : 'eraseFabric';
+    setToolMode(newMode);
+    showHintBriefly(newMode === 'eraseFabric' ? HINTS.eraseFabric : HINTS.eraseFabricOff);
   };
 
   const handleLockToggle = () => {
@@ -265,31 +273,56 @@ export default function Toolbar() {
 
       {/* Akcje */}
       <div className="flex gap-2">
-        {/* Gumka */}
+        {/* Gumka paneli */}
         <button
-          onClick={handleEraserClick}
-          onMouseEnter={() => onHover(toolMode === 'erase' ? HINTS.eraserOff : HINTS.eraser)}
+          onClick={handleErasePanelClick}
+          onMouseEnter={() => onHover(toolMode === 'erasePanel' ? HINTS.erasePanelOff : HINTS.erasePanel)}
           onMouseLeave={onLeave}
-          onTouchStart={() => onTouchStart(toolMode === 'erase' ? HINTS.eraserOff : HINTS.eraser)}
+          onTouchStart={() => onTouchStart(toolMode === 'erasePanel' ? HINTS.erasePanelOff : HINTS.erasePanel)}
           onTouchEnd={onTouchEnd}
           className={cn(
-            'p-2 rounded-lg transition-all border',
-            toolMode === 'erase'
+            'p-2 rounded-lg transition-all border relative',
+            toolMode === 'erasePanel'
               ? 'bg-red-600 border-red-500 text-white'
               : 'bg-slate-700 border-slate-600 text-slate-200 hover:bg-slate-600 hover:border-red-500'
           )}
+          title="Gumka paneli"
         >
+          {/* Ikona panelu z X */}
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 00-3.7-3.7 48.678 48.678 0 00-7.324 0 4.006 4.006 0 00-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3l-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 003.7 3.7 48.656 48.656 0 007.324 0 4.006 4.006 0 003.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3l-3 3"
-            />
+            <rect x="3" y="3" width="18" height="18" rx="2" strokeWidth={2} strokeLinecap="round" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 9l6 6m0-6l-6 6" />
           </svg>
         </button>
 
-        {/* Cofnij */}
+        {/* Gumka tkanin */}
+        <button
+          onClick={handleEraseFabricClick}
+          onMouseEnter={() => onHover(toolMode === 'eraseFabric' ? HINTS.eraseFabricOff : HINTS.eraseFabric)}
+          onMouseLeave={onLeave}
+          onTouchStart={() => onTouchStart(toolMode === 'eraseFabric' ? HINTS.eraseFabricOff : HINTS.eraseFabric)}
+          onTouchEnd={onTouchEnd}
+          className={cn(
+            'p-2 rounded-lg transition-all border relative',
+            toolMode === 'eraseFabric'
+              ? 'bg-orange-600 border-orange-500 text-white'
+              : 'bg-slate-700 border-slate-600 text-slate-200 hover:bg-slate-600 hover:border-orange-500'
+          )}
+          title="Gumka tkanin"
+        >
+          {/* Ikona palety z X */}
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 7l-4 4" />
+          </svg>
+        </button>
+      </div>
+
+      {/* Separator */}
+      <div className="w-px h-8 bg-slate-600 mx-2 hidden sm:block" />
+
+      {/* Cofnij i Wyczysc */}
+      <div className="flex gap-2">
         <button
           onClick={handleUndo}
           onMouseEnter={() => onHover(HINTS.undo)}

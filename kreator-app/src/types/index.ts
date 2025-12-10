@@ -154,7 +154,7 @@ export interface SavedProject {
 // ============================================
 
 export type ViewMode = 'frontal' | 'top';
-export type ToolMode = 'select' | 'paint' | 'erase';
+export type ToolMode = 'select' | 'paint' | 'erasePanel' | 'eraseFabric';
 
 export interface KreatorState {
   // Sciana
