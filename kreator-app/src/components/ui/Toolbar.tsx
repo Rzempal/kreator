@@ -296,7 +296,7 @@ export default function Toolbar() {
         </button>
 
         {/* Etykieta */}
-        <span className="text-xs text-slate-500 hidden sm:block">Gumka</span>
+        <span className="px-2 py-1 text-xs text-slate-300 hidden sm:block">Gumka</span>
 
         {/* Gumka tkanin */}
         <button
