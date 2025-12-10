@@ -135,7 +135,7 @@ export default function Toolbar() {
   return (
     <div className="flex flex-wrap items-center gap-2 p-3 bg-slate-800/80 backdrop-blur-md rounded-xl border border-slate-700">
       {/* Historia rozmiarow paneli */}
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2" data-onboarding="toolbar">
         {recentSizes.map((size, index) => {
           const isActive =
             activePanelSize?.width === size.width &&
@@ -346,7 +346,6 @@ export default function Toolbar() {
         onMouseLeave={onLeave}
         onTouchStart={() => onTouchStart(HINTS.help)}
         onTouchEnd={onTouchEnd}
-        data-onboarding="toolbar"
         className={cn(
           'ml-auto p-2 rounded-lg transition-all',
           'border border-slate-600 hover:border-cyan-500',

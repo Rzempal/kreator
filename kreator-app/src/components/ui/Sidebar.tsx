@@ -1,7 +1,7 @@
-// src/components/ui/Sidebar.tsx v0.005 Dodano data-onboarding dla przewodnika
+// src/components/ui/Sidebar.tsx v0.006 Zwijanie menu przy onboardingu
 'use client';
 
-import { useState, useRef, ReactNode, useCallback } from 'react';
+import { useState, useRef, ReactNode, useCallback, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { useKreatorStore, useSavedProjects, useCurrentProjectId } from '@/store/useKreatorStore';
 import WallConfig from './WallConfig';
@@ -365,6 +365,15 @@ function ProjectsSection() {
 export default function Sidebar() {
   // Domyslnie otwarta sekcja tkanin
   const [openSection, setOpenSection] = useState<SectionId | null>('fabric');
+
+  // Zwin wszystkie sekcje gdy onboarding sie uruchamia
+  const showOnboarding = useKreatorStore((state) => state.showOnboarding);
+
+  useEffect(() => {
+    if (showOnboarding) {
+      setOpenSection(null);
+    }
+  }, [showOnboarding]);
 
   const toggleSection = (id: SectionId) => {
     setOpenSection((prev) => (prev === id ? null : id));

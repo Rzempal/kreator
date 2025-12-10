@@ -70,9 +70,30 @@ export default function Onboarding() {
     const { showOnboarding, onboardingStep, nextOnboardingStep, skipOnboarding } = useKreatorStore();
     const [targetRect, setTargetRect] = useState<DOMRect | null>(null);
     const [tooltipPos, setTooltipPos] = useState<TooltipPosition>({ top: 0, left: 0 });
+    const [isMobile, setIsMobile] = useState(false);
 
     const currentStep = ONBOARDING_STEPS[onboardingStep];
     const isLastStep = onboardingStep === ONBOARDING_STEPS.length - 1;
+
+    // Wykryj mobile
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
+    // Zablokuj scroll gdy onboarding jest aktywny
+    useEffect(() => {
+        if (showOnboarding) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [showOnboarding]);
 
     // Znajdz element docelowy i oblicz pozycje dymka
     useEffect(() => {
@@ -129,6 +150,63 @@ export default function Onboarding() {
 
     if (!showOnboarding || !currentStep) return null;
 
+    // Mobile: prosty modal na srodku
+    if (isMobile) {
+        return (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                {/* Overlay */}
+                <div className="absolute inset-0 bg-black/70" onClick={skipOnboarding} />
+
+                {/* Modal */}
+                <div className="relative w-full max-w-sm bg-slate-800 border border-slate-600 rounded-xl shadow-2xl p-5">
+                    {/* Naglowek */}
+                    <div className="flex items-center justify-between mb-3">
+                        <h3 className="text-lg font-bold text-cyan-400">{currentStep.title}</h3>
+                        <span className="text-xs text-slate-400">
+                            {onboardingStep + 1} / {ONBOARDING_STEPS.length}
+                        </span>
+                    </div>
+
+                    {/* Opis */}
+                    <p className="text-sm text-slate-300 mb-5">{currentStep.description}</p>
+
+                    {/* Przyciski */}
+                    <div className="flex gap-2">
+                        <button
+                            onClick={skipOnboarding}
+                            className="px-3 py-2 text-sm text-slate-400 hover:text-slate-200 transition-colors"
+                        >
+                            Pomiń
+                        </button>
+                        <button
+                            onClick={nextOnboardingStep}
+                            className={cn(
+                                'flex-1 px-4 py-2 text-sm font-medium rounded-lg transition-colors',
+                                'bg-cyan-600 text-white hover:bg-cyan-500'
+                            )}
+                        >
+                            {isLastStep ? 'Zakończ' : 'Dalej'}
+                        </button>
+                    </div>
+
+                    {/* Kropki postępu */}
+                    <div className="flex justify-center gap-1.5 mt-4">
+                        {ONBOARDING_STEPS.map((_, i) => (
+                            <div
+                                key={i}
+                                className={cn(
+                                    'w-2 h-2 rounded-full transition-colors',
+                                    i === onboardingStep ? 'bg-cyan-400' : 'bg-slate-600'
+                                )}
+                            />
+                        ))}
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    // Desktop: overlay z podswietlaniem
     return (
         <div className="fixed inset-0 z-[100] pointer-events-none">
             {/* Overlay z wyciętym otworem */}
@@ -227,3 +305,4 @@ export default function Onboarding() {
         </div>
     );
 }
+
