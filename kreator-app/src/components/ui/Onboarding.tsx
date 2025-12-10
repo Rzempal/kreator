@@ -150,8 +150,8 @@ export default function Onboarding() {
 
     if (!showOnboarding || !currentStep) return null;
 
-    // Mobile: prosty modal na srodku
-    if (isMobile) {
+    // Fallback: modal gdy element nie zostal znaleziony
+    if (!targetRect) {
         return (
             <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
                 {/* Overlay */}
