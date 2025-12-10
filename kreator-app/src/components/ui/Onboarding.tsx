@@ -110,7 +110,11 @@ export default function Onboarding() {
                 let top = 0;
                 let left = 0;
 
-                switch (currentStep.position) {
+                // Dla mobile: jesli element jest w dolnej polowie ekranu, uzyj 'top'
+                const isInBottomHalf = rect.top > window.innerHeight / 2;
+                const effectivePosition = isInBottomHalf ? 'top' : currentStep.position;
+
+                switch (effectivePosition) {
                     case 'right':
                         top = rect.top + rect.height / 2 - tooltip.height / 2;
                         left = rect.right + 20;
