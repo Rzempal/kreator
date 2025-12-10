@@ -262,6 +262,15 @@ export default function MobileDrawer() {
   const currentProjectId = useCurrentProjectId();
   const currentProject = savedProjects.find(p => p.id === currentProjectId);
 
+  // Mapowanie tabów na data-onboarding
+  const onboardingMap: Record<Tab, string | null> = {
+    projects: null,
+    wall: 'wall',
+    colors: 'fabric',
+    sizes: 'panels',
+    price: 'price',
+  };
+
   const tabs: { id: Tab; label: string; color: string }[] = [
     { id: 'projects', label: currentProject ? 'Projekt' : 'Projekty', color: 'bg-amber-600' },
     { id: 'wall', label: 'Sciana', color: 'bg-purple-600' },
@@ -314,6 +323,7 @@ export default function MobileDrawer() {
                     ? `${tab.color} text-white`
                     : 'bg-slate-700 text-slate-300'
                 )}
+                {...(onboardingMap[tab.id] && { 'data-onboarding': onboardingMap[tab.id] })}
               >
                 {tab.label}
               </button>

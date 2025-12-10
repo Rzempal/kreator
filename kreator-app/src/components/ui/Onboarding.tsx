@@ -100,7 +100,19 @@ export default function Onboarding() {
         if (!showOnboarding || !currentStep) return;
 
         const findTarget = () => {
-            const target = document.querySelector(currentStep.targetSelector);
+            // Szukaj wszystkich elementow z tym selektorem i wybierz WIDOCZNY
+            const elements = document.querySelectorAll(currentStep.targetSelector);
+            let target: Element | null = null;
+
+            for (const el of elements) {
+                const htmlEl = el as HTMLElement;
+                // Element jest widoczny jesli ma wymiary i nie jest hidden
+                if (htmlEl.offsetWidth > 0 && htmlEl.offsetHeight > 0) {
+                    target = el;
+                    break;
+                }
+            }
+
             if (target) {
                 const rect = target.getBoundingClientRect();
                 setTargetRect(rect);
@@ -110,7 +122,11 @@ export default function Onboarding() {
                 let top = 0;
                 let left = 0;
 
-                switch (currentStep.position) {
+                // Dla mobile: jesli element jest w dolnej polowie ekranu, uzyj 'top'
+                const isInBottomHalf = rect.top > window.innerHeight / 2;
+                const effectivePosition = isInBottomHalf ? 'top' : currentStep.position;
+
+                switch (effectivePosition) {
                     case 'right':
                         top = rect.top + rect.height / 2 - tooltip.height / 2;
                         left = rect.right + 20;
@@ -150,8 +166,8 @@ export default function Onboarding() {
 
     if (!showOnboarding || !currentStep) return null;
 
-    // Mobile: prosty modal na srodku
-    if (isMobile) {
+    // Fallback: modal gdy element nie zostal znaleziony
+    if (!targetRect) {
         return (
             <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
                 {/* Overlay */}

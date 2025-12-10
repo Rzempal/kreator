@@ -1,4 +1,4 @@
-// src/components/canvas/Canvas.tsx v0.010 Oba widoki jednoczesnie (frontalny + rzut z gory ponizej)
+// src/components/canvas/Canvas.tsx v0.012 Oddzielne gumki dla paneli i tkanin
 'use client';
 
 import { useRef, useState, useCallback, useEffect, useMemo } from 'react';
@@ -45,6 +45,7 @@ export default function Canvas() {
     setPan,
     zoomIn,
     zoomOut,
+    showTopView,
   } = useKreatorStore();
 
   // Oblicz wymiary sciany
@@ -53,8 +54,8 @@ export default function Canvas() {
     ...wall.segments.flatMap((seg) => [seg.startHeight, seg.endHeight])
   );
 
-  // SVG viewBox - dodatkowe miejsce na widok z gory
-  const TOP_VIEW_HEIGHT = 150; // wysokosc na widok z gory
+  // SVG viewBox - dodatkowe miejsce na widok z gory tylko gdy aktywny
+  const TOP_VIEW_HEIGHT = showTopView ? 150 : 0;
   const viewBoxWidth = totalWidth * SCALE + PADDING * 2;
   const viewBoxHeight = maxHeight * SCALE + PADDING * 2 + TOP_VIEW_HEIGHT;
 
@@ -161,7 +162,7 @@ export default function Canvas() {
       // Lewy przycisk
       if (e.button === 0) {
         // Tryb gumki - nic nie robimy (obslugiwane przez panel)
-        if (toolMode === 'erase') return;
+        if (toolMode === 'erasePanel' || toolMode === 'eraseFabric') return;
 
         // Jesli jest aktywny rozmiar panelu i preview widoczny
         if (activePanelSize && preview.visible) {
@@ -259,7 +260,7 @@ export default function Canvas() {
         const touch = e.touches[0];
 
         // Tryb gumki - obslugiwane przez panel
-        if (toolMode === 'erase') return;
+        if (toolMode === 'erasePanel' || toolMode === 'eraseFabric') return;
 
         // Logika analogiczna do mouseDown
         if (activePanelSize && preview.visible) {
@@ -390,8 +391,11 @@ export default function Canvas() {
 
   const handlePanelClick = useCallback(
     (panelId: string) => {
-      if (toolMode === 'erase') {
+      if (toolMode === 'erasePanel') {
         removePanel(panelId);
+      } else if (toolMode === 'eraseFabric') {
+        // Resetuj kolor panelu do domyslnego
+        updatePanel(panelId, { colorId: 'color-gray' });
       } else if (toolMode === 'paint') {
         updatePanel(panelId, { colorId: activeColorId });
       }
@@ -480,14 +484,16 @@ export default function Canvas() {
           )}
 
           {/* Widok z gory - ponizej widoku frontalnego */}
-          <g transform={`translate(0, ${maxHeight * SCALE + 50})`}>
-            <TopView
-              wall={wall}
-              scale={SCALE}
-              totalWidth={totalWidth}
-              alignToFrontal={true}
-            />
-          </g>
+          {showTopView && (
+            <g transform={`translate(0, ${maxHeight * SCALE + 50})`}>
+              <TopView
+                wall={wall}
+                scale={SCALE}
+                totalWidth={totalWidth}
+                alignToFrontal={true}
+              />
+            </g>
+          )}
         </g>
       </svg>
 
@@ -522,9 +528,12 @@ export default function Canvas() {
         </div>
       )}
 
-      {toolMode === 'erase' && !toolbarHint && (
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-red-600/90 text-white px-4 py-2 rounded-full text-sm">
-          Tryb gumki - dotknij panel aby go usunac
+      {(toolMode === 'erasePanel' || toolMode === 'eraseFabric') && !toolbarHint && (
+        <div className={cn(
+          'absolute top-4 left-1/2 -translate-x-1/2 text-white px-4 py-2 rounded-full text-sm',
+          toolMode === 'erasePanel' ? 'bg-red-600/90' : 'bg-orange-600/90'
+        )}>
+          {toolMode === 'erasePanel' ? 'Gumka paneli - kliknij aby usunąć' : 'Gumka tkanin - kliknij aby zresetować kolor'}
         </div>
       )}
 
