@@ -272,7 +272,7 @@ export default function Toolbar() {
       <div className="w-px h-8 bg-slate-600 mx-2 hidden sm:block" />
 
       {/* Akcje */}
-      <div className="flex gap-2">
+      <div className="flex items-center gap-2">
         {/* Gumka paneli */}
         <button
           onClick={handleErasePanelClick}
